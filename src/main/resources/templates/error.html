@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="text-danger">Oops! Something went wrong.</h1>
+    <p>We're sorry, but an unexpected error has occurred.</p>
+    <!-- Optionally show error attributes if available -->
+    <p th:if="${status}" class="text-muted">Error Code: <span th:text="${status}"></span></p>
+    <p th:if="${error}" class="text-muted" th:text="${error}"></p>
+    <p th:if="${message}" class="text-muted" th:text="${message}"></p>
+    <a href="/" class="btn btn-primary mt-3">Return to Home</a>
+</div>
+</body>
+</html>

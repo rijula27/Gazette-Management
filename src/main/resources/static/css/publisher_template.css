@@ -1,0 +1,142 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f4f6f8;
+  color: #333;
+  overflow: hidden; /* prevents scroll on entire body */
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.navbar {
+  background-color: #072746;;
+  color: #fff;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.navbar-left .fas {
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-weight: 500;
+}
+
+.wrapper {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 60px); /* Adjust height below navbar */
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #072746;
+  color: white;
+  padding: 20px;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
+.sidebar nav ul {
+  list-style: none;
+}
+
+.sidebar nav ul li {
+  margin-bottom: 20px;
+}
+
+.sidebar nav ul li a {
+  color: #ecf0f1;
+  text-decoration: none;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar nav ul li a:hover {
+  color: #1abc9c;
+}
+
+.content {
+  flex: 1;
+  padding: 80px 30px 30px;
+  overflow-y: auto;
+  height: 100%;
+  /* border: solid black; */
+}
+
+.sidebar.collapsed {
+  width: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.sidebar.collapsed + .content {
+  padding-left: 30px;
+}
+
+.footer {
+  background-color: #072746;
+  color: #ecf0f1;
+  text-align: center;
+  padding: 15px;
+  font-size: 0.95rem;
+  width: 100%;
+  z-index: 5;
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .sidebar {
+    position: absolute;
+    left: 0;
+    height: calc(100% - 60px);
+    width: 250px;
+    background-color: #072746;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+    transform: translateX(0);
+    /* z-index: 100; */
+  }
+
+  .sidebar.collapsed {
+    transform: translateX(-100%);
+  }
+
+  .content {
+    padding: 90px 20px 20px;
+    height: calc(100vh - 60px);
+  }
+}

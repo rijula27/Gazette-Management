@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tender Display - NIC</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/top_nav.css">
+    <script type='text/javascript' src='/js/jquery.min.js'></script>
+    <script type="text/javascript" src="/js/jquery.creaseFont.min.js"></script>
+    <script src="/js/theme.js" type="text/javascript"></script>
+    <script src="/js/top_nav.js"></script>
+    <style>
+        main{
+            margin: 40px auto;
+            width: 90%; 
+            /* padding: 20px;  */
+            background-color: #ffffff; 
+            border-radius: 10px; box-shadow: 
+            0 4px 12px rgba(0,0,0,0.1); 
+            text-align: center;
+        }
+
+  .screen-reader-access {
+    max-width: 90%;
+    margin: 10px auto 2rem;
+    padding: 2rem;
+    background-color: #f9fafb;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    font-family: 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    color: #333;
+  }
+
+  .screen-reader-access h2,
+  .screen-reader-access h3 {
+    color: #003366;
+    margin-bottom: 1.5rem;
+    font-size: 1.7rem;
+  }
+
+  .screen-reader-access ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin: 1rem 0;
+  }
+
+  .screen-reader-access a {
+    color: #1a73e8;
+    text-decoration: none;
+  }
+
+  .screen-reader-access a:hover {
+    text-decoration: underline;
+  }
+
+  .screen-reader-access table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+
+  .screen-reader-access th,
+  .screen-reader-access td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+
+  .screen-reader-access thead {
+    background-color: #e3e8f0;
+  }
+
+  .screen-reader-access tr:nth-child(even) {
+    background-color: #f5f8fa;
+  }
+
+  li{
+    list-style: none;
+  }
+
+  @media (max-width: 768px) {
+    .screen-reader-access table,
+    .screen-reader-access thead,
+    .screen-reader-access tbody,
+    .screen-reader-access th,
+    .screen-reader-access td,
+    .screen-reader-access tr {
+      display: block;
+      width: 100%;
+    }
+
+    .screen-reader-access thead tr {
+      display: none;
+    }
+
+    .screen-reader-access td {
+      border: none;
+      position: relative;
+      padding-left: 50%;
+      text-align: left;
+      margin-bottom: 10px;
+    }
+
+    .screen-reader-access td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 15px;
+      width: 45%;
+      padding-right: 10px;
+      font-weight: bold;
+      white-space: nowrap;
+      color: #333;
+    }
+  }
+</style>
+
+</style>
+</head>
+<body>
+    <div th:replace="~{/index :: header_top}"></div>
+    
+    <div th:replace="~{/index :: header}"></div>
+
+    <main>
+        
+        <div class="screen-reader-access">
+  <h2>Screen Reader Access</h2>
+  <p>
+    Assistive technologies are meant to cater to the needs of people with various impairments like visual, hearing, mobility, and learning impairment. These technologies help differently-abled people in rendering or viewing a webpage.
+    Screen readers convert text into synthesized speech, enabling visually impaired users to listen to and comprehend webpage content. Visit the following links to learn more:
+  </p>
+  <ul>
+    <li><a href="http://www.screenreader.net/" target="_blank" rel="noopener noreferrer">http://www.screenreader.net</a></li>
+    <li><a href="http://www.freedomscientific.com/" target="_blank" rel="noopener noreferrer">http://www.freedomscientific.com</a></li>
+    <li><a href="http://www.gwmicro.com/" target="_blank" rel="noopener noreferrer">http://www.gwmicro.com</a></li>
+    <li><a href="http://www.spectronicsinoz.com/" target="_blank" rel="noopener noreferrer">http://www.spectronicsinoz.com</a></li>
+  </ul>
+
+  <!-- <h3>Screen Reader Access</h3> -->
+  <p>
+    This website complies with W3C's Web Content Accessibility Guidelines (WCAG) 2.0 Level AA. It supports screen readers like JAWS (Job Access With Speech), NVDA (Non Visual Desktop Access), SAFA (Screen Access For All), Supernova, and Window-Eyes.
+  </p>
+  <p>Following table lists the information about different screen readers:</p>
+
+  <h3>Information related to the various screen readers</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Screen Reader</th>
+        <th>Website</th>
+        <th>Free or Commercial</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td data-label="Screen Reader">Non Visual Desktop Access (NVDA)</td>
+        <td data-label="Website"><a href="http://www.nvda-project.org/" target="_blank" rel="noopener noreferrer">nvda-project.org</a></td>
+        <td data-label="Free or Commercial">Free</td>
+      </tr>
+      <tr>
+        <td data-label="Screen Reader">System Access To Go</td>
+        <td data-label="Website"><a href="http://www.satogo.com/" target="_blank" rel="noopener noreferrer">satogo.com</a></td>
+        <td data-label="Free or Commercial">Free</td>
+      </tr>
+      <tr>
+        <td data-label="Screen Reader">Thunder</td>
+        <td data-label="Website"><a href="http://www.screenreader.net/index.php?pageid=2" target="_blank" rel="noopener noreferrer">screenreader.net</a></td>
+        <td data-label="Free or Commercial">Free</td>
+      </tr>
+      <tr>
+        <td data-label="Screen Reader">Hal</td>
+        <td data-label="Website"><a href="http://www.yourdolphin.co.uk/productdetail.asp?id=5" target="_blank" rel="noopener noreferrer">yourdolphin.co.uk</a></td>
+        <td data-label="Free or Commercial">Commercial</td>
+      </tr>
+      <tr>
+        <td data-label="Screen Reader">JAWS</td>
+        <td data-label="Website"><a href="http://www.freedomscientific.com/jaws-hq.asp" target="_blank" rel="noopener noreferrer">freedomscientific.com</a></td>
+        <td data-label="Free or Commercial">Commercial</td>
+      </tr>
+      <tr>
+        <td data-label="Screen Reader">Supernova</td>
+        <td data-label="Website"><a href="http://www.yourdolphin.co.uk/productdetail.asp?id=1" target="_blank" rel="noopener noreferrer">yourdolphin.co.uk</a></td>
+        <td data-label="Free or Commercial">Commercial</td>
+      </tr>
+      <tr>
+        <td data-label="Screen Reader">Window-Eyes</td>
+        <td data-label="Website"><a href="http://www.gwmicro.com/Window-Eyes/" target="_blank" rel="noopener noreferrer">gwmicro.com</a></td>
+        <td data-label="Free or Commercial">Commercial</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    </main>
+
+
+    <div th:replace="~{/index :: footer}"></div>
+
+
+    <!-- <script src="/js/tender.js"></script> -->
+    <script>
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+        // Menu toggle functionality
+        const menuToggle = document.querySelector('.menu-toggle');
+        const nav = document.querySelector('nav ul');
+        
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                nav.classList.toggle('active');
+            });
+        }
+    
+    
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Tender</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="/css/creator_template.css">
+    <link rel="stylesheet" href="/css/creator_tender.css">
+    <link rel="stylesheet" href="/css/sweetalert2.min.css">
+
+    <!-- SweetAlert -->
+    <script src="/js/sweetalert2.all.min.js"></script>
+
+    <style>
+         body {
+            background: #f4f6f9;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            margin-top: 60px;
+        }
+
+        .card-header {
+            background: linear-gradient(to right, #007bff, #0056b3);
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .form-label {
+            font-weight: 600;
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .icon-input {
+            position: relative;
+        }
+
+        .icon-input i {
+            position: absolute;
+            left: 22px;
+            top: 70%;
+            transform: translateY(-50%);
+            color: #007bff;
+        }
+
+        .icon-input input {
+            padding-left: 40px;
+        }
+
+        .file-label-display {
+            flex: 1;
+            padding: 0.5rem;
+            background: #e9ecef;
+            border-radius: 10px;
+            margin-right: 10px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .custom-file-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .custom-file-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .custom-file-input {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div th:replace="~{creator/creator_template :: navbar}"></div>
+ 
+    <div class="wrapper d-flex">
+        <!-- Sidebar -->
+        <div th:replace="~{creator/creator_template :: sidebar}"></div>
+    
+        <!-- Main Content -->
+        <main class="content p-4" id="content" style="width: 100%;">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fa fa-upload me-2"></i> Upload Tender Details
+                            </div>
+                            <div class="card-body p-4">
+                                <form th:action="@{/tender/uploadTender}" method="post" enctype="multipart/form-data"  id="tender_form">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4 icon-input">
+                                            <label class="form-label">Tender Title <span class="text-danger">*</span></label>
+                                            <i class="fa fa-file-alt"></i>
+                                            <input type="text" id="title" name="title" class="form-control" placeholder="Enter tender title" required>
+                                        </div>
+                                        <div class="col-md-6 mb-4 icon-input">
+                                            <label class="form-label">Reference Number <span class="text-danger">*</span></label>
+                                            <i class="fa fa-hashtag"></i>
+                                            <input type="text" id="ref_No" name="ref_No" class="form-control" placeholder="Enter reference number" required>
+                                        </div>
+                                    </div>
+    
+                                    <div class="row">
+                                        <div class="col-md-4 mb-4">
+                                            <label class="form-label">Announcement Date <span class="text-danger">*</span></label>
+                                            <input type="date" id="announcement_Date" name="announcement_Date" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-4 mb-4">
+                                            <label class="form-label">Last Date for Submission <span class="text-danger">*</span></label>
+                                            <input type="date" id="last_Date" name="last_Date" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-4 mb-4">
+                                            <label class="form-label">Opening Date <span class="text-danger">*</span></label>
+                                            <input type="date" id="opening_Date" name="opening_Date" class="form-control" required>
+                                        </div>
+                                    </div>
+    
+                                    <div class="row align-items-center mb-4">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Upload PDF <span class="text-danger">*</span></label>
+                                            <div class="d-flex align-items-center">
+                                                <span id="fileLabel" class="file-label-display">No file selected</span>
+                                                <button type="button" class="custom-file-btn" id="selectFileBtn">Browse</button>
+                                                <input type="file" id="pdfFile" name="pdfFile" accept="application/pdf" class="custom-file-input" required>
+                                            </div>
+                                        </div>
+    
+                                        <div class="col-md-6 icon-input">
+                                            <label class="form-label">Keywords</label>
+                                            <i class="fa fa-tags"></i>
+                                            <input type="text" id="keywords" name="keywords" class="form-control" placeholder="Enter keywords (comma-separated)">
+                                        </div>
+                                    </div>
+    
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-primary" id="saveTender">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+
+    <div th:replace="~{creator/creator_template :: footer}"></div>
+
+
+<script src="/js/creator_tender.js"></script>
+<script src="/js/extra.js"></script>
+
+
+</body>
+</html>

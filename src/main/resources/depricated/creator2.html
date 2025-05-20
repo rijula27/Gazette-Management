@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    
+    <!-- CSS Stylesheets -->
+    <!-- <link rel="stylesheet" th:href="@{/css/dashboard.css}"> -->
+    <!-- <link rel="stylesheet" href="/Gazette-Management-NIC/src/main/resources/static/css/creator_template2.css"> -->
+  <link rel="stylesheet" href="/css/creator_template2.css">
+  <link rel="stylesheet" href="/css/creator.css">
+
+
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div th:replace="~{creator/creator_template2 :: sidebar}"></div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+
+
+            <div th:replace="~{creator/creator_template2 :: navbar}"></div>
+
+                <main class="content-wrapper">
+                    <div class="table-container">
+                        <div class="card">
+                            <div class="card-header">Upload Gazette</div>
+                        
+                            <!-- MY ACTUAL FORM -->
+                            <form th:action="@{/gazette/upload}" method="post" enctype="multipart/form-data" id="gazette-form">
+                                <div class="card-body">
+                                    <!-- Date Picker -->
+                                    <div class="form-group">
+                                        <label for="date">Select Date</label>
+                                        <input type="date" class="form-control" id="date" name="date" required>
+                                    </div>
+                        
+                                    <!-- Gazette Part -->
+                                    <div class="form-group">
+                                        <label for="gazettePart">Select Gazette Part</label>
+                                        <select class="form-control" id="gazettePart" name="gazettePart" required>
+                                            <option value="" disabled selected>Select Part</option>
+                                            <option value="I">I</option>
+                                            <option value="IIA">IIA</option>
+                                            <option value="IIB">IIB</option>
+                                            <option value="III">III</option>
+                                            <option value="IV">IV</option>
+                                            <option value="V">V</option>
+                                            <option value="VI">VI</option>
+                                            <option value="VII">VII</option>
+                                            <option value="VIII">VIII</option>
+                                            <option value="IX">IX</option>
+                                            <option value="X">X</option>
+                                        </select>
+                                    </div>
+                        
+                                    <!-- File Input -->
+                                    <div class="form-group">
+                                        <label>Upload PDF</label>
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span id="fileLabel" class="file-label-display">No file selected</span>
+                                            <button type="button" class="custom-file-btn" id="selectFileBtn">Browse</button>
+                                            <input type="file" id="pdfFile" name="pdfFile" accept="application/pdf" class="custom-file-input" required>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                </div>
+                        
+                                <div class="card-footer">
+                                    <button type="button" class="btn btn-primary" id="saveButton">Submit</button>
+                                </div>
+                            </form> 
+                        
+                        </div>   
+                    </div>
+                </main>
+
+            <div th:replace="~{creator/creator_template2 :: footer}"></div>
+
+        </div>
+    </div>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- JavaScript -->
+    <!-- <script th:src="@{/js/dashboard.js}"></script> -->
+    <!-- <script src="/Gazette-Management-NIC/src/main/resources/static/js/creator_template2.js"></script> -->
+<script src="/js/creator_template2.js"></script>
+
+</body>
+
+</html>

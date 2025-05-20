@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Creator Dashboard - Gazette Management NIC</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/creator_template.css">
+  <link rel="stylesheet" href="/css/sweetalert2.min.css">
+
+  <!-- SweetAlert -->
+  <script src="/js/sweetalert2.all.min.js"></script>
+
+  <style>
+     .welcome-box {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    margin-top: -50px;
+
+  }
+
+  .info-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #1abc9c;
+  }
+  </style>
+</head>
+<body>
+
+    <div th:replace="~{creator/creator_template :: navbar}"></div>
+
+
+  <!-- Sidebar + Content Wrapper -->
+  <div class="wrapper">
+
+        <!-- Card Content -->
+        <div th:replace="~{creator/creator_template :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <main class="content" id="content">
+      <section class="welcome-box">
+        <h2>Welcome, <span th:text="${session.loggedInUser}"></span>!</h2>
+        <p>Your Gazette History & Activity</p>
+      </section>
+      <section class="info-cards">
+        <div class="card">
+          <i class="fas fa-file-alt card-icon"></i>
+          <h3>Created</h3>
+          <p th:text="${create}">12</p>
+        </div>
+        <div class="card">
+          <i class="fas fa-check-circle card-icon"></i>
+          <h3>Send to Publisher</h3>
+          <p th:text="${send}">9</p>
+        </div>
+        <div class="card">
+          <i class="fas fa-clock card-icon"></i>
+          <h3>Published</h3>
+          <p th:text="${approved}">3</p>
+        </div>
+      </section>
+      <section style="margin-top: 1.25rem;">
+        <div class="card">
+          <i class="fas fa-clock card-icon"></i>
+          <h3>Total Submission</h3>
+          <p th:text="${totalSubmissions}">3</p>
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <div th:replace="~{creator/creator_template :: footer}"></div>
+
+
+  
+  <script src="/js/extra.js"></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us - NIC</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/top_nav.css">
+    <script type='text/javascript' src='/js/jquery.min.js'></script>
+    <script type="text/javascript" src="/js/jquery.creaseFont.min.js"></script>
+    <script src="/js/theme.js" type="text/javascript"></script>
+    <script src="/js/top_nav.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    .main-content {
+      padding: 40px 20px;
+    }
+
+    .content-left {
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), #ffffff),
+        url('/images/front.jpg') no-repeat center center / cover;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-text {
+      font-weight: 600;
+    }
+
+    .section-heading {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #2a3f5f;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 10px;
+    }
+
+    .address-section {
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+      margin-bottom: 40px;
+    }
+
+    .address-section h3 {
+      font-size: 22px;
+      color: #1f3b73;
+      margin-bottom: 15px;
+    }
+
+    address {
+      line-height: 1.8;
+      color: #444;
+    }
+
+    .tables-container {
+      display: flex;
+      flex-direction: column;
+      gap: 35px;
+    }
+
+    .table-wrapper {
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: auto;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-wrapper h3 {
+      background: #e6effc;
+      padding: 16px 20px;
+      font-size: 20px;
+      color: #1f3b73;
+      border-bottom: 2px solid #d4e0f0;
+      margin: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table th, table td {
+      padding: 14px 18px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    table th {
+      background-color: #f5f9ff;
+      font-weight: 600;
+      color: #2f3d4a;
+    }
+
+    table tr:hover {
+      background-color: #f0f8ff;
+    }
+
+    @media (max-width: 768px) {
+      .content-left {
+        padding: 20px;
+      }
+
+      .section-heading {
+        font-size: 24px;
+      }
+
+      .table-wrapper h3 {
+        font-size: 18px;
+      }
+
+      table th, table td {
+        padding: 10px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+    <div th:replace="~{/index :: header_top}"></div>
+
+
+  <div th:replace="~{/index :: header}"></div>
+
+  <main>
+    <div class="main-content">
+      <div class="content-left">
+        <div class="info-text">
+          <h2 class="section-heading">Contact Us</h2>
+
+          <div class="address-section">
+            <h3>Our Office</h3>
+            <address>
+                Department of Printing and Stationery<br />
+                Secretariat Hill<br />
+                Shillong<br />
+                India<br /><br />
+              <!-- <strong>Phone:</strong> +91-11-24305000<br /> -->
+              <strong>Email:</strong> pns-meg@gov.in
+            </address>
+          </div>
+
+          <div class="tables-container">
+            <div class="table-wrapper">
+              <h3>A. Directorate, Shillong</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Sl No</th>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Phone No</th>
+                    <th>Mobile No</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="contact , iterStat: ${contacts}" th:if="${contact.contactTable == 'A'}">
+                    <td th:text="${iterStat.index + 1}">1</td>
+                    <td th:text="${contact.name}"></td>
+                    <td th:text="${contact.designation}"></td>
+                    <!-- <td th:text="${contact.phno.substring(0,4)} + '-' + ${contact.phno.substring(5)}"></td> -->
+                     <td th:text="${contact.stdCode} + '-' + ${contact.phno}">8638462513</td>
+                    <td th:text="${contact.mobile}">8638462513</td>
+            
+                  </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-wrapper">
+              <h3>B. Branch Press, Tura</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Sl No</th>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Phone No</th>
+                    <th>Mobile No</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="contact, iterStat: ${contacts}" th:if="${contact.contactTable == 'B'}">
+                    <td th:text="${iterStat.index + 1}">1</td>
+                    <td th:text="${contact.name}"></td>
+                    <td th:text="${contact.designation}"></td>
+                    <!-- <td th:text="${contact.phno.substring(0,4)} + '-' + ${contact.phno.substring(5)}"></td> -->
+                     <td th:text="${contact.stdCode} + '-' + ${contact.phno}">8638462513</td>
+                     <td th:text="${contact.mobile}">8638462513</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-wrapper">
+              <h3>C. Web Information Manager</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Sl No</th>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Phone No</th>
+                    <th>Mobile No</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="contact, iterStat: ${contacts}" th:if="${contact.contactTable == 'C'}">
+                    <td th:text="${iterStat.index + 1}">1</td>
+                    <td th:text="${contact.name}"></td>
+                    <td th:text="${contact.designation}"></td>
+                    <!-- <td th:text="${contact.phno.substring(0,4)} + '-' + ${contact.phno.substring(5)}"></td> -->
+                    <td th:text="${contact.stdCode} + '-' + ${contact.phno}">8638462513</td>
+                    <td th:text="${contact.mobile}">8638462513</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div th:replace="~{/index :: footer}"></div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const menuToggle = document.querySelector(".menu-toggle");
+      const nav = document.querySelector("nav ul");
+
+      if (menuToggle) {
+        menuToggle.addEventListener("click", () => {
+          nav.classList.toggle("active");
+        });
+      }
+    });
+  </script>
+</body>
+</html>

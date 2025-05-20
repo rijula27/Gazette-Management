@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tender Display - NIC</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/top_nav.css">
+    <script type='text/javascript' src='/js/jquery.min.js'></script>
+    <script type="text/javascript" src="/js/jquery.creaseFont.min.js"></script>
+    <script src="/js/theme.js" type="text/javascript"></script>
+    <script src="/js/top_nav.js"></script>
+    <style>
+        main{
+            margin: 40px auto;
+            width: 90%; 
+            padding: 20px; 
+            background-color: #ffffff; 
+            border-radius: 10px; box-shadow: 
+            0 4px 12px rgba(0,0,0,0.1); 
+            /* text-align: center; */
+        }
+
+        h2{
+            text-align: center;
+        }
+
+        .terms-container {
+  max-width: 90%;
+  margin: 2rem auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.7;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.terms-container h2 {
+  color: #002855;
+  margin-top: 2rem;
+  font-size: 1.5rem;
+}
+
+.terms-container p {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+    </style>
+</head>
+<body>
+
+    
+    <div th:replace="~{/index :: header_top}"></div>
+
+    <div th:replace="~{/index :: header}"></div>
+
+    <main class="terms-container">
+        <h2>Terms & Conditions</h2>
+
+        <p>This website is maintained by the Printing and Stationery Department, Government of Meghalaya.</p>
+
+        <p>
+            Though all efforts have been made to ensure the accuracy and currency of the content on this website,
+            the same should not be construed as a statement of law or used for any legal purposes. In case of any
+            ambiguity or doubts, users are advised to verify/check with the Department and/or other sources and to
+            obtain appropriate professional advice.
+        </p>
+
+        <p>
+            Under no circumstances will this Department be liable for any expense, loss, or damage including, without
+            limitation, indirect or consequential loss or damage, or any expense, loss or damage whatsoever arising
+            from use, or loss of use, of data, arising out of or in connection with the use of this website.
+        </p>
+
+        <p>
+            These terms and conditions shall be governed by and construed in accordance with Indian Laws. Any dispute
+            arising under these terms and conditions shall be subject to the jurisdiction of the courts of India.
+        </p>
+
+        <p>
+            The information posted on this website may include links or pointers to content maintained by
+            non-Government/private organizations. The Printing and Stationery Department, Government of Meghalaya,
+            provides these links solely for your information and convenience. When you select an external link, you
+            are leaving this website and are subject to the privacy and security policies of the respective site.
+        </p>
+
+        <p>
+            The Department does not guarantee the availability of such linked pages at all times, nor does it
+            authorize the use of copyrighted materials on linked websites. Users should obtain authorization directly
+            from the copyright holders. Also, the Department does not guarantee that linked websites comply with
+            Indian Government web guidelines.
+        </p>
+
+        <h2>Copyright Policy</h2>
+        <p>
+            Materials featured on this site may be reproduced free of charge in any format or media without requiring
+            specific permission, provided the material is reproduced accurately and not used in a derogatory or misleading
+            context. Where the material is published or issued to others, the source must be prominently acknowledged.
+        </p>
+        <p>
+            However, permission to reproduce material does not extend to third-party content explicitly identified as
+            such. Authorization to reproduce such material must be obtained from the respective copyright holders.
+        </p>
+
+        <h2>Privacy Policy</h2>
+        <p>
+            We do not collect personal information for any purpose other than to respond to you (e.g., to answer your queries).
+            If you choose to provide us with personal information—like filling out a contact form with an email or postal
+            address—we use that information solely to respond to your message and provide the information you requested.
+        </p>
+        <p>
+            Our website does not collect personal information for commercial marketing or create individual user profiles.
+            While an email address is necessary for responding to queries, we recommend not sharing additional personal details.
+        </p>
+
+        <h2>Hyperlinking Policy</h2>
+        <p>
+            We do not object to you linking directly to information hosted on our site, and no prior permission is required.
+            However, we would appreciate being informed of such links so we can notify you of updates or changes. Pages of
+            this site must not be loaded into frames on external websites; they must open in a new browser tab/window.
+        </p>
+    </main>
+
+
+
+    <div th:replace="~{/index :: footer}"></div>
+
+
+    <!-- <script src="/js/tender.js"></script> -->
+    <script>
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+        // Menu toggle functionality
+        const menuToggle = document.querySelector('.menu-toggle');
+        const nav = document.querySelector('nav ul');
+        
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                nav.classList.toggle('active');
+            });
+        }
+    
+    
+    });
+    </script>
+</body>
+</html>

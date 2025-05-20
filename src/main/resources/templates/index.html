@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Printing and Stationery Department - Government of Meghalaya</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- <link href="/css/black.css" rel="alternate stylesheet" type="text/css" title="black"/> -->
+    <!-- <link href="/css/white.css" rel="alternate stylesheet" type="text/css" title="white"/> -->
+    <link rel="stylesheet" href="/css/top_nav.css">
+    <script type='text/javascript' src='/js/jquery.min.js'></script>
+    <script type="text/javascript" src="/js/jquery.creaseFont.min.js"></script>
+    <script src="/js/theme.js" type="text/javascript"></script>
+    <script src="/js/top_nav.js"></script>
+
+</head>
+<body>
+    <div class="header_top" th:fragment="header_top">
+        <ul class="top_nav">
+          <li class="search">
+            <form method="get" action="https://www.google.com/search" target="_blank" autocomplete="off">
+              <label for="search-form"><i class="fas fa-search"></i></label>
+              <input type="text" name="q" id="search-form" maxlength="200" placeholder="Search this site...">
+              <input type="submit" value="Go">
+              <input type="hidden" name="sitesearch" value="https://megpns.gov.in">
+            </form>
+          </li>
+          <li><a style="text-decoration: none;" href="/index#body">Skip to main content</a></li>
+          <li><a style="text-decoration: none;" href="/screenReader">Screen Reader Access</a></li>
+          <li class="font-controls">
+            <span><i class="fas fa-text-height"></i> Text Size:</span>
+            <a id="fontLarge" href="#"><i class="fas fa-plus"></i></a>
+            <a id="fontDefault" href="#"><i class="fas fa-font"></i></a>
+            <a id="fontSmall" href="#"><i class="fas fa-minus"></i></a>
+          </li>
+          <li class="contrast-controls">
+            <span><i class="fas fa-adjust"></i> Contrast:</span>
+            <a href="#" onclick="switchStyle('black'); return false;"><img src="/images/black.png" alt="Yellow on Black" title="Yellow on Black"></a>
+            <a href="#" onclick="switchStyle('white'); return false;"><img src="/images/white.png" alt="Black on White" title="Black on White"></a>
+            <a href="#" onclick="switchStyle('default'); return false;"><img src="/images/default.png" alt="Default Contrast" title="Default Contrast"></a>
+          </li>
+          <li class="char-spacing">
+            <span><i class="fas fa-text-width"></i> Character Spacing:</span>
+            <button onclick="setCharSpacing(true)">On</button>
+            <button onclick="setCharSpacing(false)">Off</button>
+          </li>
+        </ul>
+    </div>
+
+    <header th:fragment="header">
+        <button class="menu-toggle">☰</button>
+        <div class="header-content">
+            <div class="header-left">
+                <img src="/images/emblem.png" alt="Emblem">
+            </div>
+            <div class="header-center">
+                <h1>PRINTING AND STATIONERY DEPARTMENT</h1>
+                <h2>Government of Meghalaya</h2>
+            </div>
+            
+        </div>
+
+        <nav>
+            <ul>
+                <li><a href="/index">Home</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/functions">Functions</a></li>
+                <li><a href="/gazette/display">Gazette</a></li>
+                <li><a href="/organizationChart">Organization Chart</a></li>
+                <li><a href="/tender/display">Tenders</a></li>
+                <li><a href="/contact/display">Contact Us</a></li>
+
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="info-boxes">
+            <div class="box citizens-corner">
+                <h3>Citizen's Corner</h3>
+                <ul>
+                    <li><a href="https://megpgrams.gov.in/lodgegrievance.htm?orc=29">Lodge your grievance</a></li>
+                    <li><a href="https://megrti.gov.in/">Right to Information</a></li>
+                    <li><a href="https://meghalaya.gov.in/key-contacts/department/35">Key contacts</a></li>
+                    
+                </ul>
+            </div>
+    
+            <div class="box important-links">
+                <h3>Important links</h3>
+                <ul>
+                    <li><a href="https://egazette.gov.in/(S(fjtsivlmksfdwrwkow0mygzl))/default.aspx">The Gazette of India</a></li>
+                    <li><a href="https://megipr.gov.in/">Information & Public Relations Department</a></li>
+                    <li><a href="https://megassembly.gov.in/">Meghalaya Legislative Assembly</a></li>
+                </ul>
+            </div>
+    
+            <div class="box online-services">
+                <h3>Online services</h3>
+                <ul>
+                    <li><a href="https://investmeghalaya.gov.in/loginWindow.do">Annual subscription for complete Gazette with extra ordinary</a></li>
+                    <li><a href="https://investmeghalaya.gov.in/loginWindow.do">Printing Request</a></li>
+                    <li><a href="https://investmeghalaya.gov.in/loginWindow.do">Demand Request for issue of Stationery Articles or Schedule Forms or Service Books</a></li>
+                </ul>
+            </div>
+        </section>
+        <div class="main-content" id="body">
+            
+            <section class="content-left" >
+                <div class="info-text">
+                    <h2>About the Department</h2>
+                    <p>Government Press was established about 100 years ago during the British Rule. After independence the then State of Assam was created with its capital and HQ of the Secretariat Press at Shillong under the supervision of Superintendent and Assistant Superintendent.
+                        The Office of the Government Press, Shillong and Stationery and Forms Office were amalgamated into one establishment and upgraded to the status of the Directorate of Printing and Stationery, Meghalaya, Shillong on the 23rd June, 1982 after Meghalaya attained Statehood. Branch Press Tura, was commissioned during the year 1983 and much of the workload have been reduced considerably. 
+                    </p>
+                    <!-- <div class="department-image">
+                        <img src="/images/front.jpg" alt="Department Building">
+                    </div> -->
+                    <a href="/about" class="more-link">More about the department →</a>
+                </div>
+            </section>
+    
+            <div class="content-right">
+                <section class="photo-gallery">
+                    <h3>Photo Gallery</h3>
+                    <div class="gallery-container">
+                        <button class="gallery-nav prev">❮</button>
+                        <button class="gallery-nav next">❯</button>
+                        <div class="gallery-slider" >
+                            <div th:each="img, iterStat : ${images}">
+                            <img th:src="@{'/gallery/images/' + ${img.imageTitle}}"
+                                 alt="Gallery Image 1"
+                                 style="width: 450px; height: 300px; object-fit: cover; object-position: center;"
+                                 class="slide" 
+                                 th:classappend="${iterStat.index == 0} ? ' active' : ''">
+                                <!-- <p th:text="${img.imageTitle}"></p> -->
+
+                                </div>
+
+
+                            <!-- <img src="/images/1.jpg" alt="Gallery Image 1" class="slide active">
+                            <img src="/images/2.jpg" alt="Gallery Image 2" class="slide">
+                            <img src="/images/3.jpg" alt="Gallery Image 3" class="slide">
+                            <img src="/images/4.jpg" alt="Gallery Image 4" class="slide">
+                            <img src="/images/7.jpg" alt="Gallery Image 5" class="slide">
+                            <img src="/images/8.jpg" alt="Gallery Image 6" class="slide">
+                            <img src="/images/5.jpg" alt="Gallery Image 7" class="slide">
+                            <img src="/images/6.jpg" alt="Gallery Image 8" class="slide"> -->
+    
+    
+    
+    
+                        </div>
+                    </div>
+                </section>
+    
+                
+                <!-- <section class="imageLink">
+                    <a href="http://india.gov.in" target="_blank"><img src="/images/banner1.jpg" alt=""></a>
+                    <a href="http://meghalaya.gov.in/" target="_blank"><img src="/images/meg.jpg" alt=""></a>
+
+                </section> -->
+
+
+            </div>
+        </div>
+    <section class="important-pdf">
+                    <h3>Important PDF</h3>
+                    <ul>
+                        <li th:each="wrapper : ${importantPdfs}">
+                            <a th:href="@{/pdf/{id}(id=${wrapper.pdf.pdfId})}" target="_blank">
+                                <span th:text="${wrapper.pdf.pdfTitle}" style="margin-left:5px;"></span>
+                                <span th:text="' (' + ${wrapper.size} + ')'" style="margin-left:5px; color:gray; font-size:0.9em;"></span>
+                                <img src="/images/pdf-icon.png" alt="pdf-icon" style="height:25px; vertical-align:middle; margin-left:5px;">
+                            </a>
+                        </li>
+                    </ul>
+                </section>
+        
+
+        
+    </main>
+<section class="imageLink">
+                    <!-- <a href="http://india.gov.in" target="_blank"><img src="/images/banner1.jpg" alt=""></a> -->
+                    <a style="height: 90%;" href="http://meghalaya.gov.in/" target="_blank"><img src="/images/gov_meghalaya.png" alt=""></a>
+                    <a style="height: 40%;" href="https://www.data.gov.in/help" target="_blank"><img src="/images/datagov.png" alt=""></a>
+                    <a href="http://india.gov.in//" target="_blank"><img src="/images/India_Portal.png" alt=""></a>
+
+                    <a style="height: 35%;" href="https://www.nic.gov.in/" target="_blank"><img src="/images/NIC.png" alt=""></a>
+
+                    <a href="http://mygov.in//" target="_blank"><img src="/images/My_Gov.png" alt=""></a>
+
+
+                </section>
+    
+    <footer th:fragment="footer">
+        <div class="footer-links">
+            <a href="/policies">Policies</a>
+            <a href="/siteMap">Site Map</a>
+            <a href="/accessibilityStatement">Accessibility Statement</a>
+            <a href="/help">Help</a>
+
+
+        </div>
+        <p>Contents owned, maintained and updated by Printing and Stationery Department, Govt. of Meghalaya</p>
+        <p>Site designed, developed and hosted by National Informatics Centre</p>
+        <p id="lastUpdatedText">Last updated on May 19 2025</p>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Menu toggle functionality
+        const menuToggle = document.querySelector('.menu-toggle');
+        const nav = document.querySelector('nav ul');
+        
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                nav.classList.toggle('active');
+            });
+        }
+    
+        // Gallery slider functionality
+        const galleryContainer = document.querySelector('.gallery-container');
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.querySelector('.gallery-nav.prev');
+        const nextBtn = document.querySelector('.gallery-nav.next');
+        let currentSlide = 0;
+    
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+        }
+    
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+    
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        }
+    
+        if (prevBtn && nextBtn) {
+            prevBtn.addEventListener('click', prevSlide);
+            nextBtn.addEventListener('click', nextSlide);
+        }
+    
+        // Auto slide every 5 seconds
+        let slideInterval = setInterval(nextSlide, 3000);
+    
+        // Pause auto-slide on hover
+        if (galleryContainer) {
+            galleryContainer.addEventListener('mouseenter', () => {
+                clearInterval(slideInterval);
+            });
+    
+            galleryContainer.addEventListener('mouseleave', () => {
+                slideInterval = setInterval(nextSlide, 5000);
+            });
+        }
+    });
+    </script>
+</body>
+</html>

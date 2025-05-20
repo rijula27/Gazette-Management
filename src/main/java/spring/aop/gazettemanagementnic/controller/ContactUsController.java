@@ -1,0 +1,129 @@
+package spring.aop.gazettemanagementnic.controller;
+
+import java.nio.file.FileAlreadyExistsException;
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import jakarta.servlet.http.HttpSession;
+import spring.aop.gazettemanagementnic.entity.ContactUs;
+import spring.aop.gazettemanagementnic.entity.Gazette;
+import spring.aop.gazettemanagementnic.entity.Pdf;
+import spring.aop.gazettemanagementnic.repository.ContactUsRepository;
+import spring.aop.gazettemanagementnic.service.ContactUsService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+
+@Controller
+@RequestMapping("/contact")
+public class ContactUsController {
+
+    @Autowired
+    private ContactUsService contactUsService;
+
+    @PostMapping("/save")
+    @ResponseBody
+    public ResponseEntity<String> saveContact(@RequestBody ContactUs contactUs,
+                                                HttpSession session ) {
+                    
+        String adminName = (String) session.getAttribute("loggedInUser");
+
+
+        try{
+            if (adminName == null || adminName.isEmpty()) {
+                return ResponseEntity.status(401).body("Session expired or not logged in.");
+            }
+
+            String resultMessage = contactUsService.saveContact(
+                contactUs.getContactTable(), 
+                contactUs.getName(), 
+                contactUs.getDesignation(), 
+                contactUs.getStdCode(),
+                contactUs.getPhno(),
+                contactUs.getMobile(),
+                adminName,
+                LocalDate.now());
+                return ResponseEntity.ok(resultMessage);
+        }catch (Exception e) {
+            e.printStackTrace(); // Keep full error in logs
+            return ResponseEntity.status(500).body("Something went wrong. Please try again.");
+        }
+
+    }
+    
+    
+
+    @GetMapping("/contactDisplay")
+    public String contactUs_Display(Model model, HttpSession session) {
+
+        String username = (String) session.getAttribute("loggedInUser");
+        if (username != null) {
+            List<ContactUs> contact = contactUsService.displayContact();
+            model.addAttribute("contacts",contact);
+            return "admin/admin_contactUs";   
+        }else{
+            return "redirect:/login"; 
+        }
+    }
+    
+
+
+    @PostMapping("/edit")
+    @ResponseBody
+    public ResponseEntity<String> editContact(@RequestBody ContactUs contactUs, HttpSession session) {
+        
+        String adminName = (String) session.getAttribute("loggedInUser");
+
+        try{
+            if (adminName == null || adminName.isEmpty()) {
+                return ResponseEntity.status(401).body("Session expired or not logged in.");
+            }
+
+            String resultMessage = contactUsService.editContact(contactUs.getContactId(), contactUs.getName(),
+            contactUs.getDesignation(), contactUs.getStdCode(), contactUs.getPhno(), contactUs.getMobile(),  adminName, LocalDate.now());
+            return ResponseEntity.ok(resultMessage);
+            
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Something went wrong. Please try again.");
+        }
+
+    }
+    
+
+
+    @GetMapping("/delete/{id}")
+    public String deleteContact(@PathVariable("id") Long id, Model model, HttpSession session){
+        String adminName = (String) session.getAttribute("loggedInUser");
+        if (adminName != null) {
+            contactUsService.deleteContact(id);
+            model.addAttribute("successMessage", "User deleted successfully!");
+            return "redirect:/contact/contactDisplay";
+        }else{
+            return "redirect:/login"; // redirect to login if user is not logged in
+
+        }
+
+    }
+
+
+    @GetMapping("/display")
+        public String contactUsPage(Model model) {
+        List<ContactUs> contact = contactUsService.getAllContact();
+        model.addAttribute("contacts", contact);
+        return "contactUs";
+    }
+
+
+
+}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    
+    <!-- CSS Stylesheets -->
+    <!-- <link rel="stylesheet" th:href="@{/css/dashboard.css}"> -->
+    <!-- <link rel="stylesheet" href="/Gazette-Management-NIC/src/main/resources/static/css/creator_template2.css"> -->
+  <link rel="stylesheet" href="/css/creator_template2.css">
+
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div th:replace="~{creator/creator_template2 :: sidebar}"></div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+
+
+            <div th:replace="~{creator/creator_template2 :: navbar}"></div>
+
+                <main class="content-wrapper">
+                    <div class="table-container">
+                        <table class="data-table"  th:if="${#lists.size(gazettes) > 0}">
+                            <thead>
+                                <tr>
+                                    <th>Sl No</th>
+                                    <th>Title</th>
+                                    <th>Date</th>
+                                    <th>Part</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="gazette, iterStat : ${gazettes}">
+                                    <td th:text="${iterStat.index + 1}">1</td>
+                                    <td th:text="(${gazette.date} + '-' + ${gazette.part} + '.pdf' )">John Doe</td>
+                                    <td th:text="${gazette.date}">john@example.com</td>
+                                    <td th:text="${gazette.part}">Admin</td>
+                                    <td class="action-cell">
+                                        <a href="#" class="view-btn">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <div class="dropdown-container">
+                                            <button class="more-actions-btn">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="fas fa-lock"></i> Suspend
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </main>
+
+            <div th:replace="~{creator/creator_template2 :: footer}"></div>
+
+        </div>
+    </div>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- JavaScript -->
+    <!-- <script th:src="@{/js/dashboard.js}"></script> -->
+    <!-- <script src="/Gazette-Management-NIC/src/main/resources/static/js/creator_template2.js"></script> -->
+<script src="/js/creator_template2.js"></script>
+
+</body>
+
+</html>
