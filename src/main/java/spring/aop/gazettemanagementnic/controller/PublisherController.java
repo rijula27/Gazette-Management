@@ -138,8 +138,6 @@ public class PublisherController {
 
     
     
-        // System.out.println("True = "+ approved + "False "+ pending);
-    
         // Add data to model
         model.addAttribute("gazettes", gazettes);
         model.addAttribute("totalSubmissions", totalSubmissions);
@@ -237,7 +235,6 @@ public class PublisherController {
 
     
     
-        // System.out.println("True = "+ approved + "False "+ pending);
     
         // Add data to model
         model.addAttribute("tenders", tenders);

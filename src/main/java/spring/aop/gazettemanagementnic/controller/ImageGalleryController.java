@@ -100,9 +100,7 @@ public class ImageGalleryController {
     @GetMapping("/images/{imageName:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveImage(@PathVariable String imageName) throws MalformedURLException {
-        System.out.println("executing this after reload");
         Optional<FilePath> optionalPath = filePathRepository.findByPathDescription("Gallery Local Path");
-        System.out.println("optional path find "+ optionalPath.get().getFullPath());
         if (optionalPath.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

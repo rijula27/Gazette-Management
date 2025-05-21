@@ -178,10 +178,8 @@ public class TenderController {
         String tenderPath = tender.getFilePath().getFullPath();
         int year = tender.getAnnouncement_Date().getYear();
 
-        System.out.println("tender path : "+ tenderPath);
 
         String filePath = tenderPath +year + "\\"+ tender.getTitle() + ".pdf"; // update path logic
-        System.out.println("File Path: " + filePath);
 
         String size = "Unknown";
         
