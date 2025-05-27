@@ -126,33 +126,18 @@
                     <div class="gallery-container">
                         <button class="gallery-nav prev">❮</button>
                         <button class="gallery-nav next">❯</button>
-                        <div class="gallery-slider" >
-                            <div th:each="img, iterStat : ${images}">
-                            <img th:src="@{'/gallery/images/' + ${img.imageTitle}}"
-                                 alt="Gallery Image 1"
-                                 style="width: 450px; height: 300px; object-fit: cover; object-position: center;"
-                                 class="slide" 
+                    
+                        <div class="gallery-slider">
+                            <div th:each="img, iterStat : ${images}" class="slide-wrapper" 
                                  th:classappend="${iterStat.index == 0} ? ' active' : ''">
-                                <!-- <p th:text="${img.imageTitle}"></p> -->
-
-                                </div>
-
-
-                            <!-- <img src="/images/1.jpg" alt="Gallery Image 1" class="slide active">
-                            <img src="/images/2.jpg" alt="Gallery Image 2" class="slide">
-                            <img src="/images/3.jpg" alt="Gallery Image 3" class="slide">
-                            <img src="/images/4.jpg" alt="Gallery Image 4" class="slide">
-                            <img src="/images/7.jpg" alt="Gallery Image 5" class="slide">
-                            <img src="/images/8.jpg" alt="Gallery Image 6" class="slide">
-                            <img src="/images/5.jpg" alt="Gallery Image 7" class="slide">
-                            <img src="/images/6.jpg" alt="Gallery Image 8" class="slide"> -->
-    
-    
-    
-    
+                                <img th:src="@{'/gallery/images/' + ${img.imageTitle}}"
+                                     alt="Gallery Image"
+                                     class="slide-img">
+                            </div>
                         </div>
                     </div>
                 </section>
+
     
                 
                 <!-- <section class="imageLink">
@@ -219,47 +204,54 @@
             });
         }
     
-        // Gallery slider functionality
-        const galleryContainer = document.querySelector('.gallery-container');
-        const slides = document.querySelectorAll('.slide');
-        const prevBtn = document.querySelector('.gallery-nav.prev');
-        const nextBtn = document.querySelector('.gallery-nav.next');
+        
+    });
+   
+    document.addEventListener("DOMContentLoaded", function () {
+        const slides = document.querySelectorAll(".slide-wrapper");
+        const prevBtn = document.querySelector(".gallery-nav.prev");
+        const nextBtn = document.querySelector(".gallery-nav.next");
         let currentSlide = 0;
-    
+        let slideInterval;
+
         function showSlide(index) {
-            slides.forEach(slide => slide.classList.remove('active'));
-            slides[index].classList.add('active');
+            slides.forEach((slide, i) => {
+                slide.classList.toggle("active", i === index);
+            });
         }
-    
+
         function nextSlide() {
             currentSlide = (currentSlide + 1) % slides.length;
             showSlide(currentSlide);
         }
-    
-        function prevSlide() {
+
+        function startAutoSlide() {
+            slideInterval = setInterval(nextSlide, 4000); // 4 seconds
+        }
+
+        function stopAutoSlide() {
+            clearInterval(slideInterval);
+        }
+
+        prevBtn.addEventListener("click", () => {
+            stopAutoSlide();
             currentSlide = (currentSlide - 1 + slides.length) % slides.length;
             showSlide(currentSlide);
-        }
-    
-        if (prevBtn && nextBtn) {
-            prevBtn.addEventListener('click', prevSlide);
-            nextBtn.addEventListener('click', nextSlide);
-        }
-    
-        // Auto slide every 5 seconds
-        let slideInterval = setInterval(nextSlide, 3000);
-    
-        // Pause auto-slide on hover
-        if (galleryContainer) {
-            galleryContainer.addEventListener('mouseenter', () => {
-                clearInterval(slideInterval);
-            });
-    
-            galleryContainer.addEventListener('mouseleave', () => {
-                slideInterval = setInterval(nextSlide, 5000);
-            });
-        }
+            startAutoSlide();
+        });
+
+        nextBtn.addEventListener("click", () => {
+            stopAutoSlide();
+            nextSlide();
+            startAutoSlide();
+        });
+
+        // Initialize
+        showSlide(currentSlide);
+        startAutoSlide();
     });
-    </script>
+</script>
+
+
 </body>
 </html>

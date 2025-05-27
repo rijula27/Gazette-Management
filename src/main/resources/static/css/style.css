@@ -315,7 +315,7 @@ main {
     padding-bottom: 5px;
 }
 
-.photo-gallery{
+/* .photo-gallery{
     background: linear-gradient(rgba(6, 39, 82, 0.982), rgba(255, 255, 255, 0.85)), url('/images/front.jpg');
 
 }
@@ -344,8 +344,8 @@ main {
 
 .slide.active {
     display: block;
-}
-
+} */
+    
 .gallery-nav {
     position: absolute;
     top: 50%;
@@ -370,6 +370,57 @@ main {
 .gallery-nav.next {
     right: 10px;
 }
+
+
+
+/* trying new */
+.photo-gallery {
+    background: linear-gradient(rgba(6, 39, 82, 0.982), rgba(255, 255, 255, 0.85)), url('/images/front.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 30px;
+    text-align: center;
+}
+
+.gallery-container {
+    position: relative;
+    max-width: 100%;
+    margin: auto;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.gallery-slider {
+    display: flex;
+    transition: transform 0.5s ease;
+    height: 300px;
+    width: 100%;
+}
+
+.slide-wrapper {
+    flex: 0 0 100%;
+    display: none;
+    height: 100%;
+}
+
+.slide-wrapper.active {
+    display: block;
+}
+
+.slide-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 2px;
+}
+
+
+
+
+
+
 
 .important-pdf ul {
     list-style: none;
