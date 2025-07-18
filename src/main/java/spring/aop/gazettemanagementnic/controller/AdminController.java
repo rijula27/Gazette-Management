@@ -246,6 +246,151 @@ public ResponseEntity<String> creatorUpload(@RequestBody CreatorRequestDTO reque
 
 
 
+
+    @GetMapping("/admin_publisher_list")
+    public String displayPublisher_List(Model model, HttpSession session) {
+        String username = (String) session.getAttribute("loggedInUser");
+        if (username != null) {
+            List<GCUser> gcUsers = gcUserService.displayPublisher_List();  
+            model.addAttribute("gcUsers", gcUsers);
+            return "admin/admin_publisher_list";
+        }else{
+            return "redirect:/login"; // redirect to login if user is not logged in
+        }
+    }
+
+
+
+    @PostMapping("/publisher_upload")
+    @ResponseBody
+    public ResponseEntity<String> publisherUpload(@RequestBody CreatorRequestDTO requestDTO,
+                                                 HttpSession session) {
+        String adminName = (String) session.getAttribute("loggedInUser");
+
+
+
+        try {
+            if (adminName == null || adminName.isEmpty()) {
+                return ResponseEntity.status(401).body("Session expired or not logged in.");
+            }
+
+            Optional<GCUser> optionalAdmin = gcUserRepository.findByUsername(adminName);
+            if (!optionalAdmin.isPresent()) {
+                return ResponseEntity.status(404).body("Admin user not found.");
+            }
+
+            String existingAdminPassword = optionalAdmin.get().getPassword();
+            String rawAdminPassword = requestDTO.getAdminPassword();
+
+            if (!gcUserService.matches( rawAdminPassword, existingAdminPassword)                                                                         ) {
+                return ResponseEntity.badRequest().body("Wrong Admin password");
+            }
+
+            if (!requestDTO.getUserPassword().equals(requestDTO.getUserConfirmPassword())) {
+                return ResponseEntity.badRequest().body("Password and Confirm Password don't match.");
+            }
+
+            if (!requestDTO.getUserPassword().equals(requestDTO.getUserConfirmPassword())) {
+                return ResponseEntity.badRequest().body("Password and Confirm Password don't match.");
+            }
+
+            String resultMessage = gcUserService.savePublisher(
+                requestDTO.getUserName(),
+                requestDTO.getUserPassword(),
+                adminName,
+                LocalDate.now()
+            );
+
+            return ResponseEntity.ok(resultMessage);
+
+        } catch (FileAlreadyExistsException e) {
+            return ResponseEntity.badRequest().body("A user with this username already exists.");
+        } catch (Exception e) {
+            e.printStackTrace(); // Keep full error in logs
+            return ResponseEntity.status(500).body("Something went wrong. Please try again.");
+        }
+
+    }
+
+
+    @GetMapping("/delete_publisher/{id}")
+    public String deletePublisher(@PathVariable("id") Long id, Model model, HttpSession session){
+        String username = (String) session.getAttribute("loggedInUser");
+        if (username != null) {
+            gcUserService.deleteUser(id);
+            model.addAttribute("successMessage", "User deleted successfully!");
+            return "redirect:/admin/admin_publisher_list";
+        }else{
+            return "redirect:/login"; // redirect to login if user is not logged in
+
+        }
+
+    }
+
+
+
+    @PostMapping("/edit_publisher")
+    @ResponseBody
+    public ResponseEntity<String> edit_publisher(@RequestBody EditCreatorRequestDTO editRequestDTO,
+    HttpSession session) {
+        System.out.println("entere d d jsdioklsd");
+        String adminName = (String) session.getAttribute("loggedInUser");
+        try {
+            if (adminName == null || adminName.isEmpty()) {
+                return ResponseEntity.status(401).body("Session expired or not logged in.");
+            }
+
+
+            Optional<GCUser> optionalAdmin = gcUserRepository.findByUsername(adminName);
+            if (!optionalAdmin.isPresent()) {
+                return ResponseEntity.status(404).body("Admin user not found.");
+            }
+
+            String existingAdminPassword = optionalAdmin.get().getPassword();
+            String rawAdminPassword = editRequestDTO.getAdminPassword();
+
+            if (!gcUserService.matches( rawAdminPassword, existingAdminPassword)                                                                         ) {
+                return ResponseEntity.badRequest().body("Wrong Admin password");
+            }
+
+            if (!editRequestDTO.getNewUserPassword().equals(editRequestDTO.getUserConfirmPassword())) {
+                return ResponseEntity.badRequest().body("Password and Confirm Password don't match.");
+            }
+
+
+
+        
+        
+            if (editRequestDTO.getNewUserPassword().equals(editRequestDTO.getUserConfirmPassword())){ 
+            
+                ResponseEntity<String> message = gcUserService.editCreator(
+                    editRequestDTO.getUserName(),
+                    editRequestDTO.getNewUserName(),
+                    editRequestDTO.getExistingUserPassword(),
+                    editRequestDTO.getNewUserPassword(),
+                    editRequestDTO.getUserConfirmPassword(),
+                    LocalDate.now()
+                    );
+            
+                return (message);
+            } else {
+            
+                return ResponseEntity.badRequest().body(" Password and Confirm Password don't match");
+            }
+        
+        } catch (Exception e) {
+            e.printStackTrace(); // Full error in terminal
+        
+            return ResponseEntity.status(500).body(" Internal Server Error: ");
+        }  
+    }
+
+
+    
+
+
+
+
     @GetMapping("/admin_tender_display")
     public String display_tender_Admin(Model model, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
@@ -332,6 +477,65 @@ public ResponseEntity<String> creatorUpload(@RequestBody CreatorRequestDTO reque
                     .body("{\"error\": \"User not authorized.\"}");
         }
     }
+
+
+
+
+    @PostMapping("/edit_admin")
+    @ResponseBody
+    public ResponseEntity<String> edit_admin(@RequestBody EditCreatorRequestDTO editRequestDTO,
+    HttpSession session) {
+        String adminName = (String) session.getAttribute("loggedInUser");
+        try {
+            if (adminName == null || adminName.isEmpty()) {
+                return ResponseEntity.status(401).body("Session expired or not logged in.");
+            }
+
+
+            Optional<GCUser> optionalAdmin = gcUserRepository.findByUsername(adminName);
+            if (!optionalAdmin.isPresent()) {
+                return ResponseEntity.status(404).body("Admin user not found.");
+            }
+
+            String existingAdminPassword = optionalAdmin.get().getPassword();
+            String rawAdminPassword = editRequestDTO.getAdminPassword();
+
+            if (!gcUserService.matches( rawAdminPassword, existingAdminPassword)                                                                         ) {
+                return ResponseEntity.badRequest().body("Wrong Admin password");
+            }
+
+            if (!editRequestDTO.getNewUserPassword().equals(editRequestDTO.getUserConfirmPassword())) {
+                return ResponseEntity.badRequest().body("Password and Confirm Password don't match.");
+            }
+
+
+
+        
+        
+            if (editRequestDTO.getNewUserPassword().equals(editRequestDTO.getUserConfirmPassword())){ 
+            
+                ResponseEntity<String> message = gcUserService.editCreator(
+                    editRequestDTO.getUserName(),
+                    editRequestDTO.getNewUserName(),
+                    editRequestDTO.getExistingUserPassword(),
+                    editRequestDTO.getNewUserPassword(),
+                    editRequestDTO.getUserConfirmPassword(),
+                    LocalDate.now()
+                    );
+            
+                return (message);
+            } else {
+            
+                return ResponseEntity.badRequest().body(" Password and Confirm Password don't match");
+            }
+        
+        } catch (Exception e) {
+            e.printStackTrace(); // Full error in terminal
+        
+            return ResponseEntity.status(500).body(" Internal Server Error: ");
+        }  
+    }
+
 
 
 }

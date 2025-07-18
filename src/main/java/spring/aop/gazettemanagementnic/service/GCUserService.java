@@ -62,6 +62,10 @@ public class GCUserService implements UserDetailsService {
         return gcUserRepository.findByRole("CREATOR");
     }
 
+    public List<GCUser> displayPublisher_List() {
+        return gcUserRepository.findByRole("PUBLISHER");
+    }
+
 
 
     public String saveUser(String userName, String userPassword, String adminName, LocalDate date )throws IOException{
@@ -141,6 +145,34 @@ public class GCUserService implements UserDetailsService {
         return ResponseEntity.badRequest().body("User not found");
     }
 }
+
+    public String savePublisher(String userName, String userPassword, String adminName, LocalDate date) throws IOException{
+      String role = "PUBLISHER";
+        Optional<GCUser> existingUser = gcUserRepository.findByUsername(userName);
+
+
+        if(!existingUser.isPresent()){
+
+
+            GCUser gcUser = new GCUser();
+            
+            if (!passwordEncoder.matches(userPassword, gcUser.getPassword())) {
+                
+            
+            gcUser.setUsername(userName);
+            gcUser.setPassword(passwordEncoder.encode(userPassword));
+            gcUser.setRole(role);
+            gcUser.setDate(date);
+
+            gcUserRepository.save(gcUser);
+            return "User created successfully by admin: " + adminName;
+            }else{
+                return "Password already exist: " + adminName;
+            }
+        }else{
+                throw new FileAlreadyExistsException("user with the same user name already exist");
+            }
+    }
 
 
 }

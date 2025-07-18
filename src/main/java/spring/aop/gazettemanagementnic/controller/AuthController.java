@@ -50,7 +50,7 @@ public class AuthController {
 
 
         // if (sessionCaptcha != null && captchaInput.equals(sessionCaptcha)) {
-            if (username != null && username.length() > 9 && username.length() < 15 && username.contains("_")) {
+            if (username != null && username.length() > 9 && username.length() < 21 && username.contains("_")) {
                 if (password != null && password.length() == 12) {
 
                     Optional<GCUser> user = gcUserService.findByUsername(username);

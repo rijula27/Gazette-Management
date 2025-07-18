@@ -27,10 +27,10 @@
   <div class="wrapper">
     <div th:replace="~{admin/admin_template :: sidebar}"></div>
 
-    <div class="content-area" style="position: relative;">
+    <!-- <div class="content-area" style="position: relative;">
       <div th:if="${errorMessage}" class="alert alert-danger alert-message" th:text="${errorMessage}"></div>
       <div th:if="${successMessage}" class="alert alert-success alert-message" th:text="${successMessage}">dsfsdfs</div>
-  </div>
+  </div> -->
 
     <main class="content" id="content">
 
@@ -40,8 +40,8 @@
     
       <div class="dashboard-container">
         <div class="dashboard-header">
-          <h2 class="dashboard-title">Creator Dashboard</h2>
-          <button class="add-btn" onclick="openModal()">+ Add Creator</button>
+          <h2 class="dashboard-title">Publisher Dashboard</h2>
+          <button class="add-btn" onclick="openModal()">+ Add Publisher</button>
         </div>
         <div id="responseMessage" class="response-message"></div>
         <div class="table-wrapper" th:if="${#lists.size(gcUsers) > 0}">
@@ -54,7 +54,7 @@
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody id="creatorTable">
+            <tbody id="publisherTable">
               <tr th:each="gcUsers, iterStat : ${gcUsers}">
                 <td th:text="${iterStat.index + 1}">1</td>
                 <td th:text="(${gcUsers.username})">John Doe</td>
@@ -63,7 +63,7 @@
                   <div class="dropdown">
                     <button class="dropdown-toggle" onclick="toggleDropdown(this)">More</button>
                     <div class="dropdown-menu">
-                      <a href="#" th:attr="data-id=${gcUsers.id}, data-name=${gcUsers.username}" onclick="editCreator(this)">✏️ Edit</a>
+                      <a href="#" th:attr="data-id=${gcUsers.id}, data-name=${gcUsers.username}" onclick="editPublisher(this)">✏️ Edit</a>
                       <a href="#" th:attr="data-id=${gcUsers.id}" onclick="confirmDelete(this)">🗑️ Delete</a>
                     </div>
                   </div>
@@ -77,12 +77,12 @@
   </div>
 
   <div th:replace="~{admin/admin_template :: footer}"></div>
-  
   <div th:replace="~{admin/admin_template :: editModal}"></div>
   <div th:replace="~{admin/admin_template :: saveEditModal}"></div>
 
+
   <!-- Delete Confirmation Modal -->
-  <div class="modal fade" id="deleteCreatorModal" tabindex="-1" role="dialog">
+  <div class="modal fade" id="deletePublisherModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -101,17 +101,17 @@
   </div>
 
   <!-- Add Creator Modal -->
-  <div id="creatorModal" class="modal">
+  <div id="publisherModal" class="modal">
 
     <!-- On admin_creator_list.html or your target redirect page -->
-<div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
-<div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+<!-- <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+<div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div> -->
 
     <div class="modal-content" id="modal-content">
       <span class="close-btn" onclick="closeModal()">&times;</span>
-      <h3 id="modalTitle">Add New Creator</h3>
+      <h3 id="modalTitle">Add New Publisher</h3>
       <!-- <form th:action="@{/admin/creator_upload}" method="post" id="user-form"> -->
-        <form id="creatorForm">
+        <form id="publisherForm">
           <!-- <form id="creatorForm" action="/admin/creator_upload" method="post"> -->
           <label for="userName">Username</label>
           <input type="text" id="userName" name="userName" placeholder="Enter User Name" required>
@@ -135,10 +135,11 @@
 
 
   <!-- Edit creator modal -->
-  <div id="editCreatorModal" class="modal" data-backdrop="static" data-keyboard="false">
+  <div id="editPublisherModal" class="modal" data-backdrop="static" data-keyboard="false">
     <div class="modal-content" id="edit-modal">
       <span class="close-btn" onclick="closeEditModal()">&times;</span>
-      <h3 id="modalTitle">Edit the Creator account</h3>
+      <h3 id="modalTitle">Edit the Publisher account</h3>
+      <!-- <form th:action="@{/admin/edit_creator}" method="post" id="edit-form"> -->
         <form id="edit-form">
 
         <label for="userName">Username</label>
@@ -167,7 +168,7 @@
   </div>
 
   <!-- Save Confirmation Modal -->
-  <div class="modal fade" id="saveCreatorModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" >
+  <div class="modal fade" id="savePublisherModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" >
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -175,7 +176,7 @@
           <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
         </div>
         <div class="modal-body">
-          Are you sure you want to save this creator?
+          Are you sure you want to save this publisher?
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -188,7 +189,7 @@
 
 
   <!-- Save Edit Confirmation Modal -->
-  <div class="modal fade" id="saveEditCreatorModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal fade" id="saveEditPublisherModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -196,22 +197,27 @@
           <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
         </div>
         <div class="modal-body">
-          Are you sure you want to save this creator?
+          Are you sure you want to save this publisher?
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary" id="confirmCancel" data-dismiss="modal">Cancel</button>
-          <button class="btn btn-primary" id="confirmUpdate">Save</button>
+          <button class="btn btn-primary" id="confirmUpdatePublisher">Savefdf</button>
         </div>
       </div>
     </div>
   </div>
 
 
+
+
+
   <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="/js/admin_creator_list.js"></script>
+  <script src="/js/admin_publisher_list.js"></script>
   <script src="/js/extra.js"></script>
+  <script src="/js/extra2.js"></script>
+
 
 
 

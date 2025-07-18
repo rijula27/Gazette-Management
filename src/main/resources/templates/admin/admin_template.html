@@ -6,8 +6,28 @@
   <title>Admin: Printing and Stationery Department - Government of Meghalaya</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/admin_template.css">
+  <link rel="stylesheet" href="/css/admin_creator_list.css">
+
   <link rel="stylesheet" href="/css/sweetalert2.min.css">
   <script src="/js/sweetalert2.all.min.js"></script>
+  <style>
+    .edit-profile {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: #ffffff;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    z-index: 10;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .navbar-right:hover .edit-profile {
+    display: block;
+  }
+  </style>
 </head>
 <body>
 
@@ -20,7 +40,7 @@
     </div>
     <div class="navbar-right">
       <span th:text="${session.loggedInUser}"></span>
-      <i class="fas fa-user-circle"></i>
+      <i class="fas fa-user-circle" th:attr="data-name=${session.loggedInUser}" onclick="editAdmin(this)"></i>
     </div>
   </header>
 
@@ -34,6 +54,7 @@
           <li><a href="/admin/admin_display"><i class="fas fa-tachometer-alt"></i> Gazette Dashboard</a></li>
           <li><a href="/admin/admin_tender_display"><i class="fas fa-file-contract"></i> Tender Dashboard</a></li>
           <li><a href="/admin/admin_creator_list"><i class="fas fa-users"></i> Creator List</a></li>
+          <li><a href="/admin/admin_publisher_list"><i class="fas fa-users"></i> Publisher List</a></li>
           <li><a href="/upload_pdf"><i class="fas fa-upload"></i> Upload PDF</a></li>
           <li><a href="/admin/admin_pdf_display"><i class="fas fa-file-pdf"></i> PDF Dashboard</a></li>
           <li><a href="/gallery/imageDisplay"><i class="fas fa-images"></i> Photo Gallery</a></li>
@@ -42,15 +63,6 @@
           <li><a href="/logout" id="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
 
 
-          <!-- <li><a href="/admin/admin_display"><i class="fas fa-home"></i>Gazette Dashboard</a></li>
-          <li><a href="/admin/admin_tender_display"><i class="fas fa-home"></i>Tender Dashboard</a></li>
-          <li><a href="/admin/admin_creator_list"><i class="fas fa-home"></i> Creator List</a></li>
-          <li><a href="/upload_pdf"><i class="fas fa-home"></i>Upload PDF</a></li>
-          <li><a href="/admin/admin_pdf_display"><i class="fas fa-home"></i>Pdf Dashboard</a></li>
-          <li><a href="/gallery/imageDisplay"><i class="fas fa-home"></i>Photo Gallery</a></li>
-          <li><a href="/contact/contactDisplay"><i class="fas fa-home"></i>Contact Us</a></li>
-          <li><a href="/about/aboutDisplay"><i class="fas fa-home"></i>About Us</a></li>
-          <li><a href="/logout" id="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li> -->
         </ul>
       </nav>
     </aside>
@@ -65,9 +77,72 @@
   <footer th:fragment="footer" class="footer">
     <p>&copy; 2025 Gazette Management NIC. All rights reserved.</p>
   </footer>
+  <div th:replace="~{admin/admin_template :: editModal}"></div>
+  <div th:replace="~{admin/admin_template :: saveEditModal}"></div>
+
+
+
+
+  <!-- Edit creator modal -->
+  <div id="editAdminModal" class="modal" data-backdrop="static" data-keyboard="false" th:fragment="editModal">
+    <div class="modal-content" id="edit-modal">
+      <span class="close-btn" onclick="closeEditModal()">&times;</span>
+      <h3 id="modalTitle">Edit the Publisher account</h3>
+        <form id="edit-form-admin">
+
+        <label for="userName">Username</label>
+        <input type="text" id="existingAdminUserName" name="existingAdminUserName" placeholder="Enter the existing User Name" disabled>
+
+        <label for="newUserName">New Username</label>
+        <input type="text" id="newAdminUserName" name="newAdminUserName" placeholder="Enter the New User Name" required>
+
+        <label for="existingUserPassword">Existing User Password</label>
+        <input type="password" id="existingAdminUserPassword" name="existingAdminUserPassword" placeholder="Enter the existing User Password" required>
+
+        <label for="newUserPassword">New User Password</label>
+        <input type="password" id="newAdminUserPassword" name="newAdminUserPassword" placeholder="Enter the new User Password" required>
+
+        <label for="userConfirmPassword">Confirm Password</label>
+        <input type="password" id="confirmAdminPassword" name="confirmAdminPassword" placeholder="Enter the new User Password again" required>
+
+        <label for="adminPassword">Admin Password</label>
+          <input type="password" id="adminPassword3" name="adminPassword" >
+
+        
+        <!-- <button class="save-btn" type="button" onclick="showEditSaveModal()">Save</button> -->
+         <button class="save-btn" type="submit">save</button>
+      </form>
+    </div>
+  </div>
+
+
+
+  <!-- Save Edit Confirmation Modal -->
+  <div class="modal fade" id="saveEditAdminModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" th:fragment="saveEditModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Save</h5>
+          <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to save this publisher?
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="confirmCancel" data-dismiss="modal">Cancel</button>
+          <button class="btn btn-primary" id="confirmUpdate">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
 
 
 <script src="/js/extra.js"></script>
+
 
 </body>
 </html>

@@ -16,8 +16,8 @@ public class GCUser {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    @Size(min = 10, max = 15, message = "Username must be between 10 and 15 characters")
-    @Pattern(regexp = "^(?=.{10,15}$)(?=[^_]*_[^_]*$).*$", message = "Username must contain exactly one underscore")
+    @Size(min = 10, max = 20, message = "Username must be between 10 and 20 characters")
+    @Pattern(regexp = "^(?=.{10,20}$)(?=[^_]*_[^_]*$).*$", message = "Username must contain exactly one underscore")
     private String username;
 
 
