@@ -92,6 +92,7 @@
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <form class="form-upload">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
     <div class="form-group">
         <label for="galleryImages">Upload Image <span class="text-danger">*</span></label>
         <input type="file" class="form-control-file" id="galleryImages" name="galleryImages" accept="image/*" required>

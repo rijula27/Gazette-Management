@@ -11,7 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import spring.aop.gazettemanagementnic.entity.Gazette;
+import spring.aop.gazettemanagementnic.entity.GCUser;
 import spring.aop.gazettemanagementnic.repository.GazetteRepository;
+import spring.aop.gazettemanagementnic.repository.GCUserRepository;
 import spring.aop.gazettemanagementnic.service.GazetteService;
 
 import java.io.IOException;
@@ -41,6 +43,9 @@ public class GazetteController {
 
     @Autowired
     private GazetteRepository gazetteRepository;
+
+    @Autowired
+    private GCUserRepository gcUserRepository;
 
 
     @PostMapping("/upload")
@@ -122,9 +127,47 @@ public class GazetteController {
 
   //view pdf
     @GetMapping("/pdf/{id}")
-    public ResponseEntity<?> viewGazettePdf(@PathVariable Long id) throws IOException {
-            return gazetteService.getGazettePdfResponse(id);
+    public ResponseEntity<?> viewGazettePdf(@PathVariable Long id, HttpSession session) throws IOException {
+        // Check if user is authenticated
+        String username = (String) session.getAttribute("loggedInUser");
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("User not authenticated. Please login to view this resource.");
+        }
         
+        // Get user's role from database
+        java.util.Optional<GCUser> userOpt = gcUserRepository.findByUsername(username);
+        if (!userOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("User not found.");
+        }
+        String role = userOpt.get().getRole();
+        
+        // Get gazette by ID
+        java.util.Optional<Gazette> gazetteOpt = gazetteRepository.findById(id);
+        if (!gazetteOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Gazette not found.");
+        }
+        Gazette gazette = gazetteOpt.get();
+        
+        // Authorization rules based on dashboard visibility:
+        // - CREATOR/ADMIN can view only their own gazettes they created
+        // - PUBLISHER (single role) can view ALL gazettes sent by creators
+        if (role.equals("CREATOR") || role.equals("ADMIN")) {
+            // Creator/Admin can only view their own gazettes
+            if (!gazette.getGcUser().getUsername().equals(username)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("You do not have permission to access this gazette.");
+            }
+            return gazetteService.getGazettePdfResponse(id);
+        } else if (role.equals("PUBLISHER")) {
+            // Publisher can view all gazettes from creators
+            return gazetteService.getGazettePdfResponse(id);
+        }
+        
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            .body("You do not have permission to access this resource.");
     }
 
 

@@ -133,6 +133,7 @@
                             </div>
                             <div class="card-body p-4">
                                 <form th:action="@{/tender/uploadTender}" method="post" enctype="multipart/form-data"  id="tender_form">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                     <div class="row">
                                         <div class="col-md-6 mb-4 icon-input">
                                             <label class="form-label">Tender Title <span class="text-danger">*</span></label>

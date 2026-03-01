@@ -32,6 +32,9 @@ import spring.aop.gazettemanagementnic.dto.TenderWithSize;
 import spring.aop.gazettemanagementnic.entity.FilePath;
 import spring.aop.gazettemanagementnic.entity.Gazette;
 import spring.aop.gazettemanagementnic.entity.Tender;
+import spring.aop.gazettemanagementnic.entity.GCUser;
+import spring.aop.gazettemanagementnic.repository.TenderRepository;
+import spring.aop.gazettemanagementnic.repository.GCUserRepository;
 import spring.aop.gazettemanagementnic.service.TenderService;
 
 
@@ -46,6 +49,12 @@ public class TenderController {
 
     @Autowired
     public TenderService tenderService;
+
+    @Autowired
+    private TenderRepository tenderRepository;
+
+    @Autowired
+    private GCUserRepository gcUserRepository;
 
 
 
@@ -125,8 +134,47 @@ public class TenderController {
 
 
     @GetMapping("/pdf/{id}")
-    public ResponseEntity<?> viewTenderPdf(@PathVariable Long id) throws IOException {
-        return tenderService.getTenderPdfResponse(id);
+    public ResponseEntity<?> viewTenderPdf(@PathVariable Long id, HttpSession session) throws IOException {
+        // Check if user is authenticated
+        String username = (String) session.getAttribute("loggedInUser");
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("User not authenticated. Please login to view this resource.");
+        }
+        
+        // Get user's role from database
+        java.util.Optional<GCUser> userOpt = gcUserRepository.findByUsername(username);
+        if (!userOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("User not found.");
+        }
+        String role = userOpt.get().getRole();
+        
+        // Get tender by ID
+        java.util.Optional<Tender> tenderOpt = tenderRepository.findById(id);
+        if (!tenderOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Tender not found.");
+        }
+        Tender tender = tenderOpt.get();
+        
+        // Authorization rules based on dashboard visibility:
+        // - CREATOR/ADMIN can view only their own tenders they created
+        // - PUBLISHER (single role) can view ALL tenders sent by creators
+        if (role.equals("CREATOR") || role.equals("ADMIN")) {
+            // Creator/Admin can only view their own tenders
+            if (!tender.getGcUser().getUsername().equals(username)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("You do not have permission to access this tender.");
+            }
+            return tenderService.getTenderPdfResponse(id);
+        } else if (role.equals("PUBLISHER")) {
+            // Publisher can view all tenders from creators
+            return tenderService.getTenderPdfResponse(id);
+        }
+        
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            .body("You do not have permission to access this resource.");
     }
 
 

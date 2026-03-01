@@ -71,9 +71,14 @@
   }).then(async (result) => {
     if (result.isConfirmed) {
       try {
+        const csrfToken = document.querySelector('input[name="_csrf"]')?.value || '';
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
         const res = await fetch("/about/save", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            [csrfHeader]: csrfToken
+          },
           body: JSON.stringify(formDataJson)
         });
 
@@ -215,10 +220,13 @@ function submitUpdate(btn) {
     sectionContent: content
   };
 
+  const csrfToken = document.querySelector('input[name="_csrf"]')?.value || '';
+  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
   fetch('/about/edit', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      [csrfHeader]: csrfToken
     },
     body: JSON.stringify(payload)
   }).then(response => {

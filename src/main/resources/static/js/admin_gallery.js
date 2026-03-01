@@ -81,6 +81,9 @@ document.querySelector('.form-upload').addEventListener('submit', function(e) {
             const formData = new FormData();
             formData.append('image', imageInput.files[0]);
             formData.append('description', descInput.value.trim());
+            // Add CSRF token
+            const csrfToken = document.querySelector('input[name="_csrf"]')?.value || '';
+            formData.append('_csrf', csrfToken);
 
             fetch('/gallery/upload', {
                 method: 'POST',

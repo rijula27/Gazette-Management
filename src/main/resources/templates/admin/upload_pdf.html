@@ -71,8 +71,7 @@
                 <h2 class="dashboard-title mb-4">Pdf Dashboard</h2>
             
                 <div class="tender-upload-form card p-4 rounded shadow-sm">
-                    <form id="pdfForm" th:action="@{/admin/uploadPdf}" method="post" enctype="multipart/form-data">
-                        <div class="form-group mb-3">
+                    <form id="pdfForm" th:action="@{/admin/uploadPdf}" method="post" enctype="multipart/form-data">                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />                        <div class="form-group mb-3">
                             <label for="title" class="form-label fw-bold">Pdf Title</label>
                             <input type="text" class="form-control input-style" id="title" name="title" placeholder="Enter tender title" required>
                         </div>

@@ -2,6 +2,7 @@ package spring.aop.gazettemanagementnic.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,7 +32,23 @@ public class AuthController {
 
     // Display the login page (the CAPTCHA image is served separately)
     @GetMapping("/login")
-    public String showLoginPage(Model model) {
+    public String showLoginPage(Model model, @RequestParam(value = "error", required = false) String error,
+                                @RequestParam(value = "logout", required = false) String logout,
+                                @RequestParam(value = "session", required = false) String session) {
+        
+        // Handle different redirect scenarios
+        if (error != null && !error.isEmpty()) {
+            model.addAttribute("error", error);
+        }
+        
+        if ("expired".equals(session)) {
+            model.addAttribute("sessionExpired", "Your session has timed out. Please login again.");
+        }
+        
+        if ("true".equals(logout)) {
+            model.addAttribute("logoutSuccess", "You have been successfully logged out.");
+        }
+        
         return "login";
     }
 
@@ -93,6 +110,30 @@ public class AuthController {
         //     return "login";
         // }
 
-        }
+        // }
 
     }
+
+    /**
+     * Logout endpoint - properly invalidates session and clears authentication
+     */
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+        // Invalidate the current session
+        if (session != null) {
+            // Remove user attributes
+            session.removeAttribute("loggedInUser");
+            session.removeAttribute("userRole");
+            session.removeAttribute("loginTime");
+            // Invalidate the entire session
+            session.invalidate();
+        }
+
+        // Clear the security context
+        SecurityContextHolder.clearContext();
+        SecurityContextHolder.getContext().setAuthentication(null);
+
+        // Redirect to login page with logout message
+        return "redirect:/login?logout=true";
+    }
+}

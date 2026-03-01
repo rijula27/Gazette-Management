@@ -46,8 +46,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         loginLogRepository.save(log);
 
-        // Store username in session
+        // Store username and login time in session for timeout validation
         request.getSession().setAttribute("loggedInUser", username);
+        request.getSession().setAttribute("userRole", role);
+        request.getSession().setAttribute("loginTime", System.currentTimeMillis());
 
         // Redirect by role
         String targetUrl = switch (role) {

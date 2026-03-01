@@ -112,7 +112,7 @@
       <h3 id="modalTitle">Add New Creator</h3>
       <!-- <form th:action="@{/admin/creator_upload}" method="post" id="user-form"> -->
         <form id="creatorForm">
-          <!-- <form id="creatorForm" action="/admin/creator_upload" method="post"> -->
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
           <label for="userName">Username</label>
           <input type="text" id="userName" name="userName" placeholder="Enter User Name" required>
     
@@ -140,7 +140,7 @@
       <span class="close-btn" onclick="closeEditModal()">&times;</span>
       <h3 id="modalTitle">Edit the Creator account</h3>
         <form id="edit-form">
-
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <label for="userName">Username</label>
         <input type="text" id="existingUserName" name="existingUserName" placeholder="Enter the existing User Name" disabled>
 

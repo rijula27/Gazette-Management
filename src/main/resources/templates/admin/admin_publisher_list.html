@@ -112,7 +112,7 @@
       <h3 id="modalTitle">Add New Publisher</h3>
       <!-- <form th:action="@{/admin/creator_upload}" method="post" id="user-form"> -->
         <form id="publisherForm">
-          <!-- <form id="creatorForm" action="/admin/creator_upload" method="post"> -->
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
           <label for="userName">Username</label>
           <input type="text" id="userName" name="userName" placeholder="Enter User Name" required>
     
@@ -141,7 +141,7 @@
       <h3 id="modalTitle">Edit the Publisher account</h3>
       <!-- <form th:action="@{/admin/edit_creator}" method="post" id="edit-form"> -->
         <form id="edit-form">
-
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <label for="userName">Username</label>
         <input type="text" id="existingUserName" name="existingUserName" placeholder="Enter the existing User Name" disabled>
 

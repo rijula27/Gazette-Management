@@ -138,9 +138,14 @@ form.addEventListener("submit", function (e) {
 
   document.getElementById("confirmSave").addEventListener("click", async function () {
     try {
+      const csrfToken = document.querySelector('input[name="_csrf"]')?.value || '';
+      const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
       const res = await fetch("/admin/publisher_upload", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          [csrfHeader]: csrfToken
+        },
         body: JSON.stringify(formDataJson)
       });
 
@@ -259,9 +264,14 @@ edit_form.addEventListener("submit", function (e) {
 document.getElementById("confirmUpdatePublisher").addEventListener("click", async function () {
   console.log("enterejklsdjf ");
     try {
+        const csrfToken = document.querySelector('input[name="_csrf"]')?.value || '';
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
         const res = await fetch("/admin/edit_publisher", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+              "Content-Type": "application/json",
+              [csrfHeader]: csrfToken
+            },
             body: JSON.stringify(editFormJson)
         });
 

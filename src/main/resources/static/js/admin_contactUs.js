@@ -118,9 +118,14 @@ function closeAddModal() {
   }).then(async (result) => {
     if (result.isConfirmed) {
       try {
+        const csrfToken = document.querySelector('input[name="_csrf"]')?.value || '';
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
         const res = await fetch("/contact/save", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            [csrfHeader]: csrfToken
+          },
           body: JSON.stringify(formDataJson)
         });
 
@@ -262,9 +267,14 @@ edit_form.addEventListener("submit", function (e) {
  }).then(async (result) => {
    if (result.isConfirmed) {
      try {
+       const csrfToken = document.querySelector('input[name="_csrf"]')?.value || '';
+       const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
        const res = await fetch("/contact/edit", {
          method: "POST",
-         headers: { "Content-Type": "application/json" },
+         headers: { 
+           "Content-Type": "application/json",
+           [csrfHeader]: csrfToken
+         },
          body: JSON.stringify(editFormDataJson)
        });
 

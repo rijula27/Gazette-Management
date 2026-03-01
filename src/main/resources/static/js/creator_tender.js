@@ -127,6 +127,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 formData.append("pdfFile", document.getElementById('pdfFile').files[0]);
                 
+                // Add CSRF token
+                const csrfToken = document.querySelector('input[name="_csrf"]')?.value || '';
+                formData.append('_csrf', csrfToken);
+                
                 setTimeout(() => {
                     fetch('/tender/uploadTender', {
                         method: 'POST',

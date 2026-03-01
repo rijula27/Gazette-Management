@@ -30,6 +30,7 @@
 
     <!-- MY ACTUAL FORM -->
     <form th:action="@{/gazette/upload}" method="post" enctype="multipart/form-data" id="gazette-form">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <div class="card-body">
             <!-- Date Picker -->
             <div class="form-group">

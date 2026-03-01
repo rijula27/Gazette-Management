@@ -150,11 +150,23 @@
 
 <!-- Main Login Section -->
 <main class="main-content">
+    <!-- Error message for failed login -->
     <div id="errorMessage" th:if="${error}" class="error" th:text="${error}"></div>
+    
+    <!-- Session timeout message -->
+    <div id="sessionExpiredMessage" th:if="${param.session == 'expired'}" class="error" style="background-color: #ff9800; border-color: #ff9800;">
+        <strong>Session Expired:</strong> Your session has timed out due to inactivity. Please login again.
+    </div>
+    
+    <!-- Logout success message -->
+    <div id="logoutMessage" th:if="${param.logout == 'true'}" class="success" style="background-color: #4CAF50; border-color: #4CAF50; color: white;">
+        <strong>Logged out successfully</strong>
+    </div>
 
     <div class="login-container">
         <h2 class="login-title">Login</h2>
         <form th:action="@{/login}" method="post" class="login-form" id="loginform">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <div class="input-group">
                 <i class="fa-regular fa-circle-user"></i>
                 <input type="text" name="username" placeholder="Username" required class="form-input" />
