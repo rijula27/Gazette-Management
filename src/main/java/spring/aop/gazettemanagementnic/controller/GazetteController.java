@@ -128,22 +128,8 @@ public class GazetteController {
   //view pdf
     @GetMapping("/pdf/{id}")
     public ResponseEntity<?> viewGazettePdf(@PathVariable Long id, HttpSession session) throws IOException {
-        // Check if user is authenticated
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body("User not authenticated. Please login to view this resource.");
-        }
         
-        // Get user's role from database
-        java.util.Optional<GCUser> userOpt = gcUserRepository.findByUsername(username);
-        if (!userOpt.isPresent()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body("User not found.");
-        }
-        String role = userOpt.get().getRole();
-        
-        // Get gazette by ID
+        // Get gazette by ID first (public check, no auth needed yet)
         java.util.Optional<Gazette> gazetteOpt = gazetteRepository.findById(id);
         if (!gazetteOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -151,23 +137,53 @@ public class GazetteController {
         }
         Gazette gazette = gazetteOpt.get();
         
-        // Authorization rules based on dashboard visibility:
-        // - CREATOR/ADMIN can view only their own gazettes they created
-        // - PUBLISHER (single role) can view ALL gazettes sent by creators
-        if (role.equals("CREATOR") || role.equals("ADMIN")) {
-            // Creator/Admin can only view their own gazettes
-            if (!gazette.getGcUser().getUsername().equals(username)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("You do not have permission to access this gazette.");
-            }
-            return gazetteService.getGazettePdfResponse(id);
-        } else if (role.equals("PUBLISHER")) {
-            // Publisher can view all gazettes from creators
+        String status = String.valueOf( gazette.getStatus().getStatusCode());
+        
+        if ("3".equals(status)) {
             return gazetteService.getGazettePdfResponse(id);
         }
         
+        String username = (String) session.getAttribute("loggedInUser");
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("User not authenticated. Please login to view this resource.");
+        }
+        
+        java.util.Optional<GCUser> userOpt = gcUserRepository.findByUsername(username);
+        if (!userOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("User not found.");
+        }
+        String role = userOpt.get().getRole();
+        
+        // if ("ADMIN".equals(role)) {
+        //     return gazetteService.getGazettePdfResponse(id);
+        // }
+        
+        if ("CREATOR".equals(role)) {
+            if ("1".equals(status)) {
+                // Creator can only view their own drafts
+                if (gazette.getGcUser().getUsername().equals(username)) {
+                    return gazetteService.getGazettePdfResponse(id);
+                } else {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("You do not have permission to access this gazette. This is not your draft.");
+                }
+            }
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("You do not have permission to accddgdess this gazette.");
+        }
+        
+        if ("PUBLISHER".equals(role)) {
+            if ("2".equals(status)) {
+                return gazetteService.getGazettePdfResponse(id);
+            }
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("You do not have permission to access this gazette. Only pending gazettes can be viewed by publishers.");
+        }
+        
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-            .body("You do not have permission to access this resource.");
+            .body("You do not have permission to access this resource. Unknown user role.");
     }
 
 

@@ -133,9 +133,68 @@ public class TenderController {
     
 
 
+    // @GetMapping("/pdf/{id}")
+    // public ResponseEntity<?> viewTenderPdf(@PathVariable Long id, HttpSession session) throws IOException {
+    //     // Check if user is authenticated
+    //     String username = (String) session.getAttribute("loggedInUser");
+    //     if (username == null) {
+    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+    //             .body("User not authenticated. Please login to view this resource.");
+    //     }
+        
+    //     // Get user's role from database
+    //     java.util.Optional<GCUser> userOpt = gcUserRepository.findByUsername(username);
+    //     if (!userOpt.isPresent()) {
+    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+    //             .body("User not found.");
+    //     }
+    //     String role = userOpt.get().getRole();
+        
+    //     // Get tender by ID
+    //     java.util.Optional<Tender> tenderOpt = tenderRepository.findById(id);
+    //     if (!tenderOpt.isPresent()) {
+    //         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+    //             .body("Tender not found.");
+    //     }
+    //     Tender tender = tenderOpt.get();
+        
+    //     // Authorization rules based on dashboard visibility:
+    //     // - CREATOR/ADMIN can view only their own tenders they created
+    //     // - PUBLISHER (single role) can view ALL tenders sent by creators
+    //     if (role.equals("CREATOR") || role.equals("ADMIN")) {
+    //         // Creator/Admin can only view their own tenders
+    //         if (!tender.getGcUser().getUsername().equals(username)) {
+    //             return ResponseEntity.status(HttpStatus.FORBIDDEN)
+    //                 .body("You do not have permission to access this tender.");
+    //         }
+    //         return tenderService.getTenderPdfResponse(id);
+    //     } else if (role.equals("PUBLISHER")) {
+    //         // Publisher can view all tenders from creators
+    //         return tenderService.getTenderPdfResponse(id);
+    //     }
+        
+    //     return ResponseEntity.status(HttpStatus.FORBIDDEN)
+    //         .body("You do not have permission to access this resource.");
+    // }
+
+
+
     @GetMapping("/pdf/{id}")
     public ResponseEntity<?> viewTenderPdf(@PathVariable Long id, HttpSession session) throws IOException {
-        // Check if user is authenticated
+        
+        java.util.Optional<Tender> tenderOpt = tenderRepository.findById(id);
+        if (!tenderOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Tender not found.");
+        }
+        Tender tender = tenderOpt.get();
+        
+        String status = String.valueOf(tender.getStatus().getStatusCode());
+        
+        if ("3".equals(status)) {
+            return tenderService.getTenderPdfResponse(id);
+        }
+        
         String username = (String) session.getAttribute("loggedInUser");
         if (username == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -150,33 +209,39 @@ public class TenderController {
         }
         String role = userOpt.get().getRole();
         
-        // Get tender by ID
-        java.util.Optional<Tender> tenderOpt = tenderRepository.findById(id);
-        if (!tenderOpt.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Tender not found.");
+        if ("ADMIN".equals(role)) {
+            return tenderService.getTenderPdfResponse(id);
         }
-        Tender tender = tenderOpt.get();
         
-        // Authorization rules based on dashboard visibility:
-        // - CREATOR/ADMIN can view only their own tenders they created
-        // - PUBLISHER (single role) can view ALL tenders sent by creators
-        if (role.equals("CREATOR") || role.equals("ADMIN")) {
-            // Creator/Admin can only view their own tenders
-            if (!tender.getGcUser().getUsername().equals(username)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("You do not have permission to access this tender.");
+        // CREATOR: Can view their own drafts (status "1")
+        if ("CREATOR".equals(role)) {
+            if ("1".equals(status)) {
+                // Creator can only view their own drafts
+                if (tender.getGcUser().getUsername().equals(username)) {
+                    return tenderService.getTenderPdfResponse(id);
+                } else {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("You do not have permission to access this tender. This is not your draft.");
+                }
             }
-            return tenderService.getTenderPdfResponse(id);
-        } else if (role.equals("PUBLISHER")) {
-            // Publisher can view all tenders from creators
-            return tenderService.getTenderPdfResponse(id);
+            // If not draft, creator cannot view other tenders
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("You do not have permission to access this tender.");
         }
         
+        // PUBLISHER: Can view tenders sent to them (status "2")
+        if ("PUBLISHER".equals(role)) {
+            if ("2".equals(status)) {
+                return tenderService.getTenderPdfResponse(id);
+            }
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("You do not have permission to access this tender. Only pending tenders can be viewed by publishers.");
+        }
+        
+        // Default: Deny access for unknown roles
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-            .body("You do not have permission to access this resource.");
+            .body("You do not have permission to access this resource. Unknown user role.");
     }
-
 
 
 
