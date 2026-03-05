@@ -76,7 +76,7 @@ public class AdminController {
     }
 
 
-     @GetMapping("/admin_creator_list")
+    @GetMapping("/admin_creator_list")
     public String displayCreator_List(Model model, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
         if (username != null) {
@@ -90,56 +90,56 @@ public class AdminController {
 
 
 
-@PostMapping("/creator_upload")
-@ResponseBody
-public ResponseEntity<String> creatorUpload(@RequestBody CreatorRequestDTO requestDTO,
-                                             HttpSession session) {
-    String adminName = (String) session.getAttribute("loggedInUser");
+    @PostMapping("/creator_upload")
+    @ResponseBody
+    public ResponseEntity<String> creatorUpload(@RequestBody CreatorRequestDTO requestDTO,
+                                                HttpSession session) {
+        String adminName = (String) session.getAttribute("loggedInUser");
 
 
 
-    try {
-        if (adminName == null || adminName.isEmpty()) {
-            return ResponseEntity.status(401).body("Session expired or not logged in.");
+        try {
+            if (adminName == null || adminName.isEmpty()) {
+                return ResponseEntity.status(401).body("Session expired or not logged in.");
+            }
+
+            Optional<GCUser> optionalAdmin = gcUserRepository.findByUsername(adminName);
+            if (!optionalAdmin.isPresent()) {
+                return ResponseEntity.status(404).body("Admin user not found.");
+            }
+
+            String existingAdminPassword = optionalAdmin.get().getPassword();
+            String rawAdminPassword = requestDTO.getAdminPassword();
+
+            if (!gcUserService.matches( rawAdminPassword, existingAdminPassword)                                                                         ) {
+                return ResponseEntity.badRequest().body("Wrong Admin password");
+            }
+
+            if (!requestDTO.getUserPassword().equals(requestDTO.getUserConfirmPassword())) {
+                return ResponseEntity.badRequest().body("Password and Confirm Password don't match.");
+            }
+
+            if (!requestDTO.getUserPassword().equals(requestDTO.getUserConfirmPassword())) {
+                return ResponseEntity.badRequest().body("Password and Confirm Password don't match.");
+            }
+
+            String resultMessage = gcUserService.saveUser(
+                requestDTO.getUserName(),
+                requestDTO.getUserPassword(),
+                adminName,
+                LocalDate.now()
+            );
+
+            return ResponseEntity.ok(resultMessage);
+
+        } catch (FileAlreadyExistsException e) {
+            return ResponseEntity.badRequest().body("A user with this username already exists.");
+        } catch (Exception e) {
+            e.printStackTrace(); // Keep full error in logs
+            return ResponseEntity.status(500).body("Something went wrong. Please try again.");
         }
 
-        Optional<GCUser> optionalAdmin = gcUserRepository.findByUsername(adminName);
-        if (!optionalAdmin.isPresent()) {
-            return ResponseEntity.status(404).body("Admin user not found.");
-        }
-
-        String existingAdminPassword = optionalAdmin.get().getPassword();
-        String rawAdminPassword = requestDTO.getAdminPassword();
-
-        if (!gcUserService.matches( rawAdminPassword, existingAdminPassword)                                                                         ) {
-            return ResponseEntity.badRequest().body("Wrong Admin password");
-        }
-
-        if (!requestDTO.getUserPassword().equals(requestDTO.getUserConfirmPassword())) {
-            return ResponseEntity.badRequest().body("Password and Confirm Password don't match.");
-        }
-
-        if (!requestDTO.getUserPassword().equals(requestDTO.getUserConfirmPassword())) {
-            return ResponseEntity.badRequest().body("Password and Confirm Password don't match.");
-        }
-
-        String resultMessage = gcUserService.saveUser(
-            requestDTO.getUserName(),
-            requestDTO.getUserPassword(),
-            adminName,
-            LocalDate.now()
-        );
-
-        return ResponseEntity.ok(resultMessage);
-
-    } catch (FileAlreadyExistsException e) {
-        return ResponseEntity.badRequest().body("A user with this username already exists.");
-    } catch (Exception e) {
-        e.printStackTrace(); // Keep full error in logs
-        return ResponseEntity.status(500).body("Something went wrong. Please try again.");
     }
-
-}
 
 
 

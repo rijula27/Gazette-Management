@@ -209,9 +209,9 @@ public class TenderController {
         }
         String role = userOpt.get().getRole();
         
-        if ("ADMIN".equals(role)) {
-            return tenderService.getTenderPdfResponse(id);
-        }
+        // if ("ADMIN".equals(role)) {
+        //     return tenderService.getTenderPdfResponse(id);
+        // }
         
         // CREATOR: Can view their own drafts (status "1")
         if ("CREATOR".equals(role)) {
