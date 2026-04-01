@@ -11,6 +11,7 @@
     <groupId>com.example</groupId>
     <artifactId>AuthApplication</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
     <name>AuthApplication</name>
     <description>AuthApplication</description>
     <url/>
@@ -97,6 +98,14 @@
         <artifactId>guava</artifactId>
         <version>28.0-jre</version>
       </dependency>
+
+
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

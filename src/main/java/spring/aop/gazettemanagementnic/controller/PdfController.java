@@ -56,7 +56,7 @@ public class PdfController {
     // }
 
 
-    @GetMapping("/index")
+    @GetMapping({"/index","/","/home"})
     public String indexPage(Model model) {
         List<Pdf> importantPdfs = pdfService.getImportantPdfs();
         List<PdfWithSize> pdfsWithSize = new ArrayList<>();

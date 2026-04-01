@@ -80,8 +80,9 @@ public class GazetteService {
 
             if (existingPart == null) {
 
-
-                String fileName = (date + "-" + part + ".pdf");
+                String safePart = sanitizePart(part);
+                
+                String fileName = (date + "-" + safePart + ".pdf");
 
                 File destinationFile = new File(uploadDir + fileName);
 
@@ -113,6 +114,14 @@ public class GazetteService {
 
     }
 
+
+    // Add this private method to GazetteService
+    private String sanitizePart(String part) {
+        if (part == null || !part.matches("^[A-Za-z0-9\\-]+$")) {
+            throw new IllegalArgumentException("Invalid part value: " + part);
+        }
+        return part;
+    }
 
     // New method to display all gazettes without any filtering
     public List<Gazette> displayGazette(String username) {
