@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import spring.aop.gazettemanagementnic.dto.TenderWithSize;
 import spring.aop.gazettemanagementnic.entity.FilePath;
 import spring.aop.gazettemanagementnic.entity.Gazette;
@@ -42,7 +43,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-
+@Slf4j
 @Controller
 @RequestMapping("/tender")
 public class TenderController {
@@ -302,7 +303,8 @@ public class TenderController {
             double mb = bytes / (1024.0 * 1024.0);  // Convert to MB
             size = String.format("%.2f MB", mb);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error occurred while display tender: {}", e.getMessage());
+
         }
 
         tenders.add(new TenderWithSize(tender, size));

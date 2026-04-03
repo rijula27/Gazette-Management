@@ -202,6 +202,14 @@ Swal.fire({
     cancelButtonText: "Cancel"
 }).then((result) => {
     if (result.isConfirmed) {
+        if (!deleteId || !/^\d+$/.test(String(deleteId))) {
+            console.error("Invalid delete ID:", deleteId);
+            return;
+        }
+
+        const numericId = parseInt(deleteId, 10); 
+        const redirectUrl = "/admin/admin_delete/" + numericId;
+
         // Show success animation with slight delay before redirection
         Swal.fire({
             title: "Deleted!",
@@ -211,7 +219,7 @@ Swal.fire({
             showConfirmButton: false,
             didClose: () => {
                 // Redirect after SweetAlert closes
-                window.location.href = "/admin/admin_delete/" + deleteId;
+                window.location.replace(redirectUrl);
             }
         });
     }

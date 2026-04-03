@@ -327,6 +327,15 @@ function confirmDelete(el) {
     cancelButtonText: 'Cancel'
   }).then((result) => {
     if (result.isConfirmed) {
+
+       if (!deleteId || !/^\d+$/.test(String(deleteId))) {
+            console.error("Invalid delete ID:", deleteId);
+            return;
+        }
+
+        const numericId = parseInt(deleteId, 10); 
+        const redirectUrl = "/contact/delete/" + numericId;
+
       // Show tick animation
       Swal.fire({
         title: 'Deleted!',
@@ -336,7 +345,7 @@ function confirmDelete(el) {
         showConfirmButton: false,
         willClose: () => {
           // Redirect after animation
-          window.location.href = '/contact/delete/' + deleteId;
+          window.location.replace(redirectUrl);
         }
       });
     }

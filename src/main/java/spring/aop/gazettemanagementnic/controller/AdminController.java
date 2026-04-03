@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import spring.aop.gazettemanagementnic.dto.CreatorRequestDTO;
 import spring.aop.gazettemanagementnic.dto.EditCreatorRequestDTO;
 import spring.aop.gazettemanagementnic.entity.GCUser;
@@ -34,8 +35,11 @@ import spring.aop.gazettemanagementnic.service.GCUserService;
 import spring.aop.gazettemanagementnic.service.GazetteService;
 import spring.aop.gazettemanagementnic.service.PdfService;
 import spring.aop.gazettemanagementnic.service.TenderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
+@Slf4j
 @RequestMapping("/admin")
 public class AdminController {
 
@@ -57,8 +61,6 @@ public class AdminController {
 
     @Autowired
     private PdfService pdfService;
-
-
 
 
     @GetMapping("/admin_display")
@@ -135,8 +137,8 @@ public class AdminController {
         } catch (FileAlreadyExistsException e) {
             return ResponseEntity.badRequest().body("A user with this username already exists.");
         } catch (Exception e) {
-            e.printStackTrace(); // Keep full error in logs
-            return ResponseEntity.status(500).body("Something went wrong. Please try again.");
+            log.error("Error occurred while creating creator", e);
+            return ResponseEntity.status(500).body("Internal Server Error");
         }
 
     }
@@ -236,10 +238,9 @@ public class AdminController {
             }
         
         } catch (Exception e) {
-            e.printStackTrace(); // Full error in terminal
-        
-            return ResponseEntity.status(500).body(" Internal Server Error: ");
-        }  
+            log.error("Error occurred while editing creator: {}", e.getMessage());
+            return ResponseEntity.status(500).body("Internal Server Error");
+        }
     }
 
 
@@ -306,7 +307,7 @@ public class AdminController {
         } catch (FileAlreadyExistsException e) {
             return ResponseEntity.badRequest().body("A user with this username already exists.");
         } catch (Exception e) {
-            e.printStackTrace(); // Keep full error in logs
+            log.error("Error occurred while creating publisher user: {}", e.getMessage());
             return ResponseEntity.status(500).body("Something went wrong. Please try again.");
         }
 
@@ -378,11 +379,10 @@ public class AdminController {
                 return ResponseEntity.badRequest().body(" Password and Confirm Password don't match");
             }
         
-        } catch (Exception e) {
-            e.printStackTrace(); // Full error in terminal
-        
-            return ResponseEntity.status(500).body(" Internal Server Error: ");
-        }  
+        }  catch (Exception e) {
+            log.error("Error occurred while editing Publisher: {}", e.getMessage());
+            return ResponseEntity.status(500).body("Internal Server Error");
+        }
     }
 
 
@@ -530,10 +530,9 @@ public class AdminController {
             }
         
         } catch (Exception e) {
-            e.printStackTrace(); // Full error in terminal
-        
-            return ResponseEntity.status(500).body(" Internal Server Error: ");
-        }  
+            log.error("Error occurred while editing admin: {}", e.getMessage());
+            return ResponseEntity.status(500).body("Internal Server Error");
+        }
     }
 
 

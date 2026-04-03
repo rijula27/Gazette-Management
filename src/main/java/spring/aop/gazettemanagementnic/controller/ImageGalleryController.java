@@ -12,9 +12,7 @@ import java.util.Optional;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import spring.aop.gazettemanagementnic.entity.ContactUs;
 import spring.aop.gazettemanagementnic.entity.FilePath;
 import spring.aop.gazettemanagementnic.entity.ImageGallery;
@@ -37,6 +36,7 @@ import spring.aop.gazettemanagementnic.repository.FilePathRepository;
 import spring.aop.gazettemanagementnic.repository.ImageGalleryRepository;
 import spring.aop.gazettemanagementnic.service.ImageGalleryService;
 
+@Slf4j
 @Controller
 @RequestMapping("/gallery")
 public class ImageGalleryController {
@@ -44,13 +44,12 @@ public class ImageGalleryController {
     @Autowired
     private ImageGalleryService imageGalleryService;
 
-
     @Autowired
     private FilePathRepository filePathRepository;
 
     @Autowired
     private ImageGalleryRepository imageGalleryRepository;
-    
+
     @PostMapping("/upload")
     public ResponseEntity<?> uploadImage(
             @RequestParam("image") MultipartFile image,
@@ -73,79 +72,168 @@ public class ImageGalleryController {
                 return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(response);
             }
 
-            imageGalleryService.saveImage(image, description, adminName); // update service to accept adminName
-            return ResponseEntity.ok().body("Image uploaded successfully!");
+            return imageGalleryService.saveImage(image, description, adminName);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error uploading image: " + e.getMessage());
+                    .body("Error uploading image.");
         }
     }
-
-
 
     @GetMapping("/imageDisplay")
     public String imageGallery_Display(Model model, HttpSession session) {
 
+        log.info("=== ENTERED imageDisplay ===");
+
         String username = (String) session.getAttribute("loggedInUser");
+        log.info("Session username = {}", username);
+
         if (username != null) {
+            log.info("Before service call");
+
             List<ImageGallery> image = imageGalleryService.displayImage();
-            model.addAttribute("images",image);
-            return "admin/admin_gallery";   
-        }else{
-            return "redirect:/login"; 
+
+            log.info("After service call");
+            log.info("image object = {}", image);
+            log.info("image size = {}", (image != null ? image.size() : "NULL"));
+
+            if (image != null && !image.isEmpty()) {
+                for (ImageGallery img : image) {
+                    log.info("Image ID: {}", img.getImageId());
+                    log.info("Title: {}", img.getImageTitle());
+                    log.info("Description: {}", img.getDescription());
+                }
+            } else {
+                log.info("Image list is empty or null");
+            }
+
+            model.addAttribute("images", image);
+            return "admin/admin_gallery";
+        } else {
+            log.info("No session user, redirecting login");
+            return "redirect:/login";
         }
     }
-
 
     @GetMapping("/images/{imageName:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveImage(@PathVariable String imageName) throws MalformedURLException {
-        Optional<FilePath> optionalPath = filePathRepository.findByPathDescription("Gallery Local Path");
-        if (optionalPath.isEmpty()) {
-            return ResponseEntity.notFound().build();
+
+        try {
+            log.info("Entered serveImage() with imageName: {}", imageName);
+
+            Optional<FilePath> optionalPath = filePathRepository.findByPathDescription("Gallery Local Path");
+            if (optionalPath.isEmpty()) {
+                log.warn("Gallery Local Path not found in file_path table");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            String uploadDir = optionalPath.get().getFullPath();
+            log.info("Upload directory fetched from DB: {}", uploadDir);
+
+            if (imageName == null || imageName.trim().isEmpty()) {
+                log.warn("Image name is null or empty");
+                return ResponseEntity.badRequest().build();
+            }
+
+            if (!imageName.matches("^[a-zA-Z0-9._-]+$")) {
+                log.warn("Invalid image name format detected: {}", imageName);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+
+            String lowerFileName = imageName.toLowerCase();
+            if (!(lowerFileName.endsWith(".jpg") ||
+                    lowerFileName.endsWith(".jpeg") ||
+                    lowerFileName.endsWith(".png") ||
+                    lowerFileName.endsWith(".gif") ||
+                    lowerFileName.endsWith(".webp"))) {
+                log.warn("Unsupported file extension for image: {}", imageName);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+
+            Path basePath = Paths.get(uploadDir).toAbsolutePath().normalize();
+            Path imagePath = basePath.resolve(imageName).normalize();
+
+            log.info("Base path: {}", basePath);
+            log.info("Resolved image path: {}", imagePath);
+
+            // Prevent path traversal
+            if (!imagePath.startsWith(basePath)) {
+                log.warn("Path traversal attempt blocked for image: {}", imageName);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+            // Check file existence
+            if (!Files.exists(imagePath) || !Files.isReadable(imagePath) || !Files.isRegularFile(imagePath)) {
+                log.warn("Image file not found or not readable: {}", imagePath);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            // Detect MIME type dynamically
+            String contentType = Files.probeContentType(imagePath);
+            log.info("Detected content type for {}: {}", imageName, contentType);
+
+            if (contentType == null || !contentType.startsWith("image/")) {
+                log.warn("Invalid content type for image {}: {}", imageName, contentType);
+                return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
+            }
+
+            Resource resource = new UrlResource(imagePath.toUri());
+
+            if (!resource.exists() || !resource.isReadable()) {
+                log.warn("Resource exists but not readable: {}", imagePath);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            log.info("Successfully serving image: {}", imagePath);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header("X-Content-Type-Options", "nosniff")
+                    .body(resource);
+
+        } catch (Exception e) {
+            log.error("Error while serving image: {}", imageName, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-        String uploadDir = optionalPath.get().getFullPath();
-        Path imagePath = Paths.get(uploadDir + imageName);
-
-        if (!Files.exists(imagePath)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Resource resource = new UrlResource(imagePath.toUri());
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_JPEG) // You can determine MIME type dynamically
-                .body(resource);
     }
-
-
-
 
     @DeleteMapping("/delete/{id}")
     @ResponseBody
     public ResponseEntity<String> deleteImage(@PathVariable Long id) {
-        Optional<ImageGallery> optionalImage = imageGalleryRepository.findById(id);
-    
-        if (optionalImage.isPresent()) {
-            ImageGallery image = optionalImage.get();
-        
-            // Optionally delete the file from the local path
-            String filePath = image.getFilePath().getFullPath() + image.getImageTitle();
-            File file = new File(filePath);
-        
-            if (file.exists()) {
-                file.delete(); // Remove file from filesystem
-            }
-        
-            imageGalleryRepository.deleteById(id);
-        
-            return ResponseEntity.ok("Image deleted successfully.");
-        }
-    
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                             .body("Image not found with ID: " + id);
-    }
+        try {
+            Optional<ImageGallery> optionalImage = imageGalleryRepository.findById(id);
 
+            if (optionalImage.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Image not found.");
+            }
+
+            ImageGallery image = optionalImage.get();
+
+            // Secure path handling
+            Path basePath = Paths.get(image.getFilePath().getFullPath()).toAbsolutePath().normalize();
+            Path filePath = basePath.resolve(image.getImageTitle()).normalize();
+
+            // Prevent path traversal
+            if (!filePath.startsWith(basePath)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("Invalid file path.");
+            }
+
+            File file = filePath.toFile();
+
+            if (file.exists() && file.isFile()) {
+                file.delete();
+            }
+
+            imageGalleryRepository.deleteById(id);
+
+            return ResponseEntity.ok("Image deleted successfully.");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting image.");
+        }
+    }
 
 }

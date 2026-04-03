@@ -26,7 +26,6 @@ import spring.aop.gazettemanagementnic.repository.PdfRepository;
 @Service
 public class PdfService {
 
-
     @Autowired
     GCUserRepository gcUserRepository;
 
@@ -37,32 +36,38 @@ public class PdfService {
     PdfRepository pdfRepository;
 
     public void savePdf(String title, MultipartFile file, LocalDate date, String username) throws IOException {
-        
 
         GCUser gcUser = gcUserRepository.findByUsername(username)
-        .orElseThrow(() -> new IllegalArgumentException("User not found for username: " + username));
+                .orElseThrow(() -> new IllegalArgumentException("User not found for username: " + username));
 
         String originalFileName = file.getOriginalFilename();
 
         FilePath filePath = filePathRepository.findByPathDescription("Pdf Local Path").get();
 
-        String uploadDir = filePath.getFullPath()+ "\\";
+        String uploadDir = filePath.getFullPath() + "\\";
 
-        File directory = new File(uploadDir);
-        if (!directory.exists()){
+        File directory = new File(uploadDir).getCanonicalFile();
+        if (!directory.exists()) {
             directory.mkdirs();
         }
 
         boolean existingPdf = pdfRepository.existsByPdfTitle(title);
 
-        if(!existingPdf){
+        if (!existingPdf) {
 
-            String fileName = (title + ".pdf");
+            String sanitizedTitle = title.replaceAll("[^a-zA-Z0-9\\-_ ]", "").trim();
+            if (sanitizedTitle.isEmpty()) {
+                throw new IllegalArgumentException("Invalid PDF title");
+            }
 
-            File destinationFile = new File(uploadDir + fileName);
+            String fileName = (sanitizedTitle + ".pdf");
+
+            File destinationFile = new File(directory, fileName).getCanonicalFile();
+            if (!destinationFile.getPath().startsWith(directory.getPath() + File.separator)) {
+                throw new SecurityException("Path traversal attempt detected.");
+            }
 
             file.transferTo(destinationFile);
-
 
             Pdf pdf = new Pdf();
             pdf.setPdfTitle(title);
@@ -72,89 +77,83 @@ public class PdfService {
             pdf.setGcUser(gcUser);
 
             pdfRepository.save(pdf);
-            
-            
 
-        }else{
-             throw new FileAlreadyExistsException( title + "file already exists.");
+        } else {
+            throw new FileAlreadyExistsException(title + "file already exists.");
 
         }
     }
 
-
-
-    public List<Pdf> getImportantPdfs(){
+    public List<Pdf> getImportantPdfs() {
         return pdfRepository.findAll();
     }
-    
 
-        public ResponseEntity<Resource> getPdfResponse(Long id) throws IOException {
+    public ResponseEntity<Resource> getPdfResponse(Long id) throws IOException {
 
-            Optional<Pdf> optionalPdf = pdfRepository.findById(id);
-            
+        Optional<Pdf> optionalPdf = pdfRepository.findById(id);
 
-            if(optionalPdf.isPresent()){
-                
-                Pdf pdf = optionalPdf.get();
+        if (optionalPdf.isPresent()) {
 
-                
-                FilePath existingPdfPath = pdf.getFilePath();
+            Pdf pdf = optionalPdf.get();
 
-                String filePath = existingPdfPath.getFullPath();
+            FilePath existingPdfPath = pdf.getFilePath();
 
-                filePath = filePath + pdf.getPdfTitle()+".pdf";
+            // Resolve canonical base directory
+            File baseDir = new File(existingPdfPath.getFullPath()).getCanonicalFile();
 
-                File file = new File(filePath);
+            String fileName = pdf.getPdfTitle() + ".pdf";
 
-                if(!file.exists()){
-                    return ResponseEntity.notFound().build();
-                }
-
-                Resource resource = new UrlResource(file.toURI());
-
-                return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getName() + "\"")
-                .body(resource);
-
+            // Canonical path boundary check
+            File file = new File(baseDir, fileName).getCanonicalFile();
+            if (!file.getPath().startsWith(baseDir.getPath() + File.separator)) {
+                throw new SecurityException("Path traversal attempt detected.");
             }
+
+            if (!file.exists()) {
                 return ResponseEntity.notFound().build();
-            
+            }
 
+            Resource resource = new UrlResource(file.toURI());
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getName() + "\"")
+                    .body(resource);
         }
 
+        return ResponseEntity.notFound().build();
+    }
 
+    public List<Pdf> display_Pdf_Admin() {
+        return pdfRepository.findAll();
+    }
 
-        public List<Pdf> display_Pdf_Admin(){
-            return pdfRepository.findAll();
-        }
+    public void deletePdf(Long id) throws IOException {
 
-    
+        Optional<Pdf> optionalPdf = pdfRepository.findById(id);
 
+        if (optionalPdf.isPresent()) {
 
+            Pdf pdf = optionalPdf.get();
 
-        public void deletePdf(Long id){
+            FilePath pdfPath = pdf.getFilePath();
 
-            Optional<Pdf> optionalPdf = pdfRepository.findById(id);
+            String deletePath = pdfPath.getFullPath();
 
-            if (optionalPdf.isPresent()) {
-                
-                Pdf pdf = optionalPdf.get();
+            String fileName = pdf.getPdfTitle() + ".pdf";
 
-                
-                FilePath pdfPath = pdf.getFilePath();
+            // File File = new File(deletePath + fileName);
+            File baseDir = new File(deletePath).getCanonicalFile();
+            File fileToDelete = new File(baseDir, fileName).getCanonicalFile();
+            if (!fileToDelete.getPath().startsWith(baseDir.getPath() + File.separator)) {
+                throw new SecurityException("Path traversal attempt detected.");
+            }
 
-                String deletePath = pdfPath.getFullPath();
-
-                String fileName = pdf.getPdfTitle() + ".pdf";
-
-                File File = new File(deletePath + fileName);
-
-                if (File.exists()) {
-                    if (File.delete()) {
-                        pdfRepository.deleteById(id);
-                    }
+            if (fileToDelete.exists()) {
+                if (fileToDelete.delete()) {
+                    pdfRepository.deleteById(id);
                 }
             }
         }
+    }
 }

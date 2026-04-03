@@ -221,15 +221,30 @@ public class TenderService {
             .orElseThrow(() -> new RuntimeException("Tender path not found"));
 
         int year = tender.getAnnouncement_Date().getYear();
-        String uploadDir = tenderPath.getFullPath() + year + "\\";
+        String uploadDir = tenderPath.getFullPath() + year + File.separator;
 
-        File directory = new File(uploadDir);
+        File directory = new File(uploadDir).getCanonicalFile();
         if (!directory.exists()) {
             directory.mkdirs();
         }
 
-        String newFileName = title + ".pdf";
-        File newFile = new File(uploadDir + newFileName);
+          String sanitizedTitle = title.trim()
+        .replace("/", "")
+        .replace("\\", "")
+        .replace(":", "")
+        .replace("\0", "");
+
+        if (sanitizedTitle.isEmpty()) {
+            throw new IllegalArgumentException("Invalid tender title.");
+        }
+
+        String newFileName = sanitizedTitle + ".pdf";
+        File newFile = new File(directory, newFileName).getCanonicalFile();
+        if (!newFile.getPath().startsWith(directory.getPath() + File.separator)) {
+            throw new SecurityException("Path traversal attempt detected.");
+        }
+
+
         if (file != null && !file.isEmpty()) {
             file.transferTo(newFile);
         }

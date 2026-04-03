@@ -61,11 +61,6 @@ public class AuthController {
                                Model model,
                                HttpServletRequest request) {
 
-        // Validate CAPTCHA: retrieve the generated CAPTCHA from the session
-        // String sessionCaptcha = (String) session.getAttribute("captcha");
-
-
-
         // if (sessionCaptcha != null && captchaInput.equals(sessionCaptcha)) {
             if (username != null && username.length() > 9 && username.length() < 21 && username.contains("_")) {
                 if (password != null && password.length() == 12) {
@@ -85,8 +80,8 @@ public class AuthController {
                         SecurityContextHolder.getContext().setAuthentication(authToken);
 
 
-                        request.setAttribute("username", username);
-                        request.setAttribute("password", password);
+                        // request.setAttribute("username", username);
+                        // request.setAttribute("password", password);
                         return "forward:/custom_login";
 
                     } else {

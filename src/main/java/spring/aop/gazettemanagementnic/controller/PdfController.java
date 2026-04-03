@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import spring.aop.gazettemanagementnic.dto.PdfWithSize;
 import spring.aop.gazettemanagementnic.entity.ImageGallery;
 import spring.aop.gazettemanagementnic.entity.Pdf;
@@ -27,6 +28,7 @@ import spring.aop.gazettemanagementnic.service.ImageGalleryService;
 import spring.aop.gazettemanagementnic.service.PdfService;
 
 
+@Slf4j
 @Controller
 public class PdfController {
     
@@ -72,7 +74,8 @@ public class PdfController {
                 double mb = bytes / (1024.0 * 1024.0);
                 size = String.format("%.2f MB", mb);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("Error occurred while opening pdf: {}", e.getMessage());
+
             }
         
             pdfsWithSize.add(new PdfWithSize(pdf, size));

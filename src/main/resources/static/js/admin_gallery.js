@@ -90,8 +90,12 @@ document.querySelector('.form-upload').addEventListener('submit', function(e) {
                 body: formData
             })
             .then(res => {
-                if (!res.ok) throw new Error('Upload failed');
-                return res.text();  // changed from res.json() to res.text()
+                return res.text().then(message => {
+                    if (!res.ok) {
+                        throw new Error(message || 'Upload failed');
+                    }
+                    return message;
+                });
             })
             .then(message => {
                 Swal.fire({
@@ -120,8 +124,10 @@ document.querySelector('.form-upload').addEventListener('submit', function(e) {
 });
 
 
-
 function deleteImage(imageId) {
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
     Swal.fire({
         title: 'Are you sure?',
         text: "This image will be deleted permanently!",
@@ -133,7 +139,10 @@ function deleteImage(imageId) {
     }).then((result) => {
         if (result.isConfirmed) {
             fetch(`/gallery/delete/${imageId}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                    [csrfHeader]: csrfToken
+                }
             })
             .then(response => {
                 if (!response.ok) throw new Error('Failed to delete image');
@@ -148,4 +157,3 @@ function deleteImage(imageId) {
         }
     });
 }
-

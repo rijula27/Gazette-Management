@@ -1,7 +1,5 @@
 package spring.aop.gazettemanagementnic.service;
 
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 
@@ -29,8 +27,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
-
 @Service
 public class GazetteService {
 
@@ -40,7 +36,6 @@ public class GazetteService {
     @Autowired
     private StatusRepository gazetteStatusRepository;
 
-
     @Autowired
     private FilePathRepository filePathRepository;
 
@@ -49,13 +44,8 @@ public class GazetteService {
 
     public void saveGazette(String part, MultipartFile file, LocalDate date, String username) throws IOException {
 
-
-
-
         GCUser gcUser = gcUserRepository.findByUsername(username)
-        .orElseThrow(() -> new IllegalArgumentException("User not found for username: " + username));
-
-
+                .orElseThrow(() -> new IllegalArgumentException("User not found for username: " + username));
 
         String originalFilename = file.getOriginalFilename();
 
@@ -64,56 +54,47 @@ public class GazetteService {
 
         FilePath filePath = filePathRepository.findByPathDescription("Local Path").get();
 
-       
-
-        String uploadDir = filePath.getFullPath() + year + "\\" + month + "\\";
-
-        File directory = new File(uploadDir);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-
+        String uploadDir = filePath.getFullPath() + year + File.separator + month + File.separator;
 
         Gazette existingPart = gazetteRepository.findByDateAndPart(date, part);
 
+        if (existingPart == null) {
 
+            String safePart = sanitizePart(part);
+            String fileName = (date + "-" + safePart + ".pdf");
 
-            if (existingPart == null) {
-
-                String safePart = sanitizePart(part);
-                
-                String fileName = (date + "-" + safePart + ".pdf");
-
-                File destinationFile = new File(uploadDir + fileName);
-
-
-                file.transferTo(destinationFile);
-
-
-                Status createStatus = gazetteStatusRepository.findByState("Create").get();
-
-
-
-
-                // Create a new Gazette entity and set its properties
-                Gazette gazette = new Gazette();
-                gazette.setPart(part);
-                gazette.setDate(date);
-                gazette.setFileName(originalFilename);
-                gazette.setGcUser(gcUser);
-                gazette.setStatus(createStatus); 
-                gazette.setFilePath(filePath);
-                gazette.setGcUser_edit(null);
-
-                // Save the entity to the database
-                gazetteRepository.save(gazette);
-            }else{
-                throw new FileAlreadyExistsException("file with the same part : " + part + " on the same date : " + date + " already exists.");
+            // Canonical base directory (moved here, removed duplicate above)
+            File directory = new File(uploadDir).getCanonicalFile();
+            if (!directory.exists()) {
+                directory.mkdirs();
             }
 
+            // Canonical path boundary check
+            File destinationFile = new File(directory, fileName).getCanonicalFile();
+            if (!destinationFile.getPath().startsWith(directory.getPath() + File.separator)) {
+                throw new SecurityException("Path traversal attempt detected.");
+            }
 
+            file.transferTo(destinationFile);
+
+            Status createStatus = gazetteStatusRepository.findByState("Create").get();
+
+            Gazette gazette = new Gazette();
+            gazette.setPart(part);
+            gazette.setDate(date);
+            gazette.setFileName(originalFilename);
+            gazette.setGcUser(gcUser);
+            gazette.setStatus(createStatus);
+            gazette.setFilePath(filePath);
+            gazette.setGcUser_edit(null);
+
+            gazetteRepository.save(gazette);
+
+        } else {
+            throw new FileAlreadyExistsException(
+                    "file with the same part : " + part + " on the same date : " + date + " already exists.");
+        }
     }
-
 
     // Add this private method to GazetteService
     private String sanitizePart(String part) {
@@ -128,37 +109,29 @@ public class GazetteService {
         return gazetteRepository.findAllByGcUser_UsernameAndStatus_State(username, "Create");
     }
 
-
     public List<Gazette> displayAllGazette(String username) {
         return gazetteRepository.findAllByGcUser_Username(username);
     }
-
-
 
     public List<Gazette> displayPublisherAllGazette() {
         return gazetteRepository.findAllByStatus_State("Send");
     }
 
-
     public List<Gazette> display_approved_Gazette(String username) {
         return gazetteRepository.findAllByGcUser_UsernameAndStatus_State(username, "Published");
     }
-
 
     public List<Gazette> display_published_Gazette() {
         return gazetteRepository.findAllByStatus_State("Published");
     }
 
-
     public List<Gazette> display_send_Gazette(String username) {
         return gazetteRepository.findAllByGcUser_UsernameAndStatus_State(username, "Send");
     }
 
-
     public List<Gazette> display_send_back_Gazette() {
         return gazetteRepository.findAllByStatus_State("Create");
     }
-
 
     public List<Gazette> display_create_Gazette(String username) {
         return gazetteRepository.findAllByGcUser_UsernameAndStatus_State(username, "Create");
@@ -168,7 +141,6 @@ public class GazetteService {
         return gazetteRepository.findAllByStatus_State("Send");
     }
 
-
     public void deleteGazette(Long id) {
 
         Optional<Gazette> optionalGazette = gazetteRepository.findById(id);
@@ -177,16 +149,12 @@ public class GazetteService {
             Gazette gazette = optionalGazette.get();
             FilePath gazettePath = gazette.getFilePath();
 
-
             int year = gazette.getDate().getYear();
             int month = gazette.getDate().getMonthValue();
 
-
             String deletePath = gazettePath.getFullPath();
 
-
             String deletedDir = deletePath + year + "\\" + month + "\\";
-
 
             String fileName = (gazette.getDate() + "-" + gazette.getPart() + ".pdf");
 
@@ -198,27 +166,24 @@ public class GazetteService {
                 }
             }
 
-
         }
-
 
     }
 
-
-    public void updateGazette(Long id, String part, MultipartFile file, String username, LocalDate date) throws IOException {
+    public void updateGazette(Long id, String part, MultipartFile file, String username, LocalDate date)
+            throws IOException {
 
         int year = date.getYear();
         int month = date.getMonthValue();
 
         FilePath gazettePath = filePathRepository.findByPathDescription("Local Path").get();
 
-
         GCUser gcUser_edit = gcUserRepository.findByUsername(username).get();
 
-        String uploadDir = gazettePath.getFullPath() + year + "\\" + month + "\\";
+        String uploadDir = gazettePath.getFullPath() + year + File.separator + month + File.separator;
 
-
-        File directory = new File(uploadDir);
+        // Resolve canonical base directory
+        File directory = new File(uploadDir).getCanonicalFile();
         if (!directory.exists()) {
             directory.mkdirs();
         }
@@ -237,25 +202,31 @@ public class GazetteService {
 
                 FilePath existinGazettePath = gazette.getFilePath();
 
-
                 int existingFileYear = gazette.getDate().getYear();
                 int existingFileMonth = gazette.getDate().getMonthValue();
 
-
                 String existingFileUploadpath = existinGazettePath.getFullPath();
-
-                String existingFileUploaddir = existingFileUploadpath + existingFileYear + "\\" + existingFileMonth + "\\";
-
-
+                String existingFileUploaddir = existingFileUploadpath + existingFileYear + File.separator
+                        + existingFileMonth + File.separator;
 
                 String existingfileName = (gazette.getDate() + "-" + gazette.getPart() + ".pdf");
 
-                String fileName = (date + "-" + part + ".pdf");
+                // Sanitize user-supplied part before using in file name
+                String safePart = sanitizePart(part);
+                String fileName = (date + "-" + safePart + ".pdf");
 
-                File existingFile = new File(existingFileUploaddir + existingfileName);
+                // Canonical check for existing file (from DB, but still validate)
+                File existingFileDir = new File(existingFileUploaddir).getCanonicalFile();
+                File existingFile = new File(existingFileDir, existingfileName).getCanonicalFile();
+                if (!existingFile.getPath().startsWith(existingFileDir.getPath() + File.separator)) {
+                    throw new SecurityException("Path traversal attempt detected.");
+                }
 
-                File destinationFile = new File(uploadDir + fileName);
-
+                // Canonical check for destination file
+                File destinationFile = new File(directory, fileName).getCanonicalFile();
+                if (!destinationFile.getPath().startsWith(directory.getPath() + File.separator)) {
+                    throw new SecurityException("Path traversal attempt detected.");
+                }
 
                 if (existingFile.exists()) {
                     if (!existingFile.delete()) {
@@ -268,9 +239,8 @@ public class GazetteService {
                     gazette.setFileName(originalFilename);
                 }
 
-                gazette.setPart(part);
+                gazette.setPart(part); // original part saved to DB for display
                 gazette.setDate(date);
-
                 gazette.setGcUser_edit(gcUser_edit);
 
                 gazetteRepository.save(gazette);
@@ -279,24 +249,20 @@ public class GazetteService {
                 throw new RuntimeException("Same name gazzette or same part gazzette already inserted for the date ");
             }
 
-
-        }else {
+        } else {
             throw new RuntimeException("Gazette not found with ID: ");
         }
     }
 
-
-
-    public void send_to_Publisher(Long id){
+    public void send_to_Publisher(Long id) {
         Optional<Gazette> optionalGazette = gazetteRepository.findById(id);
 
         if (optionalGazette.isPresent()) {
 
             Gazette gazette = optionalGazette.get();
-           
+
             Status sendBackStatus = gazetteStatusRepository.findByState("Send").get();
 
-
             gazette.setStatus(sendBackStatus);
 
             gazetteRepository.save(gazette);
@@ -304,16 +270,15 @@ public class GazetteService {
         }
     }
 
-    public void send_Back_Creator(Long id){
+    public void send_Back_Creator(Long id) {
         Optional<Gazette> optionalGazette = gazetteRepository.findById(id);
 
         if (optionalGazette.isPresent()) {
 
             Gazette gazette = optionalGazette.get();
-           
+
             Status sendBackStatus = gazetteStatusRepository.findByState("Create").get();
 
-
             gazette.setStatus(sendBackStatus);
 
             gazetteRepository.save(gazette);
@@ -321,15 +286,13 @@ public class GazetteService {
         }
     }
 
-
-    public void published(Long id){
+    public void published(Long id) {
         Optional<Gazette> optionalGazette = gazetteRepository.findById(id);
         if (optionalGazette.isPresent()) {
 
             Gazette gazette = optionalGazette.get();
-           
-            Status publishedStatus = gazetteStatusRepository.findByState("Published").get();
 
+            Status publishedStatus = gazetteStatusRepository.findByState("Published").get();
 
             gazette.setStatus(publishedStatus);
 
@@ -339,22 +302,21 @@ public class GazetteService {
     }
 
     public ResponseEntity<Resource> getGazettePdfResponse(Long id) throws IOException {
-        Optional<Gazette> optionalGazette = gazetteRepository.findById(id);  // same as before
+        Optional<Gazette> optionalGazette = gazetteRepository.findById(id); // same as before
 
         if (optionalGazette.isPresent()) {
 
             Gazette gazette = optionalGazette.get();
 
             FilePath existinGazettePath = gazette.getFilePath();
-    
 
             String filePath = existinGazettePath.getFullPath();
 
             int year = gazette.getDate().getYear();
             int month = gazette.getDate().getMonthValue();
 
-            LocalDate fileDate = gazette.getDate();  // e.g., 2024-01-01
-            String filePart = gazette.getPart();     // e.g., I
+            LocalDate fileDate = gazette.getDate(); // e.g., 2024-01-01
+            String filePart = gazette.getPart(); // e.g., I
 
             // Final file path: "uploads/gazettes/2024-01-01-I.pdf"
             filePath = filePath + year + "\\" + month + "\\" + fileDate + "-" + filePart + ".pdf";
@@ -368,17 +330,12 @@ public class GazetteService {
             Resource resource = new UrlResource(file.toURI());
 
             return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getName() + "\"")
-                .body(resource);
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getName() + "\"")
+                    .body(resource);
         }
         return ResponseEntity.notFound().build();
     }
-
-    
-
-
-
 
     public List<Gazette> displayGazette_Admin() {
 
@@ -386,22 +343,17 @@ public class GazetteService {
 
     }
 
-
-
-    public List<Integer> getAvailableYears(){
+    public List<Integer> getAvailableYears() {
         return gazetteRepository.findDistinctYears();
     }
-
-
 
     public List<Integer> getAvailableMonths(Integer year) {
         return gazetteRepository.findDistinctMonthsByYear(year);
     }
 
-    public List<Integer> getAvailableDates(Integer year, Integer month){
+    public List<Integer> getAvailableDates(Integer year, Integer month) {
         return gazetteRepository.findDistinctDaysByYearAndMonth(year, month);
     }
-
 
     public List<Gazette> getGazettesByDate(Integer year, Integer month, Integer date) {
 

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import spring.aop.gazettemanagementnic.entity.ContactUs;
 import spring.aop.gazettemanagementnic.entity.Gazette;
 import spring.aop.gazettemanagementnic.entity.Pdf;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 @RequestMapping("/contact")
+@Slf4j
 public class ContactUsController {
 
     @Autowired
@@ -55,7 +57,7 @@ public class ContactUsController {
                 LocalDate.now());
                 return ResponseEntity.ok(resultMessage);
         }catch (Exception e) {
-            e.printStackTrace(); // Keep full error in logs
+            log.error("Error occurred while saving contact: {}", e.getMessage());
             return ResponseEntity.status(500).body("Something went wrong. Please try again.");
         }
 
@@ -94,7 +96,7 @@ public class ContactUsController {
             return ResponseEntity.ok(resultMessage);
             
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("Error occurred while editing contact: {}", e.getMessage());
             return ResponseEntity.status(500).body("Something went wrong. Please try again.");
         }
 

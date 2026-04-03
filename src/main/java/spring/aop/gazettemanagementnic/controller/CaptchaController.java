@@ -22,10 +22,15 @@ public class CaptchaController {
     @GetMapping("/captcha-image")
     public void getCaptchaImage(HttpSession session, HttpServletResponse response) throws Exception {
         response.setContentType("image/png");
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
+
         String captchaText = captchaProducer.createText();
-        // Store the CAPTCHA text in the session for later validation
         session.setAttribute("captcha", captchaText);
+
         BufferedImage captchaImage = captchaProducer.createImage(captchaText);
+        
         ServletOutputStream out = response.getOutputStream();
         ImageIO.write(captchaImage, "png", out);
         try {

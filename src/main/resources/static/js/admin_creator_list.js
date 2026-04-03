@@ -53,6 +53,13 @@
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
+        if (!deleteId || !/^\d+$/.test(String(deleteId))) {
+            console.error("Invalid delete ID:", deleteId);
+            return;
+        }
+
+        const numericId = parseInt(deleteId, 10); 
+        const redirectUrl = "/admin/delete_creator/" + numericId;
         // Show tick animation
         Swal.fire({
           title: 'Deleted!',
@@ -62,7 +69,7 @@
           showConfirmButton: false,
           willClose: () => {
             // Redirect after animation
-            window.location.href = '/admin/delete_creator/' + deleteId;
+            window.location.replace(redirectUrl);
           }
         });
       }

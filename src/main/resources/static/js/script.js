@@ -26,12 +26,26 @@ document.getElementById("year-select").addEventListener("change", function () {
         fetch(`/gazette/years/${selectedYear}/months`)
             .then(response => response.json())
             .then(months => {
-                let monthOptions = "<option value=''>Choose Month</option>";
+                const monthSelect = document.getElementById("month-select");
+
+                // Clear existing options safely
+                monthSelect.replaceChildren();
+
+                // Default option
+                const defaultOption = document.createElement("option");
+                defaultOption.value = "";
+                defaultOption.textContent = "Choose Month";
+                monthSelect.appendChild(defaultOption);
+
+                // Add month options safely
                 months.forEach(month => {
-                    monthOptions += `<option value='${month}'>${month}</option>`;
+                    const option = document.createElement("option");
+                    option.value = month;
+                    option.textContent = month;
+                    monthSelect.appendChild(option);
                 });
-                document.getElementById("month-select").innerHTML = monthOptions;
-                document.getElementById("month-select").disabled = false; // Enable month dropdown
+
+                monthSelect.disabled = false;
             });
     } else {
         document.getElementById("month-select").disabled = true; // Disable month dropdown
@@ -69,11 +83,21 @@ document.getElementById("month-select").addEventListener("change", function () {
             .then(response => response.json())
             .then(dates => {
                 console.log("Dates fetched:", dates);
-                let dateOptions = "<option value=''>Choose Date</option>";
+
+                dateSelect.replaceChildren();
+
+                const defaultOption = document.createElement("option");
+                defaultOption.value = "";
+                defaultOption.textContent = "Choose Date";
+                dateSelect.appendChild(defaultOption);
+
                 dates.forEach(date => {
-                    dateOptions += `<option value='${date}'>${date}</option>`;
+                    const option = document.createElement("option");
+                    option.value = date;
+                    option.textContent = date;
+                    dateSelect.appendChild(option);
                 });
-                dateSelect.innerHTML = dateOptions;
+
                 dateSelect.disabled = false;
             });
     }
@@ -106,10 +130,16 @@ document.getElementById("month-select").addEventListener("change", function () {
     
     
                 const gazetteList = document.getElementById("gazette-items");
-                gazetteList.innerHTML = "";
+                // gazetteList.innerHTML = "";
+                gazetteList.replaceChildren();
     
                 if (gazettes.length === 0) {
-                    gazetteList.innerHTML = "<li>No gazettes found for the selected date.</li>";
+                    // gazetteList.innerHTML = "<li>No gazettes found for the selected date.</li>";
+                    gazetteList.replaceChildren();
+
+                    const li = document.createElement("li");
+                    li.textContent = "No gazettes found for the selected date.";
+                    gazetteList.appendChild(li);
                 } else {
                     gazettes.forEach(gazette => {
                         const listItem = document.createElement("li");
@@ -118,15 +148,24 @@ document.getElementById("month-select").addEventListener("change", function () {
                             const link = document.createElement("a");
                             link.href = `/gazette/pdf/${gazette.id}`;
                             link.target = "_blank";
-                            link.innerHTML = `${partLabel} - ${description}`;
+                            // link.innerHTML = `${partLabel} - ${description}`;
+                            link.textContent = `${partLabel} - ${description}`;
     
                             // Fetch the actual PDF file size
                             fetch(`/gazette/pdf/${gazette.id}`)
                                 .then(response => response.blob())
                                 .then(blob => {
                                     const fileSize = (blob.size / (1024 * 1024)).toFixed(2); // size in MB
-                                    link.innerHTML += ` (File Size: ${fileSize} MB)`;
-                                    link.innerHTML += ` <img src="/images/pdf-icon.png" alt="pdf-icon" style="height:25px; vertical-align:middle;">`;
+                                    // link.innerHTML += ` (File Size: ${fileSize} MB)`;
+                                    // link.innerHTML += ` <img src="/images/pdf-icon.png" alt="pdf-icon" style="height:25px; vertical-align:middle;">`;
+                                    link.textContent = `${partLabel} - ${description} (File Size: ${fileSize} MB) `;
+
+                                    const img = document.createElement("img");
+                                    img.src = "/images/pdf-icon.png";
+                                    img.alt = "pdf-icon";
+                                    img.style.height = "25px";
+                                    img.style.verticalAlign = "middle";
+                                    link.appendChild(img);
                                 })
                                 .catch(error => {
                                     console.error("Error fetching file size:", error);

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Component
@@ -58,6 +59,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             case "ADMIN" -> "/admin/admin_display";
             default -> "/index";
         };
+
+        List<String> allowedUrls = List.of("/creator","/publisher/publisher_display","/admin/admin_display","/index");
+        
+        if(!allowedUrls.contains(targetUrl)){
+            targetUrl = "/index";
+        }
 
         response.sendRedirect(targetUrl);
     }

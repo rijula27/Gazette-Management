@@ -41,7 +41,7 @@
         function setCharSpacing(on) {
             const spacing = on ? "1px" : "normal";
             document.body.style.letterSpacing = spacing;
-            localStorage.setItem("letterSpacing", spacing);
+            sessionStorage.setItem("letterSpacing", spacing);
         }
 
         // Load saved preferences on page load
