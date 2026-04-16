@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Admin: Printing and Stationery Department - Government of Meghalaya</title>
@@ -9,18 +10,21 @@
   <link rel="stylesheet" href="/css/admin_template.css">
   <link rel="stylesheet" href="/css/admin_creator_list.css">
 
-  <style>#responseMessage {
-    border-radius: 5px;
-    font-weight: bold;
-}</style>
+  <style>
+    #responseMessage {
+      border-radius: 5px;
+      font-weight: bold;
+    }
+  </style>
 
-<!-- SweetAlert2 CDN -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
-<link rel="stylesheet" href="/css/sweetalert2.min.css">
-<script src="/js/sweetalert2.all.min.js"></script>
+  <!-- SweetAlert2 CDN -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+  <link rel="stylesheet" href="/css/sweetalert2.min.css">
+  <script src="/js/sweetalert2.all.min.js"></script>
 
-  
+
 </head>
+
 <body>
   <div th:replace="~{admin/admin_template :: navbar}"></div>
 
@@ -34,10 +38,10 @@
 
     <main class="content" id="content">
 
-      
+
       <div id="responseMessage" style="display:none; padding: 10px; margin-top: 10px;">ifjdldjsfljds</div>
 
-    
+
       <div class="dashboard-container">
         <div class="dashboard-header">
           <h2 class="dashboard-title">Publisher Dashboard</h2>
@@ -63,7 +67,8 @@
                   <div class="dropdown">
                     <button class="dropdown-toggle" onclick="toggleDropdown(this)">More</button>
                     <div class="dropdown-menu">
-                      <a href="#" th:attr="data-id=${gcUsers.id}, data-name=${gcUsers.username}" onclick="editPublisher(this)">✏️ Edit</a>
+                      <a href="#" th:attr="data-id=${gcUsers.id}, data-name=${gcUsers.username}"
+                        onclick="editPublisher(this)">✏️ Edit</a>
                       <a href="#" th:attr="data-id=${gcUsers.id}" onclick="confirmDelete(this)">🗑️ Delete</a>
                     </div>
                   </div>
@@ -104,28 +109,30 @@
   <div id="publisherModal" class="modal">
 
     <!-- On admin_creator_list.html or your target redirect page -->
-<!-- <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <!-- <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
 <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div> -->
 
     <div class="modal-content" id="modal-content">
       <span class="close-btn" onclick="closeModal()">&times;</span>
       <h3 id="modalTitle">Add New Publisher</h3>
       <!-- <form th:action="@{/admin/creator_upload}" method="post" id="user-form"> -->
-        <form id="publisherForm">
-          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-          <label for="userName">Username</label>
-          <input type="text" id="userName" name="userName" placeholder="Enter User Name" required>
-    
-          <label for="userPassword">Password</label>
-          <input type="password" id="userPassword" name="userPassword" placeholder="Enter Password" autocomplete="off" required>
-    
-          <label for="userConfirmPassword">Confirm Password</label>
-          <input type="password" id="userConfirmPassword" name="userConfirmPassword" placeholder="Confirm Password" autocomplete="off" required>
-    
-          <label for="adminPassword">Admin Password</label>
-          <input type="password" id="adminPassword" name="adminPassword" >
-    
-    
+      <form id="publisherForm">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <label for="userName">Username</label>
+        <input type="text" id="userName" name="userName" placeholder="Enter User Name" required>
+
+        <label for="userPassword">Password</label>
+        <input type="password" id="userPassword" name="userPassword" placeholder="Enter Password" autocomplete="off"
+          required>
+
+        <label for="userConfirmPassword">Confirm Password</label>
+        <input type="password" id="userConfirmPassword" name="userConfirmPassword" placeholder="Confirm Password"
+          autocomplete="off" required>
+
+        <label for="adminPassword">Admin Password</label>
+        <input type="password" id="adminPassword" name="adminPassword">
+
+
         <!-- <button class="save-btn" type="button" onclick="showSaveModal()">Save</button> -->
         <button class="save-btn" type="submit">Submit</button>
       </form>
@@ -140,35 +147,40 @@
       <span class="close-btn" onclick="closeEditModal()">&times;</span>
       <h3 id="modalTitle">Edit the Publisher account</h3>
       <!-- <form th:action="@{/admin/edit_creator}" method="post" id="edit-form"> -->
-        <form id="edit-form">
+      <form id="edit-form">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <label for="userName">Username</label>
-        <input type="text" id="existingUserName" name="existingUserName" placeholder="Enter the existing User Name" disabled>
+        <input type="text" id="existingUserName" name="existingUserName" placeholder="Enter the existing User Name"
+          disabled>
 
         <label for="newUserName">New Username</label>
         <input type="text" id="newUserName" name="newUserName" placeholder="Enter the New User Name" required>
 
         <label for="existingUserPassword">Existing User Password</label>
-        <input type="password" id="existingUserPassword" name="existingUserPassword" placeholder="Enter the existing User Password" required>
+        <input type="password" id="existingUserPassword" name="existingUserPassword"
+          placeholder="Enter the existing User Password" required>
 
         <label for="newUserPassword">New User Password</label>
-        <input type="password" id="newUserPassword" name="newUserPassword" placeholder="Enter the new User Password" required>
+        <input type="password" id="newUserPassword" name="newUserPassword" placeholder="Enter the new User Password"
+          required>
 
         <label for="userConfirmPassword">Confirm Password</label>
-        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Enter the new User Password again" required>
+        <input type="password" id="confirmPassword" name="confirmPassword"
+          placeholder="Enter the new User Password again" required>
 
         <label for="adminPassword">Admin Password</label>
-          <input type="password" id="adminPassword2" name="adminPassword" >
+        <input type="password" id="adminPassword2" name="adminPassword">
 
-        
+
         <!-- <button class="save-btn" type="button" onclick="showEditSaveModal()">Save</button> -->
-         <button class="save-btn" type="submit">save</button>
+        <button class="save-btn" type="submit">save</button>
       </form>
     </div>
   </div>
 
   <!-- Save Confirmation Modal -->
-  <div class="modal fade" id="savePublisherModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" >
+  <div class="modal fade" id="savePublisherModal" tabindex="-1" role="dialog" data-backdrop="static"
+    data-keyboard="false">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -189,7 +201,8 @@
 
 
   <!-- Save Edit Confirmation Modal -->
-  <div class="modal fade" id="saveEditPublisherModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal fade" id="saveEditPublisherModal" tabindex="-1" role="dialog" data-backdrop="static"
+    data-keyboard="false">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -222,4 +235,5 @@
 
 
 </body>
+
 </html>

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin: Printing and Stationery Department - Government of Meghalaya</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/admin_template.css">
@@ -12,23 +13,24 @@
   <script src="/js/sweetalert2.all.min.js"></script>
   <style>
     .edit-profile {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 100%;
-    background: #ffffff;
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-    z-index: 10;
-    white-space: nowrap;
-    cursor: pointer;
-  }
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: #ffffff;
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      z-index: 10;
+      white-space: nowrap;
+      cursor: pointer;
+    }
 
-  .navbar-right:hover .edit-profile {
-    display: block;
-  }
+    .navbar-right:hover .edit-profile {
+      display: block;
+    }
   </style>
 </head>
+
 <body>
 
   <!-- Navbar -->
@@ -69,7 +71,7 @@
 
     <!-- Main Content -->
     <main class="content" id="content">
-      
+
     </main>
   </div>
 
@@ -88,29 +90,33 @@
     <div class="modal-content" id="edit-modal">
       <span class="close-btn" onclick="closeEditModal()">&times;</span>
       <h3 id="modalTitle">Edit the Publisher account</h3>
-        <form id="edit-form-admin">
+      <form id="edit-form-admin">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <label for="userName">Username</label>
-        <input type="text" id="existingAdminUserName" name="existingAdminUserName" placeholder="Enter the existing User Name" disabled>
+        <input type="text" id="existingAdminUserName" name="existingAdminUserName"
+          placeholder="Enter the existing User Name" disabled>
 
         <label for="newUserName">New Username</label>
         <input type="text" id="newAdminUserName" name="newAdminUserName" placeholder="Enter the New User Name" required>
 
         <label for="existingUserPassword">Existing User Password</label>
-        <input type="password" id="existingAdminUserPassword" name="existingAdminUserPassword" placeholder="Enter the existing User Password" required>
+        <input type="password" id="existingAdminUserPassword" name="existingAdminUserPassword"
+          placeholder="Enter the existing User Password" required>
 
         <label for="newUserPassword">New User Password</label>
-        <input type="password" id="newAdminUserPassword" name="newAdminUserPassword" placeholder="Enter the new User Password" required>
+        <input type="password" id="newAdminUserPassword" name="newAdminUserPassword"
+          placeholder="Enter the new User Password" required>
 
         <label for="userConfirmPassword">Confirm Password</label>
-        <input type="password" id="confirmAdminPassword" name="confirmAdminPassword" placeholder="Enter the new User Password again" required>
+        <input type="password" id="confirmAdminPassword" name="confirmAdminPassword"
+          placeholder="Enter the new User Password again" required>
 
         <label for="adminPassword">Admin Password</label>
-          <input type="password" id="adminPassword3" name="adminPassword" >
+        <input type="password" id="adminPassword3" name="adminPassword">
 
-        
+
         <!-- <button class="save-btn" type="button" onclick="showEditSaveModal()">Save</button> -->
-         <button class="save-btn" type="submit">save</button>
+        <button class="save-btn" type="submit">save</button>
       </form>
     </div>
   </div>
@@ -118,7 +124,8 @@
 
 
   <!-- Save Edit Confirmation Modal -->
-  <div class="modal fade" id="saveEditAdminModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" th:fragment="saveEditModal">
+  <div class="modal fade" id="saveEditAdminModal" tabindex="-1" role="dialog" data-backdrop="static"
+    data-keyboard="false" th:fragment="saveEditModal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -141,8 +148,9 @@
 
 
 
-<script src="/js/extra.js"></script>
+  <script src="/js/extra.js"></script>
 
 
 </body>
+
 </html>

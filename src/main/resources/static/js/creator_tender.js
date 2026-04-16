@@ -26,7 +26,7 @@ function validateTenderForm() {
 
 
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
 
     // if (announcementDate >= today) {
     //     Swal.fire('Invalid Date', 'Announcement date cannot be in the future.', 'warning');
@@ -124,52 +124,52 @@ document.addEventListener("DOMContentLoaded", () => {
                     opening_Date: document.getElementById('opening_Date').value,
                     keywords: document.getElementById('keywords').value
                 })], { type: 'application/json' }));
-                
+
                 formData.append("pdfFile", document.getElementById('pdfFile').files[0]);
-                
+
                 // Add CSRF token
                 const csrfToken = document.querySelector('input[name="_csrf"]')?.value || '';
                 formData.append('_csrf', csrfToken);
-                
+
                 setTimeout(() => {
                     fetch('/tender/uploadTender', {
                         method: 'POST',
                         body: formData
                     })
-                    .then(response => response.json()) // Parse the response as JSON
-                    .then(data => {
-                        if (data.message) { // Check if a success message is present
+                        .then(response => response.json()) // Parse the response as JSON
+                        .then(data => {
+                            if (data.message) { // Check if a success message is present
+                                Swal.fire({
+                                    title: 'Upload Successful!',
+                                    icon: 'success',
+                                    timer: 3000,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    // Reset form fields after success
+                                    document.getElementById('tender_form').reset(); // Reset form inputs
+                                    fileLabel.textContent = 'No file selected'; // Reset file label
+                                });
+                            } else {
+                                // If response contains an error message
+                                Swal.fire({
+                                    title: 'Upload Failed!',
+                                    icon: 'error',
+                                    text: data.error || 'Something went wrong while uploading.', // Show backend error or default message
+                                    confirmButtonColor: '#d33'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
                             Swal.fire({
-                                title: 'Upload Successful!',
-                                icon: 'success',
-                                timer: 3000,
-                                showConfirmButton: false
-                            }).then(() => {
-                                // Reset form fields after success
-                                document.getElementById('tender_form').reset(); // Reset form inputs
-                                fileLabel.textContent = 'No file selected'; // Reset file label
+                                title: 'Upload Error!',
+                                text: error.message,
+                                icon: 'error'
                             });
-                        } else {
-                            // If response contains an error message
-                            Swal.fire({
-                                title: 'Upload Failed!',
-                                icon: 'error',
-                                text: data.error || 'Something went wrong while uploading.', // Show backend error or default message
-                                confirmButtonColor: '#d33'
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error:", error);
-                        Swal.fire({
-                            title: 'Upload Error!',
-                            text: error.message,
-                            icon: 'error'
                         });
-                    });
                 }, 1500);
-                
-                
+
+
             }
         });
     });

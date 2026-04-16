@@ -2,11 +2,9 @@ package spring.aop.gazettemanagementnic.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.extern.slf4j.Slf4j;
 import spring.aop.gazettemanagementnic.entity.FilePath;
 import spring.aop.gazettemanagementnic.entity.GCUser;
-import spring.aop.gazettemanagementnic.entity.Gazette;
 import spring.aop.gazettemanagementnic.entity.ImageGallery;
 import spring.aop.gazettemanagementnic.repository.FilePathRepository;
 import spring.aop.gazettemanagementnic.repository.GCUserRepository;
@@ -35,27 +32,28 @@ public class ImageGalleryService {
     @Autowired
     private FilePathRepository filePathRepository;
 
-
     @Autowired
     private ImageGalleryRepository imageGalleryRepository;
 
     public ResponseEntity<?> saveImage(MultipartFile image, String description, String adminName) throws IOException {
 
         GCUser gcUser = gcUserRepository.findByUsername(adminName)
-            .orElseThrow(() -> new IllegalArgumentException("User not found for username: " + adminName));
-
+                .orElseThrow(() -> new IllegalArgumentException("User not found for username: " + adminName));
 
         // ✅ Validate filename
         String originalFilename = image.getOriginalFilename();
 
         if (originalFilename == null || originalFilename.isBlank()) {
+            log.info("invalid file name : " + originalFilename);
             throw new IllegalArgumentException("Invalid file name");
         }
 
         String cleanFilename = new File(originalFilename).getName();
 
-
         if (!cleanFilename.matches("^[a-zA-Z0-9._ -]+$")) {
+
+            log.info("invalid file name : " + cleanFilename);
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Invalid file name");
         }
@@ -63,26 +61,27 @@ public class ImageGalleryService {
         // ✅ Validate file type
         String contentType = image.getContentType();
         if (contentType == null ||
-            !(contentType.equals("image/jpeg") ||
-            contentType.equals("image/png") ||
-            contentType.equals("image/jpg"))) {
-            log.info("entered here 6");
+                !(contentType.equals("image/jpeg") ||
+                        contentType.equals("image/png") ||
+                        contentType.equals("image/jpg"))) {
+                log.info("invalid file type : " + contentType);
 
             throw new IllegalArgumentException("Only image files are allowed");
         }
 
         // ✅ Generate safe filename (BEST PRACTICE)
         String extension = cleanFilename.contains(".")
-            ? cleanFilename.substring(cleanFilename.lastIndexOf("."))
-            : "";
-
+                ? cleanFilename.substring(cleanFilename.lastIndexOf("."))
+                : "";
 
         String uniqueFilename = UUID.randomUUID().toString() + extension;
 
+        log.info("Generated unique filename: " + uniqueFilename);
+
         // ✅ Get upload directory safely
         FilePath filePathEntity = filePathRepository
-            .findByPathDescription("Gallery Local Path")
-            .orElseThrow(() -> new IllegalArgumentException("Upload path not configured"));
+                .findByPathDescription("Gallery Local Path")
+                .orElseThrow(() -> new IllegalArgumentException("Upload path not configured"));
 
         String uploadDir = filePathEntity.getFullPath();
 
@@ -113,14 +112,12 @@ public class ImageGalleryService {
 
         imageGalleryRepository.save(imageGallery);
 
-        return ResponseEntity.ok().body("File uploaded succusfully");
+        return ResponseEntity.ok().body("File uploaded successfully");
     }
 
     public List<ImageGallery> displayImage() {
-    
+
         return imageGalleryRepository.findAll();
     }
 
-
-    
 }

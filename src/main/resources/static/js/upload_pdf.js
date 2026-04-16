@@ -24,7 +24,7 @@ document.getElementById('pdfFile').addEventListener('change', (event) => {
                 icon: 'error',
                 title: 'File Too Large',
                 text: 'The file size exceeds the 20MB limit.',
-            }); 
+            });
             event.target.value = ''; // Clear the file input
             document.getElementById('fileLabel').textContent = 'No file selected';
         } else {
@@ -38,7 +38,7 @@ document.getElementById('pdfFile').addEventListener('change', (event) => {
 
 
 // loading and confirmation
-document.getElementById('saveButton').addEventListener('click', function() {
+document.getElementById('saveButton').addEventListener('click', function () {
     Swal.fire({
         title: 'Are you sure?',
         text: 'Do you want to submit this pdf?',

@@ -1,11 +1,10 @@
-
 .card {
     width: 400px;
     border-radius: 15px;
     box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     background-color: white;
-    margin: 0 auto; 
+    margin: 0 auto;
 }
 
 .card-header {
@@ -75,8 +74,10 @@
     display: none;
     position: fixed;
     z-index: 10;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
 }
 
@@ -96,7 +97,7 @@
     margin-top: 15px;
 }
 
-#fileLabel{
+#fileLabel {
     /* border: solid; */
     width: 70%;
 }

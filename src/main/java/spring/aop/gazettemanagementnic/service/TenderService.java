@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import spring.aop.gazettemanagementnic.entity.FilePath;
 import spring.aop.gazettemanagementnic.entity.GCUser;
-import spring.aop.gazettemanagementnic.entity.Gazette;
 import spring.aop.gazettemanagementnic.entity.Status;
 import spring.aop.gazettemanagementnic.entity.Tender;
 import spring.aop.gazettemanagementnic.repository.FilePathRepository;
@@ -31,37 +30,22 @@ public class TenderService {
     @Autowired
     private TenderRepository tenderRepository;
 
-
     @Autowired
     private GCUserRepository gcUserRepository;
-
 
     @Autowired
     private FilePathRepository filePathRepository;
 
-
     @Autowired
     private StatusRepository statusRepository;
 
+    public String save_tender(String username, String title, String referenceNumber,
+            LocalDate announcementDate, LocalDate submissionLastDate, LocalDate openingDate,
+            MultipartFile file, String keywords) throws IOException {
 
-    
-
-
-    public String save_tender(String username, String title, String referenceNumber, 
-                              LocalDate announcementDate, LocalDate submissionLastDate, LocalDate openingDate, 
-                              MultipartFile  file, String keywords) throws IOException {
-
-
-
-        GCUser gcUser = gcUserRepository.findByUsername(username).get();               
-
-
-
-
-
+        GCUser gcUser = gcUserRepository.findByUsername(username).get();
 
         int year = announcementDate.getYear();
-
 
         FilePath filePath = filePathRepository.findByPathDescription("Tender Local Path").get();
 
@@ -72,7 +56,6 @@ public class TenderService {
             directory.mkdirs();
         }
 
-
         String fileName = title + ".pdf";
 
         File destinationFile = new File(uploadDir + fileName);
@@ -80,7 +63,6 @@ public class TenderService {
         file.transferTo(destinationFile);
 
         Status createStatus = statusRepository.findByState("Create").get();
-
 
         Tender tender = new Tender();
         tender.setTitle(title);
@@ -97,30 +79,24 @@ public class TenderService {
         return "Tender saved successfully!";
     }
 
-
-    public List<Tender> displayTender(String username){
+    public List<Tender> displayTender(String username) {
 
         return tenderRepository.findAllByGcUser_UsernameAndStatus_State(username, "Create");
     }
 
-
-
-
-
     public ResponseEntity<Resource> getTenderPdfResponse(Long id) throws IOException {
-        Optional<Tender> optionalTender = tenderRepository.findById(id);  // same as before
+        Optional<Tender> optionalTender = tenderRepository.findById(id); // same as before
 
         if (optionalTender.isPresent()) {
 
             Tender tender = optionalTender.get();
 
             FilePath existinTenderPath = tender.getFilePath();
-    
 
             String filePath = existinTenderPath.getFullPath();
 
             int year = tender.getAnnouncement_Date().getYear();
-            String title = tender.getTitle();     // e.g., I
+            String title = tender.getTitle(); // e.g., I
 
             filePath = filePath + year + "\\" + title + ".pdf";
 
@@ -136,16 +112,11 @@ public class TenderService {
                     .contentType(MediaType.APPLICATION_PDF)
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getName() + "\"")
                     .body(resource);
-        }       
+        }
         return ResponseEntity.notFound().build();
     }
 
-
-
-
-
     public void deleteTender(Long id) {
-
 
         Optional<Tender> optionalTender = tenderRepository.findById(id);
 
@@ -155,20 +126,15 @@ public class TenderService {
 
             FilePath tenderPath = tender.getFilePath();
 
-
             int year = tender.getAnnouncement_Date().getYear();
 
             String deletePath = tenderPath.getFullPath();
 
-
             String deletedDir = deletePath + year + "\\";
-
-
 
             String fileName = tender.getTitle() + ".pdf";
 
             File File = new File(deletedDir + fileName);
-
 
             if (File.exists()) {
                 if (File.delete()) {
@@ -176,24 +142,18 @@ public class TenderService {
                 }
             }
 
-
         }
-
 
     }
 
-
-
-
-    public void send_tender_Publisher(Long id){
+    public void send_tender_Publisher(Long id) {
         Optional<Tender> optionalTender = tenderRepository.findById(id);
 
         if (optionalTender.isPresent()) {
 
             Tender tender = optionalTender.get();
-        
-            Status sendBackStatus = statusRepository.findByState("Send").get();
 
+            Status sendBackStatus = statusRepository.findByState("Send").get();
 
             tender.setStatus(sendBackStatus);
 
@@ -202,10 +162,8 @@ public class TenderService {
         }
     }
 
-
-
-
-    public String updateTender(Long id,String title, String username,  LocalDate submissionLastDate,LocalDate openingDate, MultipartFile file) throws IOException {
+    public String updateTender(Long id, String title, String username, LocalDate submissionLastDate,
+            LocalDate openingDate, MultipartFile file) throws IOException {
 
         Optional<Tender> optionalTender = tenderRepository.findById(id);
         if (optionalTender.isEmpty()) {
@@ -215,10 +173,10 @@ public class TenderService {
         Tender tender = optionalTender.get();
 
         GCUser gcUser_edit = gcUserRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found: " + username));
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
         FilePath tenderPath = filePathRepository.findByPathDescription("Tender Local Path")
-            .orElseThrow(() -> new RuntimeException("Tender path not found"));
+                .orElseThrow(() -> new RuntimeException("Tender path not found"));
 
         int year = tender.getAnnouncement_Date().getYear();
         String uploadDir = tenderPath.getFullPath() + year + File.separator;
@@ -228,11 +186,11 @@ public class TenderService {
             directory.mkdirs();
         }
 
-          String sanitizedTitle = title.trim()
-        .replace("/", "")
-        .replace("\\", "")
-        .replace(":", "")
-        .replace("\0", "");
+        String sanitizedTitle = title.trim()
+                .replace("/", "")
+                .replace("\\", "")
+                .replace(":", "")
+                .replace("\0", "");
 
         if (sanitizedTitle.isEmpty()) {
             throw new IllegalArgumentException("Invalid tender title.");
@@ -243,7 +201,6 @@ public class TenderService {
         if (!newFile.getPath().startsWith(directory.getPath() + File.separator)) {
             throw new SecurityException("Path traversal attempt detected.");
         }
-
 
         if (file != null && !file.isEmpty()) {
             file.transferTo(newFile);
@@ -259,22 +216,18 @@ public class TenderService {
         return "Tender updated successfully!";
     }
 
-
     public List<Tender> display_Tender_Publisher() {
-        return tenderRepository.findAllByStatus_State( "Send");
+        return tenderRepository.findAllByStatus_State("Send");
     }
 
-
-
-    public void send_Back_tender_Creator(Long id){
+    public void send_Back_tender_Creator(Long id) {
         Optional<Tender> optionalTender = tenderRepository.findById(id);
 
         if (optionalTender.isPresent()) {
 
             Tender tender = optionalTender.get();
-           
-            Status sendBackStatus = statusRepository.findByState("Create").get();
 
+            Status sendBackStatus = statusRepository.findByState("Create").get();
 
             tender.setStatus(sendBackStatus);
 
@@ -283,15 +236,13 @@ public class TenderService {
         }
     }
 
-
-    public void published_tender(Long id){
+    public void published_tender(Long id) {
         Optional<Tender> optionalTender = tenderRepository.findById(id);
         if (optionalTender.isPresent()) {
 
             Tender tender = optionalTender.get();
-           
-            Status publishedStatus = statusRepository.findByState("Published").get();
 
+            Status publishedStatus = statusRepository.findByState("Published").get();
 
             tender.setStatus(publishedStatus);
 
@@ -304,92 +255,74 @@ public class TenderService {
         return tenderRepository.findAllByStatus_State("Published");
     }
 
-
-
-
     public List<Tender> displayAllTender(String username) {
         return tenderRepository.findAllByGcUser_Username(username);
 
     }
-
 
     public List<Tender> display_approved_Tender(String username) {
         return tenderRepository.findAllByGcUser_UsernameAndStatus_State(username, "Published");
 
     }
 
-
     public List<Tender> display_send_Tender(String username) {
         return tenderRepository.findAllByGcUser_UsernameAndStatus_State(username, "Send");
 
     }
-
 
     public List<Tender> display_create_Tender(String username) {
         return tenderRepository.findAllByGcUser_UsernameAndStatus_State(username, "Create");
 
     }
 
+    public List<Tender> displayPublisherAllTender() {
 
+        return tenderRepository.findAllByStatus_State("Send");
 
+    }
 
+    public List<Tender> display_published_Tender() {
 
-        public List<Tender> displayPublisherAllTender() {
+        return tenderRepository.findAllByStatus_State("Published");
 
-            return tenderRepository.findAllByStatus_State("Send");
-    
-        }
+    }
 
+    public List<Tender> display_send_back_Tender() {
 
-        public List<Tender> display_published_Tender() {
+        return tenderRepository.findAllByStatus_State("Create");
 
-            return tenderRepository.findAllByStatus_State("Published");
-    
-    
-        }
+    }
 
+    public boolean isTenderExist(String title, String ref_No) {
+        return tenderRepository.existsByTitleOrRefNo(title, ref_No);
+    }
 
-        public List<Tender> display_send_back_Tender() {
+    public List<Tender> getActiveTenders() {
+        LocalDate today = LocalDate.now();
+        LocalDate oneMonthAgo = today.minusMonths(1);
+        Status publishedStatus = statusRepository.findByState("Published")
+                .orElseThrow(() -> new RuntimeException("Published status not found"));
 
-            return tenderRepository.findAllByStatus_State("Create");
-    
-    
-        }
+        Long publisherStatusId = publishedStatus.getStatus_id();
 
+        return tenderRepository.findPublishedTenders(publisherStatusId, today, oneMonthAgo);
 
+    }
 
-        public boolean isTenderExist(String title, String ref_No) {
-            return tenderRepository.existsByTitleOrRefNo(title, ref_No);
-        }
-        
+    public List<Integer> getAvailableYears() {
+        return tenderRepository.findDistinctYears();
+    }
 
+    public List<Integer> getAvailableMonths(Integer year) {
+        return tenderRepository.findDistinctMonthsByYear(year);
+    }
 
-        public List<Tender> getActiveTenders(){
-            LocalDate today = LocalDate.now();
-            LocalDate oneMonthAgo = today.minusMonths(1);
-            return tenderRepository.findActiveTenders(today, oneMonthAgo);
-            
-        }
+    public List<Tender> getTendersByDate(Integer year, Integer month) {
 
+        return tenderRepository.findByYearAndMonthAndStatus_State(year, month, "Published");
+    }
 
-
-
-        public List<Integer> getAvailableYears(){
-            return tenderRepository.findDistinctYears();
-        }
-
-
-
-        public List<Integer> getAvailableMonths(Integer year) {
-            return tenderRepository.findDistinctMonthsByYear(year);
-        }
-
-
-        public List<Tender> getTendersByDate(Integer year, Integer month) {
-
-            return tenderRepository.findByYearAndMonthAndStatus_State(year, month, "Published");
-        }
+    public Optional<Tender> findTenderById(Long id) {
+        return tenderRepository.findById(id);
+    }
 }
-
-    
-

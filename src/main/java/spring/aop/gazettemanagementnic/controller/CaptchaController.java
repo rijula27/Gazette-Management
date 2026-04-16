@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
-
 @Controller
 public class CaptchaController {
 
@@ -30,7 +29,7 @@ public class CaptchaController {
         session.setAttribute("captcha", captchaText);
 
         BufferedImage captchaImage = captchaProducer.createImage(captchaText);
-        
+
         ServletOutputStream out = response.getOutputStream();
         ImageIO.write(captchaImage, "png", out);
         try {

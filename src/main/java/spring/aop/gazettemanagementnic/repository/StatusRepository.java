@@ -6,12 +6,11 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import spring.aop.gazettemanagementnic.entity.Status;
 
-
 @Repository
-public interface StatusRepository extends JpaRepository<Status, Long>{
-
+public interface StatusRepository extends JpaRepository<Status, Long> {
 
     Optional<Status> findByStatusCode(Long code);
+
     Optional<Status> findByState(String state);
 
 }

@@ -2,8 +2,8 @@ package spring.aop.gazettemanagementnic.dto;
 
 import java.time.LocalDate;
 
-public class GazetteUploadRequest  {
-    
+public class GazetteUploadRequest {
+
     private String gazettePart;
     private LocalDate date;
     private String username;

@@ -77,7 +77,7 @@ $(document).ready(function () {
 document.addEventListener("DOMContentLoaded", () => {
     console.log("executing file size  block")
     const fileInput = document.getElementById("editPdfFile");
-    
+
     fileInput.addEventListener("change", (event) => {
         const file = event.target.files[0];
         const maxSize = 20 * 1024 * 1024; // 20MB in bytes
@@ -88,16 +88,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     icon: "error",
                     title: "File Too Large",
                     text: "The file size exceeds the 20MB limit.",
-                }); 
+                });
                 event.target.value = ""; // Clear the file input
             }
         }
     });
 });
- 
- 
- // Client-side pagination (adjust rows per page as needed)
- $(document).ready(function () {
+
+
+// Client-side pagination (adjust rows per page as needed)
+$(document).ready(function () {
     const rowsPerPage = 5;
     let currentPage = 0;
     const paginationControls = $('#paginationControls');
@@ -229,11 +229,11 @@ function confirmDelete(el) {
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
-                    
+
                     $.ajax({
                         url: '/publisher/publisher_delete/' + deleteId,
                         type: 'GET',
-                        success: function(response) {
+                        success: function (response) {
                             Swal.fire({
                                 title: "Deleted!",
                                 text: response.message, // Show success message from server
@@ -244,7 +244,7 @@ function confirmDelete(el) {
                                 location.reload(); // Refresh after success
                             });
                         },
-                        error: function(xhr) {
+                        error: function (xhr) {
                             Swal.fire({
                                 title: "Error!",
                                 text: "Failed to delete the gazette.",
@@ -252,7 +252,7 @@ function confirmDelete(el) {
                             });
                         }
                     });
-                
+
                 }
             });
         }
@@ -263,7 +263,7 @@ function confirmDelete(el) {
 
 
 var sendId;
-function sendBack_Creator(el){
+function sendBack_Creator(el) {
     sendId = $(el).data('id');
     Swal.fire({
         title: "Confirm Send?",
@@ -283,11 +283,11 @@ function sendBack_Creator(el){
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
-            
+
                     $.ajax({
                         url: '/publisher/sendBack_Creator/' + sendId,
                         type: 'GET', // Use 'POST' if needed
-                        success: function(response) {
+                        success: function (response) {
                             Swal.fire({
                                 title: "Send!",
                                 text: response.message, // Show success message from server
@@ -298,7 +298,7 @@ function sendBack_Creator(el){
                                 location.reload(); // Refresh after success
                             });
                         },
-                        error: function(xhr) {
+                        error: function (xhr) {
                             Swal.fire({
                                 title: "Error!",
                                 text: "Failed to send the gazette.",
@@ -316,7 +316,7 @@ function sendBack_Creator(el){
 
 
 var publishedId;
-function published(el){
+function published(el) {
     publishedId = $(el).data('id');
     Swal.fire({
         title: "Confirm Published?",
@@ -336,11 +336,11 @@ function published(el){
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
-            
+
                     $.ajax({
                         url: '/publisher/published/' + publishedId,
                         type: 'GET', // Use 'POST' if needed
-                        success: function(response) {
+                        success: function (response) {
                             Swal.fire({
                                 title: "Published!",
                                 text: response.message, // Show success message from server
@@ -351,7 +351,7 @@ function published(el){
                                 location.reload(); // Refresh after success
                             });
                         },
-                        error: function(xhr) {
+                        error: function (xhr) {
                             Swal.fire({
                                 title: "Error!",
                                 text: "Failed to published the gazette.",
@@ -422,7 +422,7 @@ function submitEditForm() {
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function(response) {
+                success: function (response) {
                     Swal.fire({
                         title: "Success!",
                         text: "Gazette updated successfully!",
@@ -433,7 +433,7 @@ function submitEditForm() {
                         location.reload();
                     });
                 },
-                error: function(xhr) {
+                error: function (xhr) {
                     Swal.fire({
                         title: "Error!",
                         text: "Failed to update gazette: " + xhr.responseText,

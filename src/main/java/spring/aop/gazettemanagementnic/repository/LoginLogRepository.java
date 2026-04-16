@@ -8,5 +8,4 @@ import spring.aop.gazettemanagementnic.entity.LoginLog;
 @Repository
 public interface LoginLogRepository extends JpaRepository<LoginLog, Long> {
 
-
 }

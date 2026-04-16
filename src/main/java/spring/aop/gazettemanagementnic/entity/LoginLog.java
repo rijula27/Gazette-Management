@@ -2,7 +2,6 @@ package spring.aop.gazettemanagementnic.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.annotation.Generated;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,7 +9,6 @@ import jakarta.persistence.Id;
 
 @Entity
 public class LoginLog {
-    
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +23,6 @@ public class LoginLog {
     private String ipAddress;
 
     private String userAgent;
-
-
-    
 
     /**
      * @return Long return the logId

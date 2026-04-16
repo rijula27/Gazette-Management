@@ -7,10 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import spring.aop.gazettemanagementnic.entity.FilePath;
 
-
-
 @Repository
-public interface FilePathRepository extends JpaRepository<FilePath, Long>{
+public interface FilePathRepository extends JpaRepository<FilePath, Long> {
 
     Optional<FilePath> findByPathDescription(String pathDescription);
 

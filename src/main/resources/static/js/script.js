@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Menu toggle functionality
     const menuToggle = document.querySelector('.menu-toggle');
     const nav = document.querySelector('nav ul');
-    
+
     if (menuToggle) {
         menuToggle.addEventListener('click', () => {
             nav.classList.toggle('active');
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    // Fetch data and populate the "month-select" and "date-select" dropdowns
+// Fetch data and populate the "month-select" and "date-select" dropdowns
 document.getElementById("year-select").addEventListener("change", function () {
     const selectedYear = this.value;
     // Clear previous selections in month and date dropdowns
@@ -63,8 +63,8 @@ document.getElementById("month-select").addEventListener("change", function () {
     const selectedYear = document.getElementById("year-select").value;
     const selectedMonthName = this.value;
 
-    
-    console.log("selected year ", selectedYear , "selected month ", selectedMonthName )
+
+    console.log("selected year ", selectedYear, "selected month ", selectedMonthName)
     const monthMap = {
         "January": 1, "February": 2, "March": 3, "April": 4,
         "May": 5, "June": 6, "July": 7, "August": 8,
@@ -106,13 +106,13 @@ document.getElementById("month-select").addEventListener("change", function () {
 
 
 
-  // Fetch data and populate the "month-select" and "date-select" dropdowns
-  document.getElementById("date-select").addEventListener("change", function () {
+// Fetch data and populate the "month-select" and "date-select" dropdowns
+document.getElementById("date-select").addEventListener("change", function () {
     const selectedYear = document.getElementById("year-select").value;
     const selectedMonthName = document.getElementById("month-select").value;
     const selectedDate = this.value;
 
-    console.log("selected year ", selectedYear , "selected month ", selectedMonthName, "selected date ", selectedDate )
+    console.log("selected year ", selectedYear, "selected month ", selectedMonthName, "selected date ", selectedDate)
     const monthMap = {
         "January": 1, "February": 2, "March": 3, "April": 4,
         "May": 5, "June": 6, "July": 7, "August": 8,
@@ -127,12 +127,12 @@ document.getElementById("month-select").addEventListener("change", function () {
         fetch(`/gazette/years/${selectedYear}/months/${selectedMonth}/dates/${selectedDate}`)
             .then(response => response.json())
             .then(gazettes => {
-    
-    
+
+
                 const gazetteList = document.getElementById("gazette-items");
                 // gazetteList.innerHTML = "";
                 gazetteList.replaceChildren();
-    
+
                 if (gazettes.length === 0) {
                     // gazetteList.innerHTML = "<li>No gazettes found for the selected date.</li>";
                     gazetteList.replaceChildren();
@@ -143,14 +143,14 @@ document.getElementById("month-select").addEventListener("change", function () {
                 } else {
                     gazettes.forEach(gazette => {
                         const listItem = document.createElement("li");
-    
+
                         function createGazetteLink(gazette, partLabel, description) {
                             const link = document.createElement("a");
                             link.href = `/gazette/pdf/${gazette.id}`;
                             link.target = "_blank";
                             // link.innerHTML = `${partLabel} - ${description}`;
                             link.textContent = `${partLabel} - ${description}`;
-    
+
                             // Fetch the actual PDF file size
                             fetch(`/gazette/pdf/${gazette.id}`)
                                 .then(response => response.blob())
@@ -170,12 +170,12 @@ document.getElementById("month-select").addEventListener("change", function () {
                                 .catch(error => {
                                     console.error("Error fetching file size:", error);
                                 });
-    
+
                             return link;
                         }
-    
+
                         let link = null;
-    
+
                         switch (gazette.part) {
                             case "I":
                                 link = createGazetteLink(gazette, "Part-I", "Appointments, Postings, Transfers, Powers, Leave and other Personal Notices");
@@ -214,7 +214,7 @@ document.getElementById("month-select").addEventListener("change", function () {
                                 link = createGazetteLink(gazette, gazette.part || "Unknown", "Unknown Gazette Part");
                                 break;
                         }
-    
+
                         if (link) {
                             listItem.appendChild(link);
                             gazetteList.appendChild(listItem);
@@ -229,4 +229,4 @@ document.getElementById("month-select").addEventListener("change", function () {
             });
     }
 
-  })    
+})    

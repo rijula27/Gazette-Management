@@ -1,13 +1,13 @@
 
-  
-  let formDataJson = {};
-  const form = document.getElementById("addSectionForm");
+
+let formDataJson = {};
+const form = document.getElementById("addSectionForm");
 
 
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-  
-   
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+
   const formData = new FormData(form);
   formDataJson = {
     sectionHeading: formData.get("sectionHeading")?.trim(),
@@ -26,7 +26,7 @@
     });
     return;
   }
-  
+
   if (!headingRegex.test(formDataJson.sectionHeading)) {
     Swal.fire({
       icon: 'warning',
@@ -35,7 +35,7 @@
     });
     return;
   }
-  
+
 
   const allowedRegex = /^[a-zA-Z0-9./\-@#$&!():;,_? \n\r]+$/;
 
@@ -47,7 +47,7 @@
     });
     return;
   }
-  
+
   if (!allowedRegex.test(formDataJson.sectionContent)) {
     Swal.fire({
       icon: 'warning',
@@ -56,11 +56,11 @@
     });
     return;
   }
-  
 
 
 
-   // Show confirmation dialog
+
+  // Show confirmation dialog
   Swal.fire({
     title: 'Are you sure?',
     text: "Do you want to save this contact?",
@@ -75,7 +75,7 @@
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
         const res = await fetch("/about/save", {
           method: "POST",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             [csrfHeader]: csrfToken
           },
@@ -131,13 +131,13 @@ function confirmDelete(el) {
     cancelButtonText: 'Cancel'
   }).then((result) => {
     if (result.isConfirmed) {
-       if (!deleteId || !/^\d+$/.test(String(deleteId))) {
-            console.error("Invalid delete ID:", deleteId);
-            return;
-        }
+      if (!deleteId || !/^\d+$/.test(String(deleteId))) {
+        console.error("Invalid delete ID:", deleteId);
+        return;
+      }
 
-        const numericId = parseInt(deleteId, 10); 
-        const redirectUrl = "/about/delete/" + numericId;
+      const numericId = parseInt(deleteId, 10);
+      const redirectUrl = "/about/delete/" + numericId;
 
 
       // Show tick animation

@@ -1,6 +1,5 @@
 package spring.aop.gazettemanagementnic.entity;
 
-
 import java.time.LocalDate;
 
 import jakarta.persistence.*;
@@ -20,14 +19,12 @@ public class GCUser {
     @Pattern(regexp = "^(?=.{10,20}$)(?=[^_]*_[^_]*$).*$", message = "Username must contain exactly one underscore")
     private String username;
 
-
     @Column(nullable = false, unique = true)
     private String password; // stored as BCrypt-hashed string
 
     @Column(nullable = false)
     @Size(min = 5, max = 9, message = "Role  must be between 5 to 9 characters")
     private String role;
-
 
     @Column(nullable = false)
     private LocalDate date;
@@ -64,7 +61,6 @@ public class GCUser {
     public void setRole(String role) {
         this.role = role;
     }
-
 
     public LocalDate getDate() {
         return date;

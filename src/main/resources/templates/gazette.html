@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +19,7 @@
             background: white;
             padding: 25px;
             border-radius: 3px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             margin: 20px auto;
             max-width: 1200px;
         }
@@ -87,13 +88,13 @@
             padding: 15px;
             background: #f8f9fa;
             border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
         }
 
         .gazette-items li a:hover {
             background: #fff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
             transform: translateY(-2px);
             color: var(--accent);
         }
@@ -121,13 +122,14 @@
         }
     </style>
 </head>
+
 <body>
 
     <div th:replace="~{/index :: header_top}"></div>
 
 
-<div th:replace="~{/index :: header}"></div>
-    
+    <div th:replace="~{/index :: header}"></div>
+
     <main>
         <div class="gazette-container">
             <div class="gazette-filters">
@@ -158,7 +160,7 @@
                 <h2>Available Gazettes</h2>
                 <ul class="gazette-items" id="gazette-items">
                     <!-- Gazette items will be populated here -->
-                     <li><a href=""></a> </li>
+                    <li><a href=""></a> </li>
                 </ul>
             </div>
         </div>
@@ -169,4 +171,5 @@
 
     <script src="/js/script.js"></script>
 </body>
+
 </html>

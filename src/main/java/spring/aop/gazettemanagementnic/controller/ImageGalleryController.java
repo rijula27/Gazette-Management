@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,11 +28,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
-import spring.aop.gazettemanagementnic.entity.ContactUs;
 import spring.aop.gazettemanagementnic.entity.FilePath;
 import spring.aop.gazettemanagementnic.entity.ImageGallery;
-import spring.aop.gazettemanagementnic.repository.FilePathRepository;
 import spring.aop.gazettemanagementnic.repository.ImageGalleryRepository;
+import spring.aop.gazettemanagementnic.service.FilePathService;
 import spring.aop.gazettemanagementnic.service.ImageGalleryService;
 
 @Slf4j
@@ -45,10 +43,10 @@ public class ImageGalleryController {
     private ImageGalleryService imageGalleryService;
 
     @Autowired
-    private FilePathRepository filePathRepository;
+    private ImageGalleryRepository imageGalleryRepository;
 
     @Autowired
-    private ImageGalleryRepository imageGalleryRepository;
+    private FilePathService filePathService;
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadImage(
@@ -121,7 +119,9 @@ public class ImageGalleryController {
         try {
             log.info("Entered serveImage() with imageName: {}", imageName);
 
-            Optional<FilePath> optionalPath = filePathRepository.findByPathDescription("Gallery Local Path");
+            // Optional<FilePath> optionalPath =
+            // filePathRepository.findByPathDescription("Gallery Local Path");
+            Optional<FilePath> optionalPath = filePathService.getFilePathByDescription("Gallery Local Path");
             if (optionalPath.isEmpty()) {
                 log.warn("Gallery Local Path not found in file_path table");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

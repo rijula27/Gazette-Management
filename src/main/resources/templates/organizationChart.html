@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +18,7 @@
             background: white;
             padding: 25px;
             border-radius: 3px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             margin: 20px auto;
             max-width: 1200px;
         }
@@ -86,13 +87,13 @@
             padding: 15px;
             background: #f8f9fa;
             border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
         }
 
         .tender-items li a:hover {
             background: #fff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
             transform: translateY(-2px);
             color: var(--accent);
         }
@@ -153,6 +154,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div th:replace="~{/index :: header_top}"></div>
@@ -160,12 +162,15 @@
 
     <div th:replace="~{/index :: header}"></div>
 
-    <main style="max-width: 900px; margin: 40px auto; padding: 20px; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center;">
-    <h1 style="font-size: 2em; color: #333; margin-bottom: 20px; font-weight: 600; border-bottom: 2px solid #ddd; padding-bottom: 10px;">
-        Organization Chart
-    </h1>
-    <img src="/images/org_chart.png" alt="Organization Chart" style="width: 100%; max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ccc;">
-</main>
+    <main
+        style="max-width: 900px; margin: 40px auto; padding: 20px; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center;">
+        <h1
+            style="font-size: 2em; color: #333; margin-bottom: 20px; font-weight: 600; border-bottom: 2px solid #ddd; padding-bottom: 10px;">
+            Organization Chart
+        </h1>
+        <img src="/images/org_chart.png" alt="Organization Chart"
+            style="width: 100%; max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ccc;">
+    </main>
 
 
     <div th:replace="~{/index :: footer}"></div>
@@ -176,18 +181,19 @@
 
 
         document.addEventListener('DOMContentLoaded', () => {
-        // Menu toggle functionality
-        const menuToggle = document.querySelector('.menu-toggle');
-        const nav = document.querySelector('nav ul');
-        
-        if (menuToggle) {
-            menuToggle.addEventListener('click', () => {
-                nav.classList.toggle('active');
-            });
-        }
-    
-    
-    });
+            // Menu toggle functionality
+            const menuToggle = document.querySelector('.menu-toggle');
+            const nav = document.querySelector('nav ul');
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', () => {
+                    nav.classList.toggle('active');
+                });
+            }
+
+
+        });
     </script>
 </body>
+
 </html>

@@ -111,7 +111,7 @@ document.getElementById('editPdfFile').addEventListener('change', (event) => {
                 icon: 'error',
                 title: 'File Too Large',
                 text: 'The file size exceeds the 20MB limit.',
-            }); 
+            });
             event.target.value = ''; // Clear the file input
             document.getElementById('fileLabel').textContent = 'No file selected';
         } else {
@@ -241,14 +241,14 @@ $(document).ready(function () {
 function toggleDropdown(button) {
     const menu = button.nextElementSibling;
     const isVisible = menu.style.display === 'block';
-    
+
     document.querySelectorAll('.dropdown-menu').forEach(drop => drop.style.display = 'none');
 
     menu.style.display = isVisible ? 'none' : 'block';
 }
 
 // Optional: Close dropdowns if clicked outside
-window.onclick = function(event) {
+window.onclick = function (event) {
     if (!event.target.matches('.dropdown-toggle')) {
         document.querySelectorAll('.dropdown-menu').forEach(drop => drop.style.display = 'none');
     }
@@ -278,11 +278,11 @@ function confirmDelete(el) {
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
-                    
+
                     $.ajax({
                         url: '/creator/tender_delete/' + deleteId,
                         type: 'GET',
-                        success: function(response) {
+                        success: function (response) {
                             Swal.fire({
                                 title: "Deleted!",
                                 text: response.message, // Show success message from server
@@ -293,7 +293,7 @@ function confirmDelete(el) {
                                 location.reload(); // Refresh after success
                             });
                         },
-                        error: function(xhr) {
+                        error: function (xhr) {
                             Swal.fire({
                                 title: "Error!",
                                 text: "Failed to delete the tender.",
@@ -301,7 +301,7 @@ function confirmDelete(el) {
                             });
                         }
                     });
-                
+
                 }
             });
         }
@@ -333,11 +333,11 @@ function sendPublisher(el) {
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
-            
+
                     $.ajax({
                         url: '/creator/sendTenderPublisher/' + sendId,
                         type: 'GET', // Use 'POST' if needed
-                        success: function(response) {
+                        success: function (response) {
                             Swal.fire({
                                 title: "Send!",
                                 text: response.message, // Show success message from server
@@ -348,7 +348,7 @@ function sendPublisher(el) {
                                 location.reload(); // Refresh after success
                             });
                         },
-                        error: function(xhr) {
+                        error: function (xhr) {
                             Swal.fire({
                                 title: "Error!",
                                 text: "Failed to send the tender.",
@@ -422,7 +422,7 @@ function submitEditForm() {
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function(response) {
+                success: function (response) {
                     Swal.fire({
                         title: "Success!",
                         text: "Tender updated successfully!",
@@ -433,7 +433,7 @@ function submitEditForm() {
                         location.reload();
                     });
                 },
-                error: function(xhr) {
+                error: function (xhr) {
                     Swal.fire({
                         title: "Error!",
                         text: "Failed to update tender: " + xhr.responseText,
@@ -443,7 +443,7 @@ function submitEditForm() {
             });
         }
     });
-}                           
+}
 
 
 function formatDate(dateString) {

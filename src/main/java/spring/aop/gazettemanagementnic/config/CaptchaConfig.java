@@ -1,6 +1,5 @@
 package spring.aop.gazettemanagementnic.config;
 
-
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +9,6 @@ import java.util.Properties;
 
 @Configuration
 public class CaptchaConfig {
-
 
     @Bean
     public DefaultKaptcha captchaProducer() {
@@ -27,15 +25,11 @@ public class CaptchaConfig {
         properties.setProperty("kaptcha.textproducer.char.length", "5");
         properties.setProperty("kaptcha.textproducer.font.names", "Arial, Courier");
 
-
-
         Config config = new Config(properties);
         defaultKaptcha.setConfig(config);
 
         return defaultKaptcha;
     }
 }
-
-
 
 // Currently not in use

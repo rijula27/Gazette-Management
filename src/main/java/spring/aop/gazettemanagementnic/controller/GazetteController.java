@@ -1,6 +1,7 @@
 package spring.aop.gazettemanagementnic.controller;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import spring.aop.gazettemanagementnic.entity.Gazette;
 import spring.aop.gazettemanagementnic.entity.GCUser;
 import spring.aop.gazettemanagementnic.repository.GazetteRepository;
-import spring.aop.gazettemanagementnic.repository.GCUserRepository;
+import spring.aop.gazettemanagementnic.service.GCUserService;
 import spring.aop.gazettemanagementnic.service.GazetteService;
 
 import java.io.IOException;
@@ -22,17 +23,13 @@ import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.format.annotation.DateTimeFormat;
 
-
-
-
-
-
+@Slf4j
 @Controller
 @RequestMapping("/gazette")
 public class GazetteController {
@@ -40,22 +37,20 @@ public class GazetteController {
     @Autowired
     private GazetteService gazetteService;
 
-
     @Autowired
     private GazetteRepository gazetteRepository;
 
     @Autowired
-    private GCUserRepository gcUserRepository;
-
+    private GCUserService gcUserService;
 
     @PostMapping("/upload")
     public String uploadGazette(@RequestParam("gazettePart") String part,
-                                @RequestParam("pdfFile") MultipartFile file,
-                                @RequestParam("date") LocalDate date,
-                                HttpSession session,
-                                RedirectAttributes redirectAttributes) {
+            @RequestParam("pdfFile") MultipartFile file,
+            @RequestParam("date") LocalDate date,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
         String username = (String) session.getAttribute("loggedInUser");
-                                
+
         if (username == null) {
             return "redirect:/login";
         }
@@ -80,10 +75,6 @@ public class GazetteController {
             return "redirect:/creator";
         }
     }
-
-
-
-
 
     @PostMapping("/edit")
     public ResponseEntity<String> editGazette(
@@ -115,51 +106,51 @@ public class GazetteController {
 
         } catch (Exception e) {
             // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            //         .body(e.getMessage());
+            // .body(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body( e.getMessage());
+                    .body(e.getMessage());
         }
     }
 
-
-
-
-
-  //view pdf
+    // view pdf
     @GetMapping("/pdf/{id}")
     public ResponseEntity<?> viewGazettePdf(@PathVariable Long id, HttpSession session) throws IOException {
-        
+
         // Get gazette by ID first (public check, no auth needed yet)
         java.util.Optional<Gazette> gazetteOpt = gazetteRepository.findById(id);
         if (!gazetteOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Gazette not found.");
+                    .body("Gazette not found.");
         }
         Gazette gazette = gazetteOpt.get();
-        
-        String status = String.valueOf( gazette.getStatus().getStatusCode());
-        
+
+        String status = String.valueOf(gazette.getStatus().getStatusCode());
+
+        log.info("Gazette status code: {}", status);
+
         if ("3".equals(status)) {
             return gazetteService.getGazettePdfResponse(id);
         }
-        
+
         String username = (String) session.getAttribute("loggedInUser");
         if (username == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body("User not authenticated. Please login to view this resource.");
+                    .body("User not authenticated. Please login to view this resource.");
         }
-        
-        java.util.Optional<GCUser> userOpt = gcUserRepository.findByUsername(username);
+
+        // java.util.Optional<GCUser> userOpt =
+        // gcUserRepository.findByUsername(username);
+        Optional<GCUser> userOpt = gcUserService.findByUsername(username);
         if (!userOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body("User not found.");
+                    .body("User not found.");
         }
         String role = userOpt.get().getRole();
-        
+
         // if ("ADMIN".equals(role)) {
-        //     return gazetteService.getGazettePdfResponse(id);
+        // return gazetteService.getGazettePdfResponse(id);
         // }
-        
+
         if ("CREATOR".equals(role)) {
             if ("1".equals(status)) {
                 // Creator can only view their own drafts
@@ -167,28 +158,24 @@ public class GazetteController {
                     return gazetteService.getGazettePdfResponse(id);
                 } else {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body("You do not have permission to access this gazette. This is not your draft.");
+                            .body("You do not have permission to access this gazette. This is not your draft.");
                 }
             }
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body("You do not have permission to accddgdess this gazette.");
+                    .body("You do not have permission to accddgdess this gazette.");
         }
-        
+
         if ("PUBLISHER".equals(role)) {
             if ("2".equals(status)) {
                 return gazetteService.getGazettePdfResponse(id);
             }
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body("You do not have permission to access this gazette. Only pending gazettes can be viewed by publishers.");
+                    .body("You do not have permission to access this gazette. Only pending gazettes can be viewed by publishers.");
         }
-        
+
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-            .body("You do not have permission to access this resource. Unknown user role.");
+                .body("You do not have permission to access this resource. Unknown user role.");
     }
-
-
-
-
 
     @GetMapping("/display")
     public String showGazettePage(Model model) {
@@ -196,34 +183,27 @@ public class GazetteController {
         model.addAttribute("years", years);
         return "gazette";
     }
-    
-
 
     @GetMapping("/years/{year}/months")
     @ResponseBody
     public List<String> getMonthsByYear(@PathVariable Integer year) {
-        List<Integer> monthNumbers =  gazetteService.getAvailableMonths(year); 
+        List<Integer> monthNumbers = gazetteService.getAvailableMonths(year);
         return monthNumbers.stream()
-        .map(month -> Month.of(month).getDisplayName(TextStyle.FULL, Locale.ENGLISH))
-        .collect(Collectors.toList());
+                .map(month -> Month.of(month).getDisplayName(TextStyle.FULL, Locale.ENGLISH))
+                .collect(Collectors.toList());
     }
-
-
 
     @GetMapping("/years/{year}/months/{month}/dates")
     @ResponseBody
     public List<Integer> getDatesByYearAndMonth(@PathVariable Integer year, @PathVariable Integer month) {
         return gazetteService.getAvailableDates(year, month); // Should return List<Integer>
     }
-    
-
 
     @GetMapping("/years/{year}/months/{month}/dates/{date}")
     @ResponseBody
-    public List<Gazette> getGazettesByDate(@PathVariable Integer year, @PathVariable Integer month, @PathVariable Integer date ) {
-            return gazetteService.getGazettesByDate(year, month, date);
+    public List<Gazette> getGazettesByDate(@PathVariable Integer year, @PathVariable Integer month,
+            @PathVariable Integer date) {
+        return gazetteService.getGazettesByDate(year, month, date);
     }
-    
-
 
 }

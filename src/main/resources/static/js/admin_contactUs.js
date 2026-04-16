@@ -20,7 +20,7 @@ function toggleDropdown(button) {
 
 
 // Open Add Creator Modal
- function openModal() {
+function openModal() {
   document.getElementById("creatorModal").style.display = "block";
   document.getElementById("modalTitle").innerText = "Add New Creator";
 }
@@ -30,16 +30,16 @@ function closeAddModal() {
   document.getElementById("creatorModal").style.display = "none";
   // document.getElementById("modalTitle").innerText = "Add New Creator";
 }
-  // ADD CREATOR SUBMIT
-  let formDataJson = {};
-  const form = document.getElementById("contactForm");
+// ADD CREATOR SUBMIT
+let formDataJson = {};
+const form = document.getElementById("contactForm");
 //   const modal_content = document.getElementById("modal-content");
 //   const responseDiv = document.getElementById('responseMessage');
-  
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-  
-   
+
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+
   const formData = new FormData(form);
   formDataJson = {
     contactTable: formData.get("contactList")?.trim(),
@@ -87,7 +87,7 @@ function closeAddModal() {
     return;
   }
 
-  if ( formDataJson.mobile.length >= 12) {
+  if (formDataJson.mobile.length >= 12) {
     Swal.fire({
       icon: 'warning',
       title: 'Invalid mobile number',
@@ -107,7 +107,7 @@ function closeAddModal() {
 
 
 
-   // Show confirmation dialog
+  // Show confirmation dialog
   Swal.fire({
     title: 'Are you sure?',
     text: "Do you want to save this contact?",
@@ -122,7 +122,7 @@ function closeAddModal() {
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
         const res = await fetch("/contact/save", {
           method: "POST",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
             [csrfHeader]: csrfToken
           },
@@ -191,45 +191,45 @@ function openEditModal(element) {
 
 
 
- // Edit contact submit
- let editFormDataJson = {};
- const edit_form = document.getElementById("edit-form");
+// Edit contact submit
+let editFormDataJson = {};
+const edit_form = document.getElementById("edit-form");
 //   const modal_content = document.getElementById("modal-content");
 //   const responseDiv = document.getElementById('responseMessage');
- 
+
 edit_form.addEventListener("submit", function (e) {
-   e.preventDefault();
-   const contactId = this.getAttribute('data-contact-id');
-  
- const formData = new FormData(edit_form);
- editFormDataJson = {
-  contactId: contactId,
-   name: formData.get("editName")?.trim(),
-   designation: formData.get("editDesignation")?.trim(),
+  e.preventDefault();
+  const contactId = this.getAttribute('data-contact-id');
+
+  const formData = new FormData(edit_form);
+  editFormDataJson = {
+    contactId: contactId,
+    name: formData.get("editName")?.trim(),
+    designation: formData.get("editDesignation")?.trim(),
     stdCode: formData.get("editStd")?.trim(),
     phno: formData.get("editPhone")?.trim(),
     mobile: formData.get("editMobile")?.trim()
- };
+  };
 
- if (!editFormDataJson.name || editFormDataJson.name.length >= 30) {
-   Swal.fire({
-     icon: 'warning',
-     title: 'Invalid Name',
-     text: 'Username maximum character limit is 30'
-   });
-   return;
- }
+  if (!editFormDataJson.name || editFormDataJson.name.length >= 30) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Invalid Name',
+      text: 'Username maximum character limit is 30'
+    });
+    return;
+  }
 
- if (!editFormDataJson.designation || editFormDataJson.designation.length >= 30) {
-   Swal.fire({
-     icon: 'warning',
-     title: 'Invalid Designation',
-     text: 'Designation maximum character limit is 30'
-   });
-   return;
- }
+  if (!editFormDataJson.designation || editFormDataJson.designation.length >= 30) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Invalid Designation',
+      text: 'Designation maximum character limit is 30'
+    });
+    return;
+  }
 
- if (!editFormDataJson.stdCode || editFormDataJson.stdCode.length >= 8) {
+  if (!editFormDataJson.stdCode || editFormDataJson.stdCode.length >= 8) {
     Swal.fire({
       icon: 'warning',
       title: 'Invalid STD code',
@@ -238,17 +238,17 @@ edit_form.addEventListener("submit", function (e) {
     return;
   }
 
- if (!editFormDataJson.phno || editFormDataJson.phno.length >= 13) {
-   Swal.fire({
-     icon: 'warning',
-     title: 'Invalid Number',
-     text: 'Phone number maximum character limit is 12'
-   });
-   return;
- }
+  if (!editFormDataJson.phno || editFormDataJson.phno.length >= 13) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Invalid Number',
+      text: 'Phone number maximum character limit is 12'
+    });
+    return;
+  }
 
 
- if ( editFormDataJson.mobile.length >= 12) {
+  if (editFormDataJson.mobile.length >= 12) {
     Swal.fire({
       icon: 'warning',
       title: 'Invalid mobile number',
@@ -257,54 +257,54 @@ edit_form.addEventListener("submit", function (e) {
     return;
   }
   // Show confirmation dialog
- Swal.fire({
-   title: 'Are you sure?',
-   text: "Do you want to edit this contact?",
-   icon: 'question',
-   showCancelButton: true,
-   confirmButtonText: 'Yes, Save',
-   cancelButtonText: 'Cancel'
- }).then(async (result) => {
-   if (result.isConfirmed) {
-     try {
-       const csrfToken = document.querySelector('input[name="_csrf"]')?.value || '';
-       const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
-       const res = await fetch("/contact/edit", {
-         method: "POST",
-         headers: { 
-           "Content-Type": "application/json",
-           [csrfHeader]: csrfToken
-         },
-         body: JSON.stringify(editFormDataJson)
-       });
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "Do you want to edit this contact?",
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, Save',
+    cancelButtonText: 'Cancel'
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const csrfToken = document.querySelector('input[name="_csrf"]')?.value || '';
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
+        const res = await fetch("/contact/edit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            [csrfHeader]: csrfToken
+          },
+          body: JSON.stringify(editFormDataJson)
+        });
 
-       const message = await res.text();
+        const message = await res.text();
 
-       if (res.ok) {
-         Swal.fire({
-           icon: 'success',
-           title: 'Success!',
-           text: message
-         }).then(() => {
-           form.reset();
-           location.reload();
-         });
-       } else {
-         Swal.fire({
-           icon: 'error',
-           title: 'Failed!',
-           text: message
-         });
-       }
-     } catch (err) {
-       Swal.fire({
-         icon: 'error',
-         title: 'Oops...',
-         text: 'Request failed!'
-       });
-     }
-   }
- });
+        if (res.ok) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: message
+          }).then(() => {
+            form.reset();
+            location.reload();
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Failed!',
+            text: message
+          });
+        }
+      } catch (err) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Request failed!'
+        });
+      }
+    }
+  });
 });
 
 
@@ -328,13 +328,13 @@ function confirmDelete(el) {
   }).then((result) => {
     if (result.isConfirmed) {
 
-       if (!deleteId || !/^\d+$/.test(String(deleteId))) {
-            console.error("Invalid delete ID:", deleteId);
-            return;
-        }
+      if (!deleteId || !/^\d+$/.test(String(deleteId))) {
+        console.error("Invalid delete ID:", deleteId);
+        return;
+      }
 
-        const numericId = parseInt(deleteId, 10); 
-        const redirectUrl = "/contact/delete/" + numericId;
+      const numericId = parseInt(deleteId, 10);
+      const redirectUrl = "/contact/delete/" + numericId;
 
       // Show tick animation
       Swal.fire({

@@ -1,134 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tender Display - NIC</title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
-        main{
+        main {
             margin: 40px auto;
-            width: 90%; 
-            padding: 20px; 
-            background-color: #ffffff; 
-            border-radius: 10px; box-shadow: 
-            0 4px 12px rgba(0,0,0,0.1); 
+            width: 90%;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
 
         .accessibility-section {
-    max-width: 90%;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    color: #002855;
-    line-height: 1.6;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-}
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: #002855;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
 
-.accessibility-box h2 {
-    font-size: 28px;
-    border-bottom: 3px solid #002855;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    text-align: center;
-}
+        .accessibility-box h2 {
+            font-size: 28px;
+            border-bottom: 3px solid #002855;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
 
-.browser-section {
-    margin-bottom: 30px;
-    padding: 20px;
-    background: #ffffff;
-    border-left: 5px solid #005eb8;
-    border-radius: 5px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
+        .browser-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #ffffff;
+            border-left: 5px solid #005eb8;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
 
-.browser-section h3 {
-    font-size: 22px;
-    margin-bottom: 10px;
-    color: #004a8f;
-}
+        .browser-section h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #004a8f;
+        }
 
-.browser-section ul {
-    list-style-type: disc;
-    padding-left: 20px;
-    margin-bottom: 10px;
-}
+        .browser-section ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-bottom: 10px;
+        }
 
-.browser-section ul li {
-    margin-bottom: 8px;
-}
+        .browser-section ul li {
+            margin-bottom: 8px;
+        }
 
-img {
-    display: block;
-    max-width: 100%;
-    height: auto;
-    margin: 10px auto 30px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    align-items: center;
-}
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 10px auto 30px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            align-items: center;
+        }
 
-kbd {
-    background: #f2f2f2;
-    border: 1px solid #ccc;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: monospace;
-}
-
-</style>
+        kbd {
+            background: #f2f2f2;
+            border: 1px solid #ccc;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
 </head>
+
 <body>
     <div th:replace="~{/index :: header}"></div>
 
     <main class="accessibility-section container">
-    <section class="accessibility-box">
-        <h2>Accessibility Options in Browsers</h2>
+        <section class="accessibility-box">
+            <h2>Accessibility Options in Browsers</h2>
 
-        <div class="browser-section">
-            <h3>Microsoft Internet Explorer for Windows</h3>
-            <ul>
-                <li><strong>Tools → Internet Options → General Tab → Accessibility</strong></li>
-                <li>Check: 'Ignore font sizes specified on Web pages'</li>
-                <li>Check: 'Ignore colours specified on web pages'</li>
-                <li>View → Text Size → Select desired size</li>
-            </ul>
-        </div>
+            <div class="browser-section">
+                <h3>Microsoft Internet Explorer for Windows</h3>
+                <ul>
+                    <li><strong>Tools → Internet Options → General Tab → Accessibility</strong></li>
+                    <li>Check: 'Ignore font sizes specified on Web pages'</li>
+                    <li>Check: 'Ignore colours specified on web pages'</li>
+                    <li>View → Text Size → Select desired size</li>
+                </ul>
+            </div>
 
-        <div class="browser-section">
-            <h3>Making Text Larger in Mozilla Firefox</h3>
-            <ul>
-                <li>View → Text Size → Choose your size (or use <kbd>Ctrl</kbd> + <kbd>+</kbd>/<kbd>-</kbd>/<kbd>0</kbd>)</li>
-                <li>To set a minimum font size: Tools → Options → Content → Fonts & Colours → Advanced</li>
-            </ul>
-            <img src="/images/firefox-accessibility.jpg" alt="Text size in Firefox">
-            <img src="/images/firefox-accessibility1.jpg" alt="Minimum font size in Firefox">
-        </div>
+            <div class="browser-section">
+                <h3>Making Text Larger in Mozilla Firefox</h3>
+                <ul>
+                    <li>View → Text Size → Choose your size (or use <kbd>Ctrl</kbd> +
+                        <kbd>+</kbd>/<kbd>-</kbd>/<kbd>0</kbd>)</li>
+                    <li>To set a minimum font size: Tools → Options → Content → Fonts & Colours → Advanced</li>
+                </ul>
+                <img src="/images/firefox-accessibility.jpg" alt="Text size in Firefox">
+                <img src="/images/firefox-accessibility1.jpg" alt="Minimum font size in Firefox">
+            </div>
 
-        <div class="browser-section">
-            <h3>Internet Explorer 7 and above</h3>
-            <ul>
-                <li>Use <kbd>Ctrl</kbd> + <kbd>+</kbd> or <kbd>-</kbd> for zoom</li>
-                <li>Page → Text Size → Choose size</li>
-                <li>To override fixed-size sites: Tools → Internet Options → Accessibility → Check 'Ignore font sizes'</li>
-            </ul>
-            <img src="/images/internet-explorer-accessibility.jpg" alt="Zoom in IE">
-            <img src="/images/internet-explorer-accessibility1.jpg" alt="Internet Options in IE">
-            <img src="/images/internet-explorer-accessibility2.jpg" alt="Ignore font sizes in IE">
-        </div>
+            <div class="browser-section">
+                <h3>Internet Explorer 7 and above</h3>
+                <ul>
+                    <li>Use <kbd>Ctrl</kbd> + <kbd>+</kbd> or <kbd>-</kbd> for zoom</li>
+                    <li>Page → Text Size → Choose size</li>
+                    <li>To override fixed-size sites: Tools → Internet Options → Accessibility → Check 'Ignore font
+                        sizes'</li>
+                </ul>
+                <img src="/images/internet-explorer-accessibility.jpg" alt="Zoom in IE">
+                <img src="/images/internet-explorer-accessibility1.jpg" alt="Internet Options in IE">
+                <img src="/images/internet-explorer-accessibility2.jpg" alt="Ignore font sizes in IE">
+            </div>
 
-        <div class="browser-section">
-            <h3>Google Chrome</h3>
-            <ul>
-                <li>Use <kbd>Ctrl</kbd> + <kbd>+</kbd> to zoom in</li>
-                <li><kbd>Ctrl</kbd> + <kbd>-</kbd> to zoom out</li>
-                <li><kbd>Ctrl</kbd> + <kbd>0</kbd> to reset to default size</li>
-            </ul>
-        </div>
-    </section>
-</main>
+            <div class="browser-section">
+                <h3>Google Chrome</h3>
+                <ul>
+                    <li>Use <kbd>Ctrl</kbd> + <kbd>+</kbd> to zoom in</li>
+                    <li><kbd>Ctrl</kbd> + <kbd>-</kbd> to zoom out</li>
+                    <li><kbd>Ctrl</kbd> + <kbd>0</kbd> to reset to default size</li>
+                </ul>
+            </div>
+        </section>
+    </main>
 
 
 
@@ -140,18 +144,19 @@ kbd {
 
 
         document.addEventListener('DOMContentLoaded', () => {
-        // Menu toggle functionality
-        const menuToggle = document.querySelector('.menu-toggle');
-        const nav = document.querySelector('nav ul');
-        
-        if (menuToggle) {
-            menuToggle.addEventListener('click', () => {
-                nav.classList.toggle('active');
-            });
-        }
-    
-    
-    });
+            // Menu toggle functionality
+            const menuToggle = document.querySelector('.menu-toggle');
+            const nav = document.querySelector('nav ul');
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', () => {
+                    nav.classList.toggle('active');
+                });
+            }
+
+
+        });
     </script>
 </body>
+
 </html>

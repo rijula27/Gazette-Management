@@ -201,11 +201,11 @@ function confirmDelete(el) {
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
-                    
+
                     $.ajax({
                         url: '/creator/tender_delete/' + deleteId,
                         type: 'GET',
-                        success: function(response) {
+                        success: function (response) {
                             Swal.fire({
                                 title: "Deleted!",
                                 text: response.message, // Show success message from server
@@ -216,7 +216,7 @@ function confirmDelete(el) {
                                 location.reload(); // Refresh after success
                             });
                         },
-                        error: function(xhr) {
+                        error: function (xhr) {
                             Swal.fire({
                                 title: "Error!",
                                 text: "Failed to delete the tender.",
@@ -224,7 +224,7 @@ function confirmDelete(el) {
                             });
                         }
                     });
-                
+
                 }
             });
         }
@@ -237,13 +237,13 @@ function confirmDelete(el) {
 function toggleDropdown(button) {
     const menu = button.nextElementSibling;
     const isVisible = menu.style.display === 'block';
-    
+
     document.querySelectorAll('.dropdown-menu').forEach(drop => drop.style.display = 'none');
 
     menu.style.display = isVisible ? 'none' : 'block';
 }
 
-window.onclick = function(event) {
+window.onclick = function (event) {
     if (!event.target.matches('.dropdown-toggle')) {
         document.querySelectorAll('.dropdown-menu').forEach(drop => drop.style.display = 'none');
     }

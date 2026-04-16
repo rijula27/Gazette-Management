@@ -13,6 +13,7 @@ public class SessionTimeoutListener implements HttpSessionListener {
 
     /**
      * Called when a session is destroyed (timeout or explicit logout)
+     * 
      * @param se the session event
      */
     @Override
@@ -26,6 +27,7 @@ public class SessionTimeoutListener implements HttpSessionListener {
 
     /**
      * Called when a session is created
+     * 
      * @param se the session event
      */
     @Override

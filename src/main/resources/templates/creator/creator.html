@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Creator: Printing and Stationery Department - Government of Meghalaya Dashboard</title>
@@ -13,71 +14,73 @@
     <script src="/js/sweetalert2.all.min.js"></script>
 
 </head>
+
 <body>
 
-     <div th:replace="~{creator/creator_template :: navbar}"></div>
+    <div th:replace="~{creator/creator_template :: navbar}"></div>
 
 
-<div class="wrapper">
+    <div class="wrapper">
 
-<!-- Card Content -->
-<div th:replace="~{creator/creator_template :: sidebar}"></div>
+        <!-- Card Content -->
+        <div th:replace="~{creator/creator_template :: sidebar}"></div>
 
-<main class="content" id="content">
+        <main class="content" id="content">
 
-<div class="card">
-    <div class="card-header">Upload Gazette</div>
+            <div class="card">
+                <div class="card-header">Upload Gazette</div>
 
-    <!-- MY ACTUAL FORM -->
-    <form th:action="@{/gazette/upload}" method="post" enctype="multipart/form-data" id="gazette-form">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-        <div class="card-body">
-            <!-- Date Picker -->
-            <div class="form-group">
-                <label for="date">Select Date</label>
-                <input type="date" class="form-control" id="date" name="date" required>
-            </div>
+                <!-- MY ACTUAL FORM -->
+                <form th:action="@{/gazette/upload}" method="post" enctype="multipart/form-data" id="gazette-form">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <div class="card-body">
+                        <!-- Date Picker -->
+                        <div class="form-group">
+                            <label for="date">Select Date</label>
+                            <input type="date" class="form-control" id="date" name="date" required>
+                        </div>
 
-            <!-- Gazette Part -->
-            <div class="form-group">
-                <label for="gazettePart">Select Gazette Part</label>
-                <select class="form-control" id="gazettePart" name="gazettePart" required>
-                    <option value="" disabled selected>Select Part</option>
-                    <option value="I">I</option>
-                    <option value="IIA">IIA</option>
-                    <option value="IIB">IIB</option>
-                    <option value="III">III</option>
-                    <option value="IV">IV</option>
-                    <option value="V">V</option>
-                    <option value="VI">VI</option>
-                    <option value="VII">VII</option>
-                    <option value="VIII">VIII</option>
-                    <option value="IX">IX</option>
-                    <option value="X">X</option>
-                </select>
-            </div>
+                        <!-- Gazette Part -->
+                        <div class="form-group">
+                            <label for="gazettePart">Select Gazette Part</label>
+                            <select class="form-control" id="gazettePart" name="gazettePart" required>
+                                <option value="" disabled selected>Select Part</option>
+                                <option value="I">I</option>
+                                <option value="IIA">IIA</option>
+                                <option value="IIB">IIB</option>
+                                <option value="III">III</option>
+                                <option value="IV">IV</option>
+                                <option value="V">V</option>
+                                <option value="VI">VI</option>
+                                <option value="VII">VII</option>
+                                <option value="VIII">VIII</option>
+                                <option value="IX">IX</option>
+                                <option value="X">X</option>
+                            </select>
+                        </div>
 
-            <!-- File Input -->
-            <div class="form-group">
-                <label>Upload PDF</label>
-                <div class="d-flex align-items-center justify-content-between">
-                    <span id="fileLabel" class="file-label-display">No file selected</span>
-                    <button type="button" class="custom-file-btn" id="selectFileBtn">Browse</button>
-                    <input type="file" id="pdfFile" name="pdfFile" accept="application/pdf" class="custom-file-input" required>
-                </div>
-            </div>
-            
-            
-        </div>
+                        <!-- File Input -->
+                        <div class="form-group">
+                            <label>Upload PDF</label>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span id="fileLabel" class="file-label-display">No file selected</span>
+                                <button type="button" class="custom-file-btn" id="selectFileBtn">Browse</button>
+                                <input type="file" id="pdfFile" name="pdfFile" accept="application/pdf"
+                                    class="custom-file-input" required>
+                            </div>
+                        </div>
 
-        <div class="card-footer">
-            <button type="button" class="btn btn-primary" id="saveButton">Submit</button>
-        </div>
-    </form> 
 
-    
-</main>
-</div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-primary" id="saveButton">Submit</button>
+                    </div>
+                </form>
+
+
+        </main>
+    </div>
 
 
 
@@ -89,4 +92,5 @@
 
 
 </body>
+
 </html>

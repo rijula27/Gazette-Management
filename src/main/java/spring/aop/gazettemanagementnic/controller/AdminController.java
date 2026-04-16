@@ -43,8 +43,6 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/admin")
 public class AdminController {
 
-
-
     @Autowired
     private GCUserService gcUserService;
 
@@ -54,14 +52,11 @@ public class AdminController {
     @Autowired
     private TenderService tenderService;
 
-    @Autowired
-    private GCUserRepository gcUserRepository;
-
-
+    // @Autowired
+    // private GCUserRepository gcUserRepository;
 
     @Autowired
     private PdfService pdfService;
-
 
     @GetMapping("/admin_display")
     public String displayGazette_Admin(Model model, HttpSession session) {
@@ -70,42 +65,38 @@ public class AdminController {
         if (username != null) {
             List<Gazette> gazettes = gazetteService.displayGazette_Admin();
             model.addAttribute("gazettes", gazettes);
-            return "admin/admin";   
-        }else{
+            return "admin/admin";
+        } else {
             return "redirect:/login"; // redirect to login if user is not logged in
         }
-        
-    }
 
+    }
 
     @GetMapping("/admin_creator_list")
     public String displayCreator_List(Model model, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
         if (username != null) {
-            List<GCUser> gcUsers = gcUserService.displayUser_List();  
+            List<GCUser> gcUsers = gcUserService.displayUser_List();
             model.addAttribute("gcUsers", gcUsers);
             return "admin/admin_creator_list";
-        }else{
+        } else {
             return "redirect:/login"; // redirect to login if user is not logged in
         }
     }
 
-
-
     @PostMapping("/creator_upload")
     @ResponseBody
     public ResponseEntity<String> creatorUpload(@RequestBody CreatorRequestDTO requestDTO,
-                                                HttpSession session) {
+            HttpSession session) {
         String adminName = (String) session.getAttribute("loggedInUser");
-
-
 
         try {
             if (adminName == null || adminName.isEmpty()) {
                 return ResponseEntity.status(401).body("Session expired or not logged in.");
             }
 
-            Optional<GCUser> optionalAdmin = gcUserRepository.findByUsername(adminName);
+            // Optional<GCUser> optionalAdmin = gcUserRepository.findByUsername(adminName);
+            Optional<GCUser> optionalAdmin = gcUserService.findByUsername(adminName);
             if (!optionalAdmin.isPresent()) {
                 return ResponseEntity.status(404).body("Admin user not found.");
             }
@@ -113,7 +104,7 @@ public class AdminController {
             String existingAdminPassword = optionalAdmin.get().getPassword();
             String rawAdminPassword = requestDTO.getAdminPassword();
 
-            if (!gcUserService.matches( rawAdminPassword, existingAdminPassword)                                                                         ) {
+            if (!gcUserService.matches(rawAdminPassword, existingAdminPassword)) {
                 return ResponseEntity.badRequest().body("Wrong Admin password");
             }
 
@@ -126,11 +117,10 @@ public class AdminController {
             }
 
             String resultMessage = gcUserService.saveUser(
-                requestDTO.getUserName(),
-                requestDTO.getUserPassword(),
-                adminName,
-                LocalDate.now()
-            );
+                    requestDTO.getUserName(),
+                    requestDTO.getUserPassword(),
+                    adminName,
+                    LocalDate.now());
 
             return ResponseEntity.ok(resultMessage);
 
@@ -143,19 +133,6 @@ public class AdminController {
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     @GetMapping("/admin_delete/{id}")
     public String deleteAdminGazette(@PathVariable("id") Long id, Model model, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
@@ -163,44 +140,38 @@ public class AdminController {
             gazetteService.deleteGazette(id);
             model.addAttribute("successMessage", "Gazette deleted successfully!");
             return "redirect:/admin/admin_display";
-        }else{
+        } else {
             return "redirect:/login"; // redirect to login if user is not logged in
 
         }
     }
 
-
-
     @GetMapping("/delete_creator/{id}")
-    public String deleteCreator(@PathVariable("id") Long id, Model model, HttpSession session){
+    public String deleteCreator(@PathVariable("id") Long id, Model model, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
         if (username != null) {
             gcUserService.deleteUser(id);
             model.addAttribute("successMessage", "User deleted successfully!");
             return "redirect:/admin/admin_creator_list";
-        }else{
+        } else {
             return "redirect:/login"; // redirect to login if user is not logged in
 
         }
 
     }
 
-
-
-
-
     @PostMapping("/edit_creator")
     @ResponseBody
     public ResponseEntity<String> edit_creator(@RequestBody EditCreatorRequestDTO editRequestDTO,
-    HttpSession session) {
+            HttpSession session) {
         String adminName = (String) session.getAttribute("loggedInUser");
         try {
             if (adminName == null || adminName.isEmpty()) {
                 return ResponseEntity.status(401).body("Session expired or not logged in.");
             }
 
-
-            Optional<GCUser> optionalAdmin = gcUserRepository.findByUsername(adminName);
+            // Optional<GCUser> optionalAdmin = gcUserRepository.findByUsername(adminName);
+            Optional<GCUser> optionalAdmin = gcUserService.findByUsername(adminName);
             if (!optionalAdmin.isPresent()) {
                 return ResponseEntity.status(404).body("Admin user not found.");
             }
@@ -208,7 +179,7 @@ public class AdminController {
             String existingAdminPassword = optionalAdmin.get().getPassword();
             String rawAdminPassword = editRequestDTO.getAdminPassword();
 
-            if (!gcUserService.matches( rawAdminPassword, existingAdminPassword)                                                                         ) {
+            if (!gcUserService.matches(rawAdminPassword, existingAdminPassword)) {
                 return ResponseEntity.badRequest().body("Wrong Admin password");
             }
 
@@ -216,66 +187,53 @@ public class AdminController {
                 return ResponseEntity.badRequest().body("Password and Confirm Password don't match.");
             }
 
+            if (editRequestDTO.getNewUserPassword().equals(editRequestDTO.getUserConfirmPassword())) {
 
-
-        
-        
-            if (editRequestDTO.getNewUserPassword().equals(editRequestDTO.getUserConfirmPassword())){ 
-            
                 ResponseEntity<String> message = gcUserService.editCreator(
-                    editRequestDTO.getUserName(),
-                    editRequestDTO.getNewUserName(),
-                    editRequestDTO.getExistingUserPassword(),
-                    editRequestDTO.getNewUserPassword(),
-                    editRequestDTO.getUserConfirmPassword(),
-                    LocalDate.now()
-                    );
-            
+                        editRequestDTO.getUserName(),
+                        editRequestDTO.getNewUserName(),
+                        editRequestDTO.getExistingUserPassword(),
+                        editRequestDTO.getNewUserPassword(),
+                        editRequestDTO.getUserConfirmPassword(),
+                        LocalDate.now());
+
                 return (message);
             } else {
-            
+
                 return ResponseEntity.badRequest().body(" Password and Confirm Password don't match");
             }
-        
+
         } catch (Exception e) {
             log.error("Error occurred while editing creator: {}", e.getMessage());
             return ResponseEntity.status(500).body("Internal Server Error");
         }
     }
 
-
-
-
-
-
     @GetMapping("/admin_publisher_list")
     public String displayPublisher_List(Model model, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
         if (username != null) {
-            List<GCUser> gcUsers = gcUserService.displayPublisher_List();  
+            List<GCUser> gcUsers = gcUserService.displayPublisher_List();
             model.addAttribute("gcUsers", gcUsers);
             return "admin/admin_publisher_list";
-        }else{
+        } else {
             return "redirect:/login"; // redirect to login if user is not logged in
         }
     }
 
-
-
     @PostMapping("/publisher_upload")
     @ResponseBody
     public ResponseEntity<String> publisherUpload(@RequestBody CreatorRequestDTO requestDTO,
-                                                 HttpSession session) {
+            HttpSession session) {
         String adminName = (String) session.getAttribute("loggedInUser");
-
-
 
         try {
             if (adminName == null || adminName.isEmpty()) {
                 return ResponseEntity.status(401).body("Session expired or not logged in.");
             }
 
-            Optional<GCUser> optionalAdmin = gcUserRepository.findByUsername(adminName);
+            // Optional<GCUser> optionalAdmin = gcUserRepository.findByUsername(adminName);
+            Optional<GCUser> optionalAdmin = gcUserService.findByUsername(adminName);
             if (!optionalAdmin.isPresent()) {
                 return ResponseEntity.status(404).body("Admin user not found.");
             }
@@ -283,7 +241,7 @@ public class AdminController {
             String existingAdminPassword = optionalAdmin.get().getPassword();
             String rawAdminPassword = requestDTO.getAdminPassword();
 
-            if (!gcUserService.matches( rawAdminPassword, existingAdminPassword)                                                                         ) {
+            if (!gcUserService.matches(rawAdminPassword, existingAdminPassword)) {
                 return ResponseEntity.badRequest().body("Wrong Admin password");
             }
 
@@ -296,11 +254,10 @@ public class AdminController {
             }
 
             String resultMessage = gcUserService.savePublisher(
-                requestDTO.getUserName(),
-                requestDTO.getUserPassword(),
-                adminName,
-                LocalDate.now()
-            );
+                    requestDTO.getUserName(),
+                    requestDTO.getUserPassword(),
+                    adminName,
+                    LocalDate.now());
 
             return ResponseEntity.ok(resultMessage);
 
@@ -313,27 +270,24 @@ public class AdminController {
 
     }
 
-
     @GetMapping("/delete_publisher/{id}")
-    public String deletePublisher(@PathVariable("id") Long id, Model model, HttpSession session){
+    public String deletePublisher(@PathVariable("id") Long id, Model model, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
         if (username != null) {
             gcUserService.deleteUser(id);
             model.addAttribute("successMessage", "User deleted successfully!");
             return "redirect:/admin/admin_publisher_list";
-        }else{
+        } else {
             return "redirect:/login"; // redirect to login if user is not logged in
 
         }
 
     }
 
-
-
     @PostMapping("/edit_publisher")
     @ResponseBody
     public ResponseEntity<String> edit_publisher(@RequestBody EditCreatorRequestDTO editRequestDTO,
-    HttpSession session) {
+            HttpSession session) {
         System.out.println("entere d d jsdioklsd");
         String adminName = (String) session.getAttribute("loggedInUser");
         try {
@@ -341,8 +295,8 @@ public class AdminController {
                 return ResponseEntity.status(401).body("Session expired or not logged in.");
             }
 
-
-            Optional<GCUser> optionalAdmin = gcUserRepository.findByUsername(adminName);
+            // Optional<GCUser> optionalAdmin = gcUserRepository.findByUsername(adminName);
+            Optional<GCUser> optionalAdmin = gcUserService.findByUsername(adminName);
             if (!optionalAdmin.isPresent()) {
                 return ResponseEntity.status(404).body("Admin user not found.");
             }
@@ -350,7 +304,7 @@ public class AdminController {
             String existingAdminPassword = optionalAdmin.get().getPassword();
             String rawAdminPassword = editRequestDTO.getAdminPassword();
 
-            if (!gcUserService.matches( rawAdminPassword, existingAdminPassword)                                                                         ) {
+            if (!gcUserService.matches(rawAdminPassword, existingAdminPassword)) {
                 return ResponseEntity.badRequest().body("Wrong Admin password");
             }
 
@@ -358,74 +312,56 @@ public class AdminController {
                 return ResponseEntity.badRequest().body("Password and Confirm Password don't match.");
             }
 
+            if (editRequestDTO.getNewUserPassword().equals(editRequestDTO.getUserConfirmPassword())) {
 
-
-        
-        
-            if (editRequestDTO.getNewUserPassword().equals(editRequestDTO.getUserConfirmPassword())){ 
-            
                 ResponseEntity<String> message = gcUserService.editCreator(
-                    editRequestDTO.getUserName(),
-                    editRequestDTO.getNewUserName(),
-                    editRequestDTO.getExistingUserPassword(),
-                    editRequestDTO.getNewUserPassword(),
-                    editRequestDTO.getUserConfirmPassword(),
-                    LocalDate.now()
-                    );
-            
+                        editRequestDTO.getUserName(),
+                        editRequestDTO.getNewUserName(),
+                        editRequestDTO.getExistingUserPassword(),
+                        editRequestDTO.getNewUserPassword(),
+                        editRequestDTO.getUserConfirmPassword(),
+                        LocalDate.now());
+
                 return (message);
             } else {
-            
+
                 return ResponseEntity.badRequest().body(" Password and Confirm Password don't match");
             }
-        
-        }  catch (Exception e) {
+
+        } catch (Exception e) {
             log.error("Error occurred while editing Publisher: {}", e.getMessage());
             return ResponseEntity.status(500).body("Internal Server Error");
         }
     }
 
-
-    
-
-
-
-
     @GetMapping("/admin_tender_display")
     public String display_tender_Admin(Model model, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
-        if(username != null){
+        if (username != null) {
             List<Tender> tenders = tenderService.display_Tender_Admin();
             model.addAttribute("tenders", tenders);
             return "admin/admin_tender";
         } else {
-        return "redirect:/login"; // redirect to login if user is not logged in
+            return "redirect:/login"; // redirect to login if user is not logged in
         }
     }
 
-
-
-
-
-
-
     @PostMapping("/uploadPdf")
     public String uploadPdf(@RequestParam("title") String title,
-                            @RequestParam("pdfFile") MultipartFile file,
-                            HttpSession session,
-                            RedirectAttributes redirectAttributes){
-
+            @RequestParam("pdfFile") MultipartFile file,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
 
         String username = (String) session.getAttribute("loggedInUser");
 
-        if(username == null){
+        if (username == null) {
             return "redirect:/login";
         }
 
-        try{
+        try {
             final long MAX_SIZE = 20 * 1024 * 1024;
 
-            if (file.getSize() > MAX_SIZE){
+            if (file.getSize() > MAX_SIZE) {
                 redirectAttributes.addFlashAttribute("error", "File size exceeds 20MB limit.");
                 return "redirect:/upload_pdf";
             }
@@ -434,31 +370,27 @@ public class AdminController {
 
             pdfService.savePdf(title, file, date, username);
 
-            redirectAttributes.addAttribute("success","Pdf saved successfully!");
+            redirectAttributes.addAttribute("success", "Pdf saved successfully!");
 
             return "redirect:/upload_pdf";
-        }catch (IOException e){
-            redirectAttributes.addAttribute("error", "Error uploading file: " + e.getMessage());
-            return "redirect:/upload_pdf"; 
+        } catch (IOException e) {
+            redirectAttributes.addAttribute("error", "Error uploading file ");
+            return "redirect:/upload_pdf";
         }
-        
+
     }
-    
 
     @GetMapping("/admin_pdf_display")
     public String display_pdf_Admin(Model model, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
-        if(username != null){
+        if (username != null) {
             List<Pdf> pdfs = pdfService.display_Pdf_Admin();
             model.addAttribute("pdfs", pdfs);
             return "admin/admin_pdf";
         } else {
-        return "redirect:/login"; // redirect to login if user is not logged in
+            return "redirect:/login"; // redirect to login if user is not logged in
         }
     }
-
-
-
 
     @GetMapping("/pdf_delete/{id}")
     @ResponseBody
@@ -478,21 +410,18 @@ public class AdminController {
         }
     }
 
-
-
-
     @PostMapping("/edit_admin")
     @ResponseBody
     public ResponseEntity<String> edit_admin(@RequestBody EditCreatorRequestDTO editRequestDTO,
-    HttpSession session) {
+            HttpSession session) {
         String adminName = (String) session.getAttribute("loggedInUser");
         try {
             if (adminName == null || adminName.isEmpty()) {
                 return ResponseEntity.status(401).body("Session expired or not logged in.");
             }
 
-
-            Optional<GCUser> optionalAdmin = gcUserRepository.findByUsername(adminName);
+            // Optional<GCUser> optionalAdmin = gcUserRepository.findByUsername(adminName);
+            Optional<GCUser> optionalAdmin = gcUserService.findByUsername(adminName);
             if (!optionalAdmin.isPresent()) {
                 return ResponseEntity.status(404).body("Admin user not found.");
             }
@@ -500,7 +429,7 @@ public class AdminController {
             String existingAdminPassword = optionalAdmin.get().getPassword();
             String rawAdminPassword = editRequestDTO.getAdminPassword();
 
-            if (!gcUserService.matches( rawAdminPassword, existingAdminPassword)                                                                         ) {
+            if (!gcUserService.matches(rawAdminPassword, existingAdminPassword)) {
                 return ResponseEntity.badRequest().body("Wrong Admin password");
             }
 
@@ -508,33 +437,26 @@ public class AdminController {
                 return ResponseEntity.badRequest().body("Password and Confirm Password don't match.");
             }
 
+            if (editRequestDTO.getNewUserPassword().equals(editRequestDTO.getUserConfirmPassword())) {
 
-
-        
-        
-            if (editRequestDTO.getNewUserPassword().equals(editRequestDTO.getUserConfirmPassword())){ 
-            
                 ResponseEntity<String> message = gcUserService.editCreator(
-                    editRequestDTO.getUserName(),
-                    editRequestDTO.getNewUserName(),
-                    editRequestDTO.getExistingUserPassword(),
-                    editRequestDTO.getNewUserPassword(),
-                    editRequestDTO.getUserConfirmPassword(),
-                    LocalDate.now()
-                    );
-            
+                        editRequestDTO.getUserName(),
+                        editRequestDTO.getNewUserName(),
+                        editRequestDTO.getExistingUserPassword(),
+                        editRequestDTO.getNewUserPassword(),
+                        editRequestDTO.getUserConfirmPassword(),
+                        LocalDate.now());
+
                 return (message);
             } else {
-            
+
                 return ResponseEntity.badRequest().body(" Password and Confirm Password don't match");
             }
-        
+
         } catch (Exception e) {
             log.error("Error occurred while editing admin: {}", e.getMessage());
             return ResponseEntity.status(500).body("Internal Server Error");
         }
     }
-
-
 
 }

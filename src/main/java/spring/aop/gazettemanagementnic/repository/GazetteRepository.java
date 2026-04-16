@@ -1,7 +1,5 @@
 package spring.aop.gazettemanagementnic.repository;
 
-
-import org.checkerframework.checker.units.qual.g;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,36 +15,27 @@ public interface GazetteRepository extends JpaRepository<Gazette, Long> {
 
     Gazette findByFileName(String fileName);
 
-
-
     Gazette findByFileNameAndDate(String fileName, LocalDate date);
 
     Gazette findByDateAndPart(LocalDate currentDate, String part);
 
-
     List<Gazette> findAllByGcUser_Username(String username);
-
-
 
     List<Gazette> findAllByGcUser_UsernameAndStatus_State(String username, String state);
 
     List<Gazette> findAllByStatus_State(String state);
-    
-
-
 
     Optional<Gazette> findById(Long id);
 
-
-
-    // @Query("SELECT DISTINCT YEAR(g.date) FROM Gazette g ORDER BY YEAR(g.date) DESC")
+    // @Query("SELECT DISTINCT YEAR(g.date) FROM Gazette g ORDER BY YEAR(g.date)
+    // DESC")
     // List<Integer> findDistinctYears();
 
     @Query("SELECT DISTINCT YEAR(g.date) FROM Gazette g WHERE g.status.state = 'Published' ORDER BY YEAR(g.date) DESC")
     List<Integer> findDistinctYears();
 
-
-    // @Query("SELECT DISTINCT MONTH(g.date) FROM Gazette g WHERE YEAR(g.date) = :year ORDER BY MONTH(g.date)")
+    // @Query("SELECT DISTINCT MONTH(g.date) FROM Gazette g WHERE YEAR(g.date) =
+    // :year ORDER BY MONTH(g.date)")
     // List<Integer> findDistinctMonthsByYear(@Param("year") int year);
 
     @Query("SELECT DISTINCT MONTH(g.date) FROM Gazette g WHERE YEAR(g.date) = :year AND g.status.state = 'Published' ORDER BY MONTH(g.date)")
@@ -57,4 +46,3 @@ public interface GazetteRepository extends JpaRepository<Gazette, Long> {
 
     List<Gazette> findByDateAndStatus_State(LocalDate date, String string);
 }
-

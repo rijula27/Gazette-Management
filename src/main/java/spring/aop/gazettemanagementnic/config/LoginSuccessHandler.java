@@ -14,20 +14,18 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
 @Component
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private LoginLogRepository loginLogRepository;
 
-
-     public LoginSuccessHandler(LoginLogRepository loginLogRepository) {
+    public LoginSuccessHandler(LoginLogRepository loginLogRepository) {
         this.loginLogRepository = loginLogRepository;
     }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException {
+            Authentication authentication) throws IOException {
 
         String username = authentication.getName();
         String role = authentication.getAuthorities().stream()
@@ -60,45 +58,13 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             default -> "/index";
         };
 
-        List<String> allowedUrls = List.of("/creator","/publisher/publisher_display","/admin/admin_display","/index");
-        
-        if(!allowedUrls.contains(targetUrl)){
+        List<String> allowedUrls = List.of("/creator", "/publisher/publisher_display", "/admin/admin_display",
+                "/index");
+
+        if (!allowedUrls.contains(targetUrl)) {
             targetUrl = "/index";
         }
 
         response.sendRedirect(targetUrl);
     }
 }
-
-
-
-
-// public class LoginSuccessHandler implements AuthenticationSuccessHandler {
-
-
-//     @Override
-//     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-//                                         Authentication authentication) throws IOException{
-
-//         // Get the authenticated user's username
-//         String username = authentication.getName();
-
-//         // Store username in the session
-//         request.getSession().setAttribute("loggedInUser", username);
-
-
-//         // Determine the target URL based on the user's role
-//         String targetUrl = "/index"; // default fallback
-
-//         if (authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("CREATOR"))) {
-//             targetUrl = "/creator";
-            
-//         } else if (authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("PUBLISHER"))) {
-//             targetUrl = "/publisher/publisher_display";
-//         } else if (authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ADMIN"))) {
-//             targetUrl = "/admin/admin_display";
-//         }
-
-//         response.sendRedirect(targetUrl);
-//     }
-// }

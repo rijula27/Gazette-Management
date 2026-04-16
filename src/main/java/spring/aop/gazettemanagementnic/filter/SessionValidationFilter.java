@@ -38,26 +38,27 @@ public class SessionValidationFilter implements Filter {
         if (session != null) {
             // Check if user is logged in
             String loggedInUser = (String) session.getAttribute("loggedInUser");
-            
+
             if (loggedInUser != null) {
                 // User is logged in, check if session has timed out
                 Long loginTime = (Long) session.getAttribute("loginTime");
-                
+
                 if (loginTime != null) {
                     long currentTime = System.currentTimeMillis();
                     long elapsedTime = currentTime - loginTime;
 
                     if (elapsedTime > SESSION_TIMEOUT_MS) {
                         // Session has expired
-                        System.out.println("Session timeout detected for user: " + loggedInUser + " (elapsed: " + (elapsedTime / 1000) + " seconds)");
-                        
+                        System.out.println("Session timeout detected for user: " + loggedInUser + " (elapsed: "
+                                + (elapsedTime / 1000) + " seconds)");
+
                         // Clear authentication
                         SecurityContextHolder.clearContext();
                         session.removeAttribute("loggedInUser");
                         session.removeAttribute("userRole");
                         session.removeAttribute("loginTime");
                         session.invalidate();
-                        
+
                         // Redirect to login with session expired message
                         httpResponse.sendRedirect(httpRequest.getContextPath() + "/login?session=expired");
                         return;

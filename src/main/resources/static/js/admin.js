@@ -186,44 +186,44 @@ $(document).ready(function () {
 var deleteId; // Store the gazette ID for deletion
 
 function confirmDelete(el) {
-deleteId = $(el).data('id');
+    deleteId = $(el).data('id');
 
-// Show SweetAlert confirmation dialog
-Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
-    showCancelButton: true,
-    allowOutsideClick: false,
-    allowEscapeKey: false,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Yes, delete it!",
-    cancelButtonText: "Cancel"
-}).then((result) => {
-    if (result.isConfirmed) {
-        if (!deleteId || !/^\d+$/.test(String(deleteId))) {
-            console.error("Invalid delete ID:", deleteId);
-            return;
-        }
-
-        const numericId = parseInt(deleteId, 10); 
-        const redirectUrl = "/admin/admin_delete/" + numericId;
-
-        // Show success animation with slight delay before redirection
-        Swal.fire({
-            title: "Deleted!",
-            text: "The gazette has been successfully removed.",
-            icon: "success",
-            timer: 1500,
-            showConfirmButton: false,
-            didClose: () => {
-                // Redirect after SweetAlert closes
-                window.location.replace(redirectUrl);
+    // Show SweetAlert confirmation dialog
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "Cancel"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (!deleteId || !/^\d+$/.test(String(deleteId))) {
+                console.error("Invalid delete ID:", deleteId);
+                return;
             }
-        });
-    }
-});
+
+            const numericId = parseInt(deleteId, 10);
+            const redirectUrl = "/admin/admin_delete/" + numericId;
+
+            // Show success animation with slight delay before redirection
+            Swal.fire({
+                title: "Deleted!",
+                text: "The gazette has been successfully removed.",
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: false,
+                didClose: () => {
+                    // Redirect after SweetAlert closes
+                    window.location.replace(redirectUrl);
+                }
+            });
+        }
+    });
 }
 
 
@@ -234,7 +234,7 @@ Swal.fire({
 function toggleDropdown(button) {
     const menu = button.nextElementSibling;
     const isVisible = menu.style.display === 'block';
-    
+
     // Close all dropdowns
     document.querySelectorAll('.dropdown-menu').forEach(drop => drop.style.display = 'none');
 
@@ -243,7 +243,7 @@ function toggleDropdown(button) {
 }
 
 // Optional: Close dropdowns if clicked outside
-window.onclick = function(event) {
+window.onclick = function (event) {
     if (!event.target.matches('.dropdown-toggle')) {
         document.querySelectorAll('.dropdown-menu').forEach(drop => drop.style.display = 'none');
     }

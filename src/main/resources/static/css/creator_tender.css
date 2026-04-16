@@ -22,7 +22,8 @@ label {
     color: #555;
 }
 
-.form-control, .form-select {
+.form-control,
+.form-select {
     border-radius: 5px;
     padding: 10px;
     font-size: 14px;
@@ -55,4 +56,4 @@ label {
     padding: 20px;
     padding-left: 0px;
     transition: all 0.3s ease;
-  }
+}

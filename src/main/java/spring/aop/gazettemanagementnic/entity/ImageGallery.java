@@ -13,15 +13,13 @@ import jakarta.persistence.ManyToOne;
 
 @Entity
 public class ImageGallery {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long imageId;
 
     @Column(nullable = false)
     private String imageTitle;
-
-    
 
     @Column(nullable = false)
     private String description;
@@ -37,10 +35,6 @@ public class ImageGallery {
     @JoinColumn(name = "gcuser_id", nullable = false)
     private GCUser gcUser;
 
-
-    
-
-
     /**
      * @return Long return the imageId
      */
@@ -54,7 +48,6 @@ public class ImageGallery {
     public void setImageId(Long imageId) {
         this.imageId = imageId;
     }
-
 
     /**
      * @return String return the description
@@ -97,9 +90,6 @@ public class ImageGallery {
     public void setGcUser(GCUser gcUser) {
         this.gcUser = gcUser;
     }
-
-
-    
 
     /**
      * @return String return the imageTitle

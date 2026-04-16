@@ -27,50 +27,45 @@ public class CreatorController {
     @Autowired
     private GazetteService gazetteService;
 
-
     @Autowired
     private TenderService tenderService;
-    
 
     @GetMapping("/display")
     public String displayGazette(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
-        if(username != null){
+        if (username != null) {
             List<Gazette> gazettes = gazetteService.displayGazette(username);
             model.addAttribute("gazettes", gazettes);
             return "creator/creator_dashboard";
-        }else{
-            return "redirect:/login"; // redirect to login if user is not logged in
+        } else {
+            return "redirect:/login"; 
         }
 
     }
-
 
     @GetMapping("/sendPublisher/{id}")
     @ResponseBody
     public ResponseEntity<?> send_to_Publisher(@PathVariable("id") Long id, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
-        if(username != null){
-            try{
+        if (username != null) {
+            try {
                 gazetteService.send_to_Publisher(id);
                 return ResponseEntity.ok("{\"message\": \"Gazette send successfully!\"}");
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("{\"error\": \"Failed to send gazette.\"}");
+                        .body("{\"error\": \"Failed to send gazette.\"}");
             }
-        }else{
+        } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body("{\"error\": \"User not authorized.\"}");
+                    .body("{\"error\": \"User not authorized.\"}");
         }
     }
-
-
 
     @GetMapping("/delete/{id}")
     @ResponseBody
     public ResponseEntity<?> deleteGazette(@PathVariable("id") Long id, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
-        if(username != null){
+        if (username != null) {
             try {
                 gazetteService.deleteGazette(id);
                 return ResponseEntity.ok("{\"message\": \"Gazette deleted successfully!\"}");
@@ -78,47 +73,40 @@ public class CreatorController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body("{\"error\": \"Failed to delete gazette.\"}");
             }
-        }else{
+        } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body("{\"error\": \"User not authorized.\"}");
+                    .body("{\"error\": \"User not authorized.\"}");
         }
     }
 
-
-
-    
     @GetMapping("/submission_history")
     public String submissionHistory(Model model, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
-    
+
         if (username != null) {
             // Fetch all categorized gazettes
             List<Gazette> gazettes = gazetteService.displayAllGazette(username);
             List<Gazette> approvedGazettes = gazetteService.display_approved_Gazette(username);
             List<Gazette> sendGazettes = gazetteService.display_send_Gazette(username);
             List<Gazette> createGazettes = gazetteService.display_create_Gazette(username);
-    
+
             // Add data to model
             model.addAttribute("gazettes", gazettes);
             model.addAttribute("totalSubmissions", gazettes.size());
             model.addAttribute("approved", approvedGazettes.size());
             model.addAttribute("send", sendGazettes.size());
             model.addAttribute("create", createGazettes.size());
-    
+
             return "creator/creator_submission_history";
         } else {
             return "redirect:/login";
         }
     }
-    
-
-
-
 
     @GetMapping("/tender_display")
     public String displayTender(Model model, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
-    
+
         if (username != null) {
             List<Tender> tenders = tenderService.displayTender(username);
             model.addAttribute("tenders", tenders);
@@ -127,9 +115,6 @@ public class CreatorController {
             return "redirect:/login";
         }
     }
-    
-
-
 
     @GetMapping("/tender_delete/{id}")
     @ResponseBody
@@ -149,21 +134,17 @@ public class CreatorController {
         }
     }
 
-
-
-
-
     @GetMapping("/sendTenderPublisher/{id}")
     @ResponseBody
     public ResponseEntity<?> sendTenderPublisher(@PathVariable("id") Long id, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
         if (username != null) {
-            try{
+            try {
                 tenderService.send_tender_Publisher(id);
                 return ResponseEntity.ok("{\"message\": \"Tender send successfully!\"}");
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("{\"error\": \"Failed to send Tender.\"}");
+                        .body("{\"error\": \"Failed to send Tender.\"}");
             }
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -171,30 +152,26 @@ public class CreatorController {
         }
     }
 
-
-
-
     @GetMapping("/tender_submission_history")
     public String tenderSubmissionHistory(Model model, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
-    
+
         if (username == null) {
             return "redirect:/login";
         }
-    
+
         List<Tender> tenders = tenderService.displayAllTender(username);
         List<Tender> approvedTenders = tenderService.display_approved_Tender(username);
         List<Tender> sendTenders = tenderService.display_send_Tender(username);
         List<Tender> createTenders = tenderService.display_create_Tender(username);
-    
+
         model.addAttribute("tenders", tenders);
         model.addAttribute("totalSubmissions", tenders.size());
         model.addAttribute("approved", approvedTenders.size());
         model.addAttribute("send", sendTenders.size());
         model.addAttribute("create", createTenders.size());
-    
+
         return "creator/creator_tender_submission_history";
     }
 
-   
 }

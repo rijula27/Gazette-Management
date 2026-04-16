@@ -20,16 +20,13 @@ public class Pdf {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pdfId;
 
-
-    @Column(nullable =  false)
-    @Size( max = 150, message = "Pdf title maximum character limit 150")
+    @Column(nullable = false)
+    @Size(max = 150, message = "Pdf title maximum character limit 150")
     private String pdfTitle;
 
-
-    @Column(nullable =  false)
-    @Size( max = 150, message = "Pdf title maximum character limit 150")
+    @Column(nullable = false)
+    @Size(max = 150, message = "Pdf title maximum character limit 150")
     private String pdfFileName;
-
 
     @ManyToOne
     @JoinColumn(name = "pathId", nullable = false)
@@ -41,62 +38,46 @@ public class Pdf {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private GCUser gcUser;
-    
 
-
-
-    
     public Long getPdfId() {
         return pdfId;
     }
-
 
     public void setPdfId(Long pdfId) {
         this.pdfId = pdfId;
     }
 
-
     public String getPdfTitle() {
         return pdfTitle;
     }
-
 
     public void setPdfTitle(String pdfTitle) {
         this.pdfTitle = pdfTitle;
     }
 
-
     public FilePath getFilePath() {
         return filePath;
     }
-
 
     public void setFilePath(FilePath filePath) {
         this.filePath = filePath;
     }
 
-
     public LocalDate getDate() {
         return date;
     }
-
 
     public void setDate(LocalDate date) {
         this.date = date;
     }
 
-
     public GCUser getGcUser() {
         return gcUser;
     }
 
-    
     public void setGcUser(GCUser gcUser) {
         this.gcUser = gcUser;
     }
-
-
-    
 
     public String getPdfFileName() {
         return pdfFileName;

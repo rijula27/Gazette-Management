@@ -71,7 +71,7 @@ $(document).ready(function () {
 
 
 
- // pagination
+// pagination
 $(document).ready(function () {
     const rowsPerPage = 5;
     let currentPage = 0;
@@ -194,7 +194,7 @@ document.getElementById('editPdfFile').addEventListener('change', (event) => {
                 icon: 'error',
                 title: 'File Too Large',
                 text: 'The file size exceeds the 20MB limit.',
-            }); 
+            });
             event.target.value = ''; // Clear the file input
             document.getElementById('fileLabel').textContent = 'No file selected';
         } else {
@@ -234,11 +234,11 @@ function confirmDelete(el) {
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
-                    
+
                     $.ajax({
                         url: '/creator/tender_delete/' + deleteId,
                         type: 'GET',
-                        success: function(response) {
+                        success: function (response) {
                             Swal.fire({
                                 title: "Deleted!",
                                 text: response.message, // Show success message from server
@@ -249,7 +249,7 @@ function confirmDelete(el) {
                                 location.reload(); // Refresh after success
                             });
                         },
-                        error: function(xhr) {
+                        error: function (xhr) {
                             Swal.fire({
                                 title: "Error!",
                                 text: "Failed to delete the tender.",
@@ -257,7 +257,7 @@ function confirmDelete(el) {
                             });
                         }
                     });
-                
+
                 }
             });
         }
@@ -268,7 +268,7 @@ function confirmDelete(el) {
 
 // send script
 var sendId;
-function sendBack_Creator(el){
+function sendBack_Creator(el) {
     sendId = $(el).data('id');
     Swal.fire({
         title: "Confirm Send?",
@@ -288,11 +288,11 @@ function sendBack_Creator(el){
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
-            
+
                     $.ajax({
                         url: '/publisher/sendBack_tender_Creator/' + sendId,
                         type: 'GET', // Use 'POST' if needed
-                        success: function(response) {
+                        success: function (response) {
                             Swal.fire({
                                 title: "Send!",
                                 text: response.message, // Show success message from server
@@ -303,7 +303,7 @@ function sendBack_Creator(el){
                                 location.reload(); // Refresh after success
                             });
                         },
-                        error: function(xhr) {
+                        error: function (xhr) {
                             Swal.fire({
                                 title: "Error!",
                                 text: "Failed to send the tender.",
@@ -322,7 +322,7 @@ function sendBack_Creator(el){
 
 // published script
 var publishedId;
-function published(el){
+function published(el) {
     publishedId = $(el).data('id');
     Swal.fire({
         title: "Confirm Published?",
@@ -342,11 +342,11 @@ function published(el){
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
-            
+
                     $.ajax({
                         url: '/publisher/published_tender/' + publishedId,
                         type: 'GET', // Use 'POST' if needed
-                        success: function(response) {
+                        success: function (response) {
                             Swal.fire({
                                 title: "Published!",
                                 text: response.message, // Show success message from server
@@ -357,7 +357,7 @@ function published(el){
                                 location.reload(); // Refresh after success
                             });
                         },
-                        error: function(xhr) {
+                        error: function (xhr) {
                             Swal.fire({
                                 title: "Error!",
                                 text: "Failed to published the tender.",
@@ -428,7 +428,7 @@ function submitEditForm() {
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function(response) {
+                success: function (response) {
                     Swal.fire({
                         title: "Success!",
                         text: "tender updated successfully!",
@@ -439,7 +439,7 @@ function submitEditForm() {
                         location.reload();
                     });
                 },
-                error: function(xhr) {
+                error: function (xhr) {
                     Swal.fire({
                         title: "Error!",
                         text: "Failed to update tender: " + xhr.responseText,
@@ -449,7 +449,7 @@ function submitEditForm() {
             });
         }
     });
-}                           
+}
 
 
 function formatDate(dateString) {

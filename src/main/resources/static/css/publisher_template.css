@@ -4,12 +4,14 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   font-family: 'Segoe UI', sans-serif;
   background-color: #f4f6f8;
   color: #333;
-  overflow: hidden; /* prevents scroll on entire body */
+  overflow: hidden;
+  /* prevents scroll on entire body */
 }
 
 body {
@@ -19,7 +21,8 @@ body {
 }
 
 .navbar {
-  background-color: #072746;;
+  background-color: #072746;
+  ;
   color: #fff;
   padding: 15px 20px;
   display: flex;
@@ -51,7 +54,8 @@ body {
 .wrapper {
   display: flex;
   flex: 1;
-  height: calc(100vh - 60px); /* Adjust height below navbar */
+  height: calc(100vh - 60px);
+  /* Adjust height below navbar */
   overflow: hidden;
 }
 
@@ -99,7 +103,7 @@ body {
   overflow: hidden;
 }
 
-.sidebar.collapsed + .content {
+.sidebar.collapsed+.content {
   padding-left: 30px;
 }
 
@@ -125,7 +129,7 @@ body {
     height: calc(100% - 60px);
     width: 250px;
     background-color: #072746;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;
     transform: translateX(0);
     /* z-index: 100; */

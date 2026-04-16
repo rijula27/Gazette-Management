@@ -6,7 +6,6 @@ public class CreatorRequestDTO {
     private String userConfirmPassword;
     private String adminPassword;
 
-
     // Getters and Setters
     public String getUserName() {
         return userName;
@@ -32,7 +31,6 @@ public class CreatorRequestDTO {
         this.userConfirmPassword = userConfirmPassword;
     }
 
-
     public String getAdminPassword() {
         return adminPassword;
     }
@@ -40,5 +38,5 @@ public class CreatorRequestDTO {
     public void setAdminPassword(String adminPassword) {
         this.adminPassword = adminPassword;
     }
-    
+
 }

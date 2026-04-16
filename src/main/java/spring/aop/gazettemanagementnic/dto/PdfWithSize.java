@@ -19,4 +19,3 @@ public class PdfWithSize {
         return size;
     }
 }
-

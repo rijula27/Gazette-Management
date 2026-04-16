@@ -6,10 +6,6 @@ import org.springframework.stereotype.Repository;
 import spring.aop.gazettemanagementnic.entity.ContactUs;
 
 @Repository
-public interface ContactUsRepository extends JpaRepository<ContactUs, Long>{
+public interface ContactUsRepository extends JpaRepository<ContactUs, Long> {
 
-
-
-    
-   
 }

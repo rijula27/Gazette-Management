@@ -302,7 +302,7 @@ public class GazetteService {
     }
 
     public ResponseEntity<Resource> getGazettePdfResponse(Long id) throws IOException {
-        Optional<Gazette> optionalGazette = gazetteRepository.findById(id); // same as before
+        Optional<Gazette> optionalGazette = gazetteRepository.findById(id); 
 
         if (optionalGazette.isPresent()) {
 
