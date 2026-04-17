@@ -151,7 +151,7 @@
                         <div class="gallery-slider">
                             <div th:each="img, iterStat : ${images}" class="slide-wrapper"
                                 th:classappend="${iterStat.index == 0} ? ' active' : ''">
-                                <img th:src="@{'/gallery/images/' + ${img.imageTitle}}" alt="Gallery Image"
+                                <img th:src="@{'/gallery/images/' + ${img.imageId}}" alt="Gallery Image"
                                     class="slide-img">
                             </div>
                         </div>

@@ -35,8 +35,6 @@ import spring.aop.gazettemanagementnic.service.GCUserService;
 import spring.aop.gazettemanagementnic.service.GazetteService;
 import spring.aop.gazettemanagementnic.service.PdfService;
 import spring.aop.gazettemanagementnic.service.TenderService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 @Slf4j
@@ -128,7 +126,9 @@ public class AdminController {
             return ResponseEntity.badRequest().body("A user with this username already exists.");
         } catch (Exception e) {
             log.error("Error occurred while creating creator", e);
-            return ResponseEntity.status(500).body("Internal Server Error");
+            // return ResponseEntity.status(500).body("Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Something went wrong. Please try again.");
         }
 
     }
@@ -204,8 +204,10 @@ public class AdminController {
             }
 
         } catch (Exception e) {
-            log.error("Error occurred while editing creator: {}", e.getMessage());
-            return ResponseEntity.status(500).body("Internal Server Error");
+            log.error("Error occurred while editing creator", e);
+            // return ResponseEntity.status(500).body("Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Something went wrong. Please try again.");
         }
     }
 
@@ -264,7 +266,7 @@ public class AdminController {
         } catch (FileAlreadyExistsException e) {
             return ResponseEntity.badRequest().body("A user with this username already exists.");
         } catch (Exception e) {
-            log.error("Error occurred while creating publisher user: {}", e.getMessage());
+            log.error("Error occurred while creating publisher user ", e);
             return ResponseEntity.status(500).body("Something went wrong. Please try again.");
         }
 
@@ -288,7 +290,6 @@ public class AdminController {
     @ResponseBody
     public ResponseEntity<String> edit_publisher(@RequestBody EditCreatorRequestDTO editRequestDTO,
             HttpSession session) {
-        System.out.println("entere d d jsdioklsd");
         String adminName = (String) session.getAttribute("loggedInUser");
         try {
             if (adminName == null || adminName.isEmpty()) {
@@ -329,8 +330,10 @@ public class AdminController {
             }
 
         } catch (Exception e) {
-            log.error("Error occurred while editing Publisher: {}", e.getMessage());
-            return ResponseEntity.status(500).body("Internal Server Error");
+            log.error("Error occurred while editing Publisher ", e);
+            // return ResponseEntity.status(500).body("Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Something went wrong. Please try again.");
         }
     }
 
@@ -454,8 +457,10 @@ public class AdminController {
             }
 
         } catch (Exception e) {
-            log.error("Error occurred while editing admin: {}", e.getMessage());
-            return ResponseEntity.status(500).body("Internal Server Error");
+            log.error("Error occurred while editing admin ", e);
+            // return ResponseEntity.status(500).body("Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Something went wrong. Please try again.");
         }
     }
 

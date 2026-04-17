@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import spring.aop.gazettemanagementnic.dto.ContactUsDto;
 import spring.aop.gazettemanagementnic.entity.ContactUs;
 import spring.aop.gazettemanagementnic.service.ContactUsService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,9 +29,39 @@ public class ContactUsController {
     @Autowired
     private ContactUsService contactUsService;
 
+    // @PostMapping("/save")
+    // @ResponseBody
+    // public ResponseEntity<String> saveContact(@RequestBody ContactUs contactUs,
+    // HttpSession session) {
+
+    // String adminName = (String) session.getAttribute("loggedInUser");
+
+    // try {
+    // if (adminName == null || adminName.isEmpty()) {
+    // return ResponseEntity.status(401).body("Session expired or not logged in.");
+    // }
+
+    // String resultMessage = contactUsService.saveContact(
+    // contactUs.getContactTable(),
+    // contactUs.getName(),
+    // contactUs.getDesignation(),
+    // contactUs.getStdCode(),
+    // contactUs.getPhno(),
+    // contactUs.getMobile(),
+    // adminName,
+    // LocalDate.now());
+    // return ResponseEntity.ok(resultMessage);
+    // } catch (Exception e) {
+    // log.error("Error occurred while saving contact ", e);
+    // return ResponseEntity.status(500).body("Something went wrong. Please try
+    // again.");
+    // }
+
+    // }
+
     @PostMapping("/save")
     @ResponseBody
-    public ResponseEntity<String> saveContact(@RequestBody ContactUs contactUs,
+    public ResponseEntity<String> saveContact(@Valid @RequestBody ContactUsDto dto,
             HttpSession session) {
 
         String adminName = (String) session.getAttribute("loggedInUser");
@@ -39,21 +71,15 @@ public class ContactUsController {
                 return ResponseEntity.status(401).body("Session expired or not logged in.");
             }
 
-            String resultMessage = contactUsService.saveContact(
-                    contactUs.getContactTable(),
-                    contactUs.getName(),
-                    contactUs.getDesignation(),
-                    contactUs.getStdCode(),
-                    contactUs.getPhno(),
-                    contactUs.getMobile(),
-                    adminName,
-                    LocalDate.now());
-            return ResponseEntity.ok(resultMessage);
+            String result = contactUsService.saveContact(dto, adminName);
+            return ResponseEntity.ok(result);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            log.error("Error occurred while saving contact: {}", e.getMessage());
+            log.error("Error while saving contact", e);
             return ResponseEntity.status(500).body("Something went wrong. Please try again.");
         }
-
     }
 
     @GetMapping("/contactDisplay")
@@ -69,9 +95,37 @@ public class ContactUsController {
         }
     }
 
+    // @PostMapping("/edit")
+    // @ResponseBody
+    // public ResponseEntity<String> editContact(@RequestBody ContactUs contactUs,
+    // HttpSession session) {
+
+    // String adminName = (String) session.getAttribute("loggedInUser");
+
+    // try {
+    // if (adminName == null || adminName.isEmpty()) {
+    // return ResponseEntity.status(401).body("Session expired or not logged in.");
+    // }
+
+    // String resultMessage = contactUsService.editContact(contactUs.getContactId(),
+    // contactUs.getName(),
+    // contactUs.getDesignation(), contactUs.getStdCode(), contactUs.getPhno(),
+    // contactUs.getMobile(),
+    // adminName, LocalDate.now());
+    // return ResponseEntity.ok(resultMessage);
+
+    // } catch (Exception e) {
+    // log.error("Error occurred while editing contact ", e);
+    // return ResponseEntity.status(500).body("Something went wrong. Please try
+    // again.");
+    // }
+
+    // }
+
     @PostMapping("/edit")
     @ResponseBody
-    public ResponseEntity<String> editContact(@RequestBody ContactUs contactUs, HttpSession session) {
+    public ResponseEntity<String> editContact(@Valid @RequestBody ContactUsDto dto,
+            HttpSession session) {
 
         String adminName = (String) session.getAttribute("loggedInUser");
 
@@ -80,16 +134,15 @@ public class ContactUsController {
                 return ResponseEntity.status(401).body("Session expired or not logged in.");
             }
 
-            String resultMessage = contactUsService.editContact(contactUs.getContactId(), contactUs.getName(),
-                    contactUs.getDesignation(), contactUs.getStdCode(), contactUs.getPhno(), contactUs.getMobile(),
-                    adminName, LocalDate.now());
-            return ResponseEntity.ok(resultMessage);
+            String result = contactUsService.editContact(dto, adminName);
+            return ResponseEntity.ok(result);
 
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            log.error("Error occurred while editing contact: {}", e.getMessage());
+            log.error("Error while editing contact", e);
             return ResponseEntity.status(500).body("Something went wrong. Please try again.");
         }
-
     }
 
     @GetMapping("/delete/{id}")

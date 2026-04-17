@@ -1,5 +1,124 @@
+// document.addEventListener('DOMContentLoaded', () => {
+//     // Menu toggle functionality
+//     const menuToggle = document.querySelector('.menu-toggle');
+//     const nav = document.querySelector('nav ul');
+
+//     if (menuToggle) {
+//         menuToggle.addEventListener('click', () => {
+//             nav.classList.toggle('active');
+//         });
+//     }
+
+
+// });
+
+
+
+
+
+// // Fetch data and populate the "month-select" and "date-select" dropdowns
+// document.getElementById("year-select").addEventListener("change", function () {
+//     const selectedYear = this.value;
+
+
+//     // Clear previous selections in month and date dropdowns
+//     document.getElementById("month-select").innerHTML = "<option value=''>Choose Month</option>";
+
+//     if (selectedYear) {
+//         // Fetch months for the selected year (example)
+//         fetch(`/tender/years/${selectedYear}/months`)
+//             .then(response => response.json())
+//             .then(months => {
+
+//                 let monthOptions = "<option value=''>Choose Month</option>";
+//                 months.forEach(month => {
+//                     monthOptions += `<option value='${month}'>${month}</option>`;
+//                 });
+//                 document.getElementById("month-select").innerHTML = monthOptions;
+//                 document.getElementById("month-select").disabled = false; // Enable month dropdown
+//             });
+//     } else {
+//         document.getElementById("month-select").disabled = true; // Disable month dropdown
+//     }
+
+
+// });
+
+
+
+
+// // Fetch data and populate the "month-select" and "date-select" dropdowns
+// document.getElementById("month-select").addEventListener("change", function () {
+//     const selectedYear = document.getElementById("year-select").value;
+//     const selectedMonthName = this.value;
+
+//     console.log("selected year ", selectedYear, "selected month ", selectedMonthName)
+//     const monthMap = {
+//         "January": 1, "February": 2, "March": 3, "April": 4,
+//         "May": 5, "June": 6, "July": 7, "August": 8,
+//         "September": 9, "October": 10, "November": 11, "December": 12
+//     };
+//     const selectedMonth = monthMap[selectedMonthName];
+
+//     if (selectedYear && selectedMonth) {
+//         // Fetch months for the selected year (example)
+//         fetch(`/tender/years/${selectedYear}/months/${selectedMonth}`)
+//             .then(response => response.json())
+//             .then(tenders => {
+
+//                 const tenderList = document.getElementById("tender-items");
+//                 tenderList.innerHTML = "";
+//                 if (tenders.length === 0) {
+//                     tenderList.innerHTML = "<li>No tenders found for the selected month.</li>";
+//                 } else {
+//                     tenders.forEach(tender => {
+//                         const listItem = document.createElement("li");
+
+//                         function createTenderLink(tender) {
+//                             const link = document.createElement("a");
+//                             link.href = `/tender/pdf/${tender.tid}`;
+//                             link.target = "_blank";
+//                             link.innerHTML = `${tender.title}`;
+
+//                             // Fetch the actual PDF file size
+//                             fetch(`/tender/pdf/${tender.tid}`)
+//                                 .then(response => response.blob())
+//                                 .then(blob => {
+//                                     const fileSize = (blob.size / (1024 * 1024)).toFixed(2); // size in MB
+//                                     link.innerHTML += ` (File Size: ${fileSize} MB)`;
+//                                     link.innerHTML += ` <img src="/images/pdf-icon.png" alt="pdf-icon" style="height:25px; vertical-align:middle;">`;
+//                                 })
+//                                 .catch(error => {
+//                                     console.error("Error fetching file size:", error);
+//                                 });
+
+//                             return link;
+//                         }
+
+//                         const link = createTenderLink(tender);
+//                         listItem.appendChild(link);
+//                         tenderList.appendChild(listItem);
+//                     });
+
+//                     // tenders.forEach(tender  => {
+//                     //     console.log("tenders ", tenders);
+//                     //     const listItem = document.createElement("li");
+//                     //     listItem.innerHTML = `<a href="/tender/pdf/${tender.tid}" target="_blank">${tender.title}      <img src="/images/pdf-icon.png" alt="pdf-icon" style="height:25px;"></a>`;
+//                     //     console.log("tender details ", tender.tid, tender.title)
+//                     //     tenderList.appendChild(listItem);
+//                     // });
+//                 }
+//             })
+//             .catch(error => {
+//                 console.error("Error fetching tenders:", error);
+//             });
+//     }
+
+// });
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Menu toggle functionality
     const menuToggle = document.querySelector('.menu-toggle');
     const nav = document.querySelector('nav ul');
 
@@ -8,110 +127,107 @@ document.addEventListener('DOMContentLoaded', () => {
             nav.classList.toggle('active');
         });
     }
-
-
 });
 
 
-
-
-
-// Fetch data and populate the "month-select" and "date-select" dropdowns
+// YEAR CHANGE
 document.getElementById("year-select").addEventListener("change", function () {
     const selectedYear = this.value;
 
+    const monthSelect = document.getElementById("month-select");
+    monthSelect.replaceChildren();
 
-    // Clear previous selections in month and date dropdowns
-    document.getElementById("month-select").innerHTML = "<option value=''>Choose Month</option>";
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "Choose Month";
+    monthSelect.appendChild(defaultOption);
 
     if (selectedYear) {
-        // Fetch months for the selected year (example)
         fetch(`/tender/years/${selectedYear}/months`)
-            .then(response => response.json())
+            .then(res => res.json())
             .then(months => {
+                monthSelect.replaceChildren();
 
-                let monthOptions = "<option value=''>Choose Month</option>";
+                const def = document.createElement("option");
+                def.value = "";
+                def.textContent = "Choose Month";
+                monthSelect.appendChild(def);
+
                 months.forEach(month => {
-                    monthOptions += `<option value='${month}'>${month}</option>`;
+                    const option = document.createElement("option");
+                    option.value = month;
+                    option.textContent = month;
+                    monthSelect.appendChild(option);
                 });
-                document.getElementById("month-select").innerHTML = monthOptions;
-                document.getElementById("month-select").disabled = false; // Enable month dropdown
+
+                monthSelect.disabled = false;
             });
     } else {
-        document.getElementById("month-select").disabled = true; // Disable month dropdown
+        monthSelect.disabled = true;
     }
-
-
 });
 
 
-
-
-// Fetch data and populate the "month-select" and "date-select" dropdowns
+// MONTH CHANGE
 document.getElementById("month-select").addEventListener("change", function () {
     const selectedYear = document.getElementById("year-select").value;
     const selectedMonthName = this.value;
 
-    console.log("selected year ", selectedYear, "selected month ", selectedMonthName)
     const monthMap = {
         "January": 1, "February": 2, "March": 3, "April": 4,
         "May": 5, "June": 6, "July": 7, "August": 8,
         "September": 9, "October": 10, "November": 11, "December": 12
     };
+
     const selectedMonth = monthMap[selectedMonthName];
 
     if (selectedYear && selectedMonth) {
-        // Fetch months for the selected year (example)
         fetch(`/tender/years/${selectedYear}/months/${selectedMonth}`)
-            .then(response => response.json())
+            .then(res => res.json())
             .then(tenders => {
 
                 const tenderList = document.getElementById("tender-items");
-                tenderList.innerHTML = "";
+                tenderList.replaceChildren();
+
                 if (tenders.length === 0) {
-                    tenderList.innerHTML = "<li>No tenders found for the selected month.</li>";
-                } else {
-                    tenders.forEach(tender => {
-                        const listItem = document.createElement("li");
-
-                        function createTenderLink(tender) {
-                            const link = document.createElement("a");
-                            link.href = `/tender/pdf/${tender.tid}`;
-                            link.target = "_blank";
-                            link.innerHTML = `${tender.title}`;
-
-                            // Fetch the actual PDF file size
-                            fetch(`/tender/pdf/${tender.tid}`)
-                                .then(response => response.blob())
-                                .then(blob => {
-                                    const fileSize = (blob.size / (1024 * 1024)).toFixed(2); // size in MB
-                                    link.innerHTML += ` (File Size: ${fileSize} MB)`;
-                                    link.innerHTML += ` <img src="/images/pdf-icon.png" alt="pdf-icon" style="height:25px; vertical-align:middle;">`;
-                                })
-                                .catch(error => {
-                                    console.error("Error fetching file size:", error);
-                                });
-
-                            return link;
-                        }
-
-                        const link = createTenderLink(tender);
-                        listItem.appendChild(link);
-                        tenderList.appendChild(listItem);
-                    });
-
-                    // tenders.forEach(tender  => {
-                    //     console.log("tenders ", tenders);
-                    //     const listItem = document.createElement("li");
-                    //     listItem.innerHTML = `<a href="/tender/pdf/${tender.tid}" target="_blank">${tender.title}      <img src="/images/pdf-icon.png" alt="pdf-icon" style="height:25px;"></a>`;
-                    //     console.log("tender details ", tender.tid, tender.title)
-                    //     tenderList.appendChild(listItem);
-                    // });
+                    const li = document.createElement("li");
+                    li.textContent = "No tenders found for the selected month.";
+                    tenderList.appendChild(li);
+                    return;
                 }
-            })
-            .catch(error => {
-                console.error("Error fetching tenders:", error);
-            });
-    }
 
+                tenders.forEach(tender => {
+                    const listItem = document.createElement("li");
+
+                    const link = document.createElement("a");
+                    link.href = `/tender/pdf/${tender.tid}`;
+                    link.target = "_blank";
+                    link.textContent = tender.title;
+
+                    // Fetch file size
+                    fetch(`/tender/pdf/${tender.tid}`)
+                        .then(res => res.blob())
+                        .then(blob => {
+                            const size = (blob.size / (1024 * 1024)).toFixed(2);
+
+                            // Update text safely
+                            link.textContent = `${tender.title} (File Size: ${size} MB) `;
+
+                            // Add image safely
+                            const img = document.createElement("img");
+                            img.src = "/images/pdf-icon.png";
+                            img.alt = "pdf-icon";
+                            img.style.height = "25px";
+                            img.style.verticalAlign = "middle";
+
+                            link.appendChild(img);
+                        })
+                        .catch(err => console.error(err));
+
+                    listItem.appendChild(link);
+                    tenderList.appendChild(listItem);
+                });
+            })
+            .catch(err => console.error("Error fetching tenders:", err));
+    }
 });

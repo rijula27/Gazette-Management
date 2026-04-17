@@ -112,87 +112,121 @@ public class ImageGalleryController {
         }
     }
 
-    @GetMapping("/images/{imageName:.+}")
+    // @GetMapping("/images/{imageId:.+}")
+    // @GetMapping("/images/{imageId}")
+    // @ResponseBody
+    // public ResponseEntity<Resource> serveImage(@PathVariable Long imageId) throws
+    // MalformedURLException {
+
+    // try {
+    // log.info("Entered serveImage() with imageName: {}", imageId);
+
+    // // Optional<FilePath> optionalPath =
+    // // filePathRepository.findByPathDescription("Gallery Local Path");
+    // Optional<FilePath> optionalPath =
+    // filePathService.getFilePathByDescription("Gallery Local Path");
+    // if (optionalPath.isEmpty()) {
+    // log.warn("Gallery Local Path not found in file_path table");
+    // return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    // }
+
+    // String uploadDir = optionalPath.get().getFullPath();
+    // log.info("Upload directory fetched from DB: {}", uploadDir);
+
+    // if (imageId == null) {
+    // log.warn("Image name is null or empty");
+    // return ResponseEntity.badRequest().build();
+    // }
+
+    // // if (!imageId.matches("^[0-9]+$")) {
+    // // log.warn("Invalid image name format detected: {}", imageId);
+    // // return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    // // }
+
+    // // String lowerFileName = imageName.toLowerCase();
+    // // if (!(lowerFileName.endsWith(".jpg") ||
+    // // lowerFileName.endsWith(".jpeg") ||
+    // // lowerFileName.endsWith(".png") ||
+    // // lowerFileName.endsWith(".gif") ||
+    // // lowerFileName.endsWith(".webp"))) {
+    // // log.warn("Unsupported file extension for image: {}", imageName);
+    // // return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    // // }
+
+    // Optional<ImageGallery> image = imageGalleryRepository.findByImageId(imageId);
+    // if (image.isEmpty()) {
+    // log.warn("Image not found for ID: {}", imageId);
+    // return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    // }
+
+    // String imageName = image.get().getImageTitle();
+    // if (!imageName.matches("^[a-zA-Z0-9._ -]+$")) {
+    // return ResponseEntity.badRequest().build();
+    // }
+
+    // Path basePath = Paths.get(uploadDir).toAbsolutePath().normalize();
+    // Path imagePath = basePath.resolve(imageName).normalize();
+
+    // log.info("Base path: {}", basePath);
+    // log.info("Resolved image path: {}", imagePath);
+
+    // // Prevent path traversal
+    // if (!imagePath.startsWith(basePath)) {
+    // log.warn("Path traversal attempt blocked for image: {}", imageName);
+    // return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    // }
+
+    // // Check file existence
+    // if (!Files.exists(imagePath) || !Files.isReadable(imagePath) ||
+    // !Files.isRegularFile(imagePath)) {
+    // log.warn("Image file not found or not readable: {}", imagePath);
+    // return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    // }
+
+    // // Detect MIME type dynamically
+    // String contentType = Files.probeContentType(imagePath);
+    // log.info("Detected content type for {}: {}", imageName, contentType);
+
+    // if (contentType == null || !contentType.startsWith("image/")) {
+    // log.warn("Invalid content type for image {}: {}", imageName, contentType);
+    // return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
+    // }
+
+    // Resource resource = new UrlResource(imagePath.toUri());
+
+    // if (!resource.exists() || !resource.isReadable()) {
+    // log.warn("Resource exists but not readable: {}", imagePath);
+    // return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    // }
+
+    // log.info("Successfully serving image: {}", imagePath);
+
+    // return ResponseEntity.ok()
+    // .contentType(MediaType.parseMediaType(contentType))
+    // .header("X-Content-Type-Options", "nosniff")
+    // .header("Content-Disposition", "inline; filename=\"" + imageName + "\"")
+    // .body(resource);
+
+    // } catch (Exception e) {
+    // log.error("Error while serving image: {}", imageId, e);
+    // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    // }
+    // }
+
+    @GetMapping("/images/{imageId}")
     @ResponseBody
-    public ResponseEntity<Resource> serveImage(@PathVariable String imageName) throws MalformedURLException {
+    public ResponseEntity<Resource> serveImage(@PathVariable Long imageId) {
+
+        log.info("Entered serveImage() with imageId: {}", imageId);
+
+        if (imageId == null) {
+            return ResponseEntity.badRequest().build();
+        }
 
         try {
-            log.info("Entered serveImage() with imageName: {}", imageName);
-
-            // Optional<FilePath> optionalPath =
-            // filePathRepository.findByPathDescription("Gallery Local Path");
-            Optional<FilePath> optionalPath = filePathService.getFilePathByDescription("Gallery Local Path");
-            if (optionalPath.isEmpty()) {
-                log.warn("Gallery Local Path not found in file_path table");
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-            String uploadDir = optionalPath.get().getFullPath();
-            log.info("Upload directory fetched from DB: {}", uploadDir);
-
-            if (imageName == null || imageName.trim().isEmpty()) {
-                log.warn("Image name is null or empty");
-                return ResponseEntity.badRequest().build();
-            }
-
-            if (!imageName.matches("^[a-zA-Z0-9._-]+$")) {
-                log.warn("Invalid image name format detected: {}", imageName);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-            }
-
-            String lowerFileName = imageName.toLowerCase();
-            if (!(lowerFileName.endsWith(".jpg") ||
-                    lowerFileName.endsWith(".jpeg") ||
-                    lowerFileName.endsWith(".png") ||
-                    lowerFileName.endsWith(".gif") ||
-                    lowerFileName.endsWith(".webp"))) {
-                log.warn("Unsupported file extension for image: {}", imageName);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-            }
-
-            Path basePath = Paths.get(uploadDir).toAbsolutePath().normalize();
-            Path imagePath = basePath.resolve(imageName).normalize();
-
-            log.info("Base path: {}", basePath);
-            log.info("Resolved image path: {}", imagePath);
-
-            // Prevent path traversal
-            if (!imagePath.startsWith(basePath)) {
-                log.warn("Path traversal attempt blocked for image: {}", imageName);
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-
-            // Check file existence
-            if (!Files.exists(imagePath) || !Files.isReadable(imagePath) || !Files.isRegularFile(imagePath)) {
-                log.warn("Image file not found or not readable: {}", imagePath);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-            // Detect MIME type dynamically
-            String contentType = Files.probeContentType(imagePath);
-            log.info("Detected content type for {}: {}", imageName, contentType);
-
-            if (contentType == null || !contentType.startsWith("image/")) {
-                log.warn("Invalid content type for image {}: {}", imageName, contentType);
-                return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
-            }
-
-            Resource resource = new UrlResource(imagePath.toUri());
-
-            if (!resource.exists() || !resource.isReadable()) {
-                log.warn("Resource exists but not readable: {}", imagePath);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-            log.info("Successfully serving image: {}", imagePath);
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .header("X-Content-Type-Options", "nosniff")
-                    .body(resource);
-
+            return imageGalleryService.getImageById(imageId);
         } catch (Exception e) {
-            log.error("Error while serving image: {}", imageName, e);
+            log.error("Error while serving image: {}", imageId, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

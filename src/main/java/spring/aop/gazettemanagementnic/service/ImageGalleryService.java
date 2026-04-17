@@ -2,18 +2,28 @@ package spring.aop.gazettemanagementnic.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+
+import org.springframework.http.MediaType;
+
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import spring.aop.gazettemanagementnic.entity.FilePath;
 import spring.aop.gazettemanagementnic.entity.GCUser;
@@ -24,6 +34,7 @@ import spring.aop.gazettemanagementnic.repository.ImageGalleryRepository;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class ImageGalleryService {
 
     @Autowired
@@ -35,10 +46,22 @@ public class ImageGalleryService {
     @Autowired
     private ImageGalleryRepository imageGalleryRepository;
 
+    private final FilePathService filePathService;
+
     public ResponseEntity<?> saveImage(MultipartFile image, String description, String adminName) throws IOException {
 
         GCUser gcUser = gcUserRepository.findByUsername(adminName)
                 .orElseThrow(() -> new IllegalArgumentException("User not found for username: " + adminName));
+
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException("File is empty");
+        }
+
+        final long MAX_SIZE = 5 * 1024 * 1024;
+if (image.getSize() > MAX_SIZE) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body("File size exceeds limit");
+}
 
         // ✅ Validate filename
         String originalFilename = image.getOriginalFilename();
@@ -52,7 +75,7 @@ public class ImageGalleryService {
 
         if (!cleanFilename.matches("^[a-zA-Z0-9._ -]+$")) {
 
-            log.info("invalid file name : " + cleanFilename);
+            log.warn("invalid file name : {}", cleanFilename);
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Invalid file name");
@@ -64,15 +87,29 @@ public class ImageGalleryService {
                 !(contentType.equals("image/jpeg") ||
                         contentType.equals("image/png") ||
                         contentType.equals("image/jpg"))) {
-                log.info("invalid file type : " + contentType);
+            log.info("invalid file type : " + contentType);
 
             throw new IllegalArgumentException("Only image files are allowed");
         }
 
         // ✅ Generate safe filename (BEST PRACTICE)
-        String extension = cleanFilename.contains(".")
-                ? cleanFilename.substring(cleanFilename.lastIndexOf("."))
-                : "";
+        // String extension = cleanFilename.contains(".")
+        // ? cleanFilename.substring(cleanFilename.lastIndexOf("."))
+        // : "";
+
+        String extension;
+
+        switch (contentType) {
+            case "image/jpeg":
+            case "image/jpg":
+                extension = ".jpg";
+                break;
+            case "image/png":
+                extension = ".png";
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported file type");
+        }
 
         String uniqueFilename = UUID.randomUUID().toString() + extension;
 
@@ -102,6 +139,7 @@ public class ImageGalleryService {
         // ✅ Save file
         image.transferTo(resolvedPath.toFile());
 
+        description = (description != null) ? description.trim() : null;
         // ✅ Save to DB
         ImageGallery imageGallery = new ImageGallery();
         imageGallery.setImageTitle(uniqueFilename);
@@ -118,6 +156,65 @@ public class ImageGalleryService {
     public List<ImageGallery> displayImage() {
 
         return imageGalleryRepository.findAll();
+    }
+
+    public ResponseEntity<Resource> getImageById(Long imageId) throws IOException {
+
+        // Fetch base path
+        Optional<FilePath> optionalPath = filePathService.getFilePathByDescription("Gallery Local Path");
+        if (optionalPath.isEmpty()) {
+            log.warn("Gallery Local Path not found in file_path table");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        String uploadDir = optionalPath.get().getFullPath();
+
+        // Fetch image from DB
+        Optional<ImageGallery> optionalImage = imageGalleryRepository.findByImageId(imageId);
+        if (optionalImage.isEmpty()) {
+            log.warn("Image not found for ID: {}", imageId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        String imageName = optionalImage.get().getImageTitle();
+
+        // Validate filename (defense-in-depth)
+        if (!imageName.matches("^[a-zA-Z0-9._ -]+$")) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Path basePath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        Path imagePath = basePath.resolve(imageName).normalize();
+
+        // Prevent path traversal
+        if (!imagePath.startsWith(basePath)) {
+            log.warn("Path traversal attempt blocked for image: {}", imageName);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        // Check file
+        if (!Files.exists(imagePath) || !Files.isReadable(imagePath) || !Files.isRegularFile(imagePath)) {
+            log.warn("Image file not found or not readable: {}", imagePath);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        // Detect MIME
+        String contentType = Files.probeContentType(imagePath);
+        if (contentType == null || !contentType.startsWith("image/")) {
+            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
+        }
+
+        Resource resource = new UrlResource(imagePath.toUri());
+
+        if (!resource.exists() || !resource.isReadable()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header("X-Content-Type-Options", "nosniff")
+                .header("Content-Disposition", "inline; filename=\"" + imageName + "\"")
+                .body(resource);
     }
 
 }

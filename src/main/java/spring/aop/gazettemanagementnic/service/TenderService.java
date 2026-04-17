@@ -162,8 +162,66 @@ public class TenderService {
         }
     }
 
-    public String updateTender(Long id, String title, String username, LocalDate submissionLastDate,
-            LocalDate openingDate, MultipartFile file) throws IOException {
+    // public String updateTender(Long id, String title, String username, LocalDate
+    // submissionLastDate,
+    // LocalDate openingDate, MultipartFile file) throws IOException {
+
+    // Optional<Tender> optionalTender = tenderRepository.findById(id);
+    // if (optionalTender.isEmpty()) {
+    // throw new RuntimeException("Tender not found with ID: " + id);
+    // }
+
+    // Tender tender = optionalTender.get();
+
+    // GCUser gcUser_edit = gcUserRepository.findByUsername(username)
+    // .orElseThrow(() -> new RuntimeException("User not found: " + username));
+
+    // FilePath tenderPath = filePathRepository.findByPathDescription("Tender Local
+    // Path")
+    // .orElseThrow(() -> new RuntimeException("Tender path not found"));
+
+    // int year = tender.getAnnouncement_Date().getYear();
+    // String uploadDir = tenderPath.getFullPath() + year + File.separator;
+
+    // File directory = new File(uploadDir).getCanonicalFile();
+    // if (!directory.exists()) {
+    // directory.mkdirs();
+    // }
+
+    // String sanitizedTitle = title.trim()
+    // .replace("/", "")
+    // .replace("\\", "")
+    // .replace(":", "")
+    // .replace("\0", "");
+
+    // if (sanitizedTitle.isEmpty()) {
+    // throw new IllegalArgumentException("Invalid tender title.");
+    // }
+
+    // String newFileName = sanitizedTitle + ".pdf";
+    // File newFile = new File(directory, newFileName).getCanonicalFile();
+    // if (!newFile.getPath().startsWith(directory.getPath() + File.separator)) {
+    // throw new SecurityException("Path traversal attempt detected.");
+    // }
+
+    // if (file != null && !file.isEmpty()) {
+    // file.transferTo(newFile);
+    // }
+
+    // tender.setLast_Date(submissionLastDate);
+    // tender.setOpening_Date(openingDate);
+    // tender.setGcUser_edit(gcUser_edit);
+    // tender.setFilePath(tenderPath); // Update file path if needed
+
+    // tenderRepository.save(tender);
+
+    // return "Tender updated successfully!";
+    // }
+
+    public String updateTender(Long id, String title, String username,
+            LocalDate submissionLastDate,
+            LocalDate openingDate,
+            MultipartFile file) throws IOException {
 
         Optional<Tender> optionalTender = tenderRepository.findById(id);
         if (optionalTender.isEmpty()) {
@@ -179,29 +237,42 @@ public class TenderService {
                 .orElseThrow(() -> new RuntimeException("Tender path not found"));
 
         int year = tender.getAnnouncement_Date().getYear();
-        String uploadDir = tenderPath.getFullPath() + year + File.separator;
 
-        File directory = new File(uploadDir).getCanonicalFile();
-        if (!directory.exists()) {
-            directory.mkdirs();
+        // ✅ BASE DIRECTORY (STRICT CONTROLLED PATH)
+        File baseDir = new File(tenderPath.getFullPath(), String.valueOf(year)).getCanonicalFile();
+
+        if (!baseDir.exists() && !baseDir.mkdirs()) {
+            throw new IOException("Failed to create directory");
+        }
+
+        // ✅ STRICT WHITELIST VALIDATION (AUDIT FRIENDLY)
+        if (title == null) {
+            throw new IllegalArgumentException("Title cannot be null");
         }
 
         String sanitizedTitle = title.trim()
-                .replace("/", "")
-                .replace("\\", "")
-                .replace(":", "")
-                .replace("\0", "");
+                .replaceAll("[^a-zA-Z0-9-_ ]", ""); // allowlist approach
 
-        if (sanitizedTitle.isEmpty()) {
-            throw new IllegalArgumentException("Invalid tender title.");
+        if (sanitizedTitle.isBlank()) {
+            throw new IllegalArgumentException("Invalid tender title");
+        }
+
+        // OPTIONAL HARD LIMIT (prevents abuse / scanner flags)
+        if (sanitizedTitle.length() > 100) {
+            throw new IllegalArgumentException("Title too long");
         }
 
         String newFileName = sanitizedTitle + ".pdf";
-        File newFile = new File(directory, newFileName).getCanonicalFile();
-        if (!newFile.getPath().startsWith(directory.getPath() + File.separator)) {
-            throw new SecurityException("Path traversal attempt detected.");
+
+        // ✅ SAFE FILE CREATION
+        File newFile = new File(baseDir, newFileName).getCanonicalFile();
+
+        // ✅ PATH ESCAPE PROTECTION (CRITICAL AUDIT CHECK)
+        if (!newFile.getPath().startsWith(baseDir.getPath() + File.separator)) {
+            throw new SecurityException("Path traversal detected");
         }
 
+        // ✅ FILE WRITE ONLY IF PRESENT
         if (file != null && !file.isEmpty()) {
             file.transferTo(newFile);
         }
@@ -209,7 +280,9 @@ public class TenderService {
         tender.setLast_Date(submissionLastDate);
         tender.setOpening_Date(openingDate);
         tender.setGcUser_edit(gcUser_edit);
-        tender.setFilePath(tenderPath); // Update file path if needed
+
+        // keep reference consistent
+        tender.setFilePath(tenderPath);
 
         tenderRepository.save(tender);
 

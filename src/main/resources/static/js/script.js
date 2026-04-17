@@ -19,8 +19,24 @@ document.addEventListener('DOMContentLoaded', () => {
 document.getElementById("year-select").addEventListener("change", function () {
     const selectedYear = this.value;
     // Clear previous selections in month and date dropdowns
-    document.getElementById("month-select").innerHTML = "<option value=''>Choose Month</option>";
-    document.getElementById("date-select").innerHTML = "<option value=''>Choose Date</option>";
+    // document.getElementById("month-select").innerHTML = "<option value=''>Choose Month</option>";
+    const monthSelect = document.getElementById("month-select");
+    monthSelect.replaceChildren();
+
+    const monthOption = document.createElement("option");
+    monthOption.value = "";
+    monthOption.textContent = "Choose Month";
+    monthSelect.appendChild(monthOption);
+
+    // document.getElementById("date-select").innerHTML = "<option value=''>Choose Date</option>";
+
+    const dateSelect = document.getElementById("date-select");
+    dateSelect.replaceChildren();
+
+    const dateOption = document.createElement("option");
+    dateOption.value = "";
+    dateOption.textContent = "Choose Date";
+    dateSelect.appendChild(dateOption);
     if (selectedYear) {
         // Fetch months for the selected year (example)
         fetch(`/gazette/years/${selectedYear}/months`)
@@ -74,9 +90,18 @@ document.getElementById("month-select").addEventListener("change", function () {
 
 
 
+    // const dateSelect = document.getElementById("date-select");
+    // dateSelect.innerHTML = "<option value=''>Choose Date</option>";
     const dateSelect = document.getElementById("date-select");
-    dateSelect.innerHTML = "<option value=''>Choose Date</option>";
+    dateSelect.replaceChildren();
+
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = "Choose Date";
+    dateSelect.appendChild(option);
+
     dateSelect.disabled = true;
+    // dateSelect.disabled = true;
 
     if (selectedYear && selectedMonth) {
         fetch(`/gazette/years/${selectedYear}/months/${selectedMonth}/dates`)
@@ -225,7 +250,12 @@ document.getElementById("date-select").addEventListener("change", function () {
             .catch(error => {
                 console.error("Error fetching gazettes:", error);
                 const gazetteList = document.getElementById("gazette-items");
-                gazetteList.innerHTML = "<li>Failed to fetch gazettes. Please try again later.</li>";
+                // gazetteList.innerHTML = "<li>Failed to fetch gazettes. Please try again later.</li>";
+                gazetteList.replaceChildren();
+
+                const li = document.createElement("li");
+                li.textContent = "Failed to fetch gazettes. Please try again later.";
+                gazetteList.appendChild(li);
             });
     }
 

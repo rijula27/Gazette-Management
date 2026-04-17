@@ -47,7 +47,7 @@ public class PdfController {
                 double mb = bytes / (1024.0 * 1024.0);
                 size = String.format("%.2f MB", mb);
             } catch (IOException e) {
-                log.error("Error occurred while opening pdf: {}", e.getMessage());
+                log.error("Error occurred while opening pdf ", e);
 
             }
 

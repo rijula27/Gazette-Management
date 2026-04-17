@@ -67,9 +67,10 @@ public class TenderController {
                     || tender.getAnnouncement_Date() == null
                     || tender.getLast_Date() == null
                     || tender.getOpening_Date() == null) {
-                        log.info("missing required fields: title={}, ref_No={}, announcement_Date={}, last_Date={}, opening_Date={}",
-                                tender.getTitle(), tender.getRef_No(), tender.getAnnouncement_Date(),
-                                tender.getLast_Date(), tender.getOpening_Date());   
+                log.info(
+                        "missing required fields: title={}, ref_No={}, announcement_Date={}, last_Date={}, opening_Date={}",
+                        tender.getTitle(), tender.getRef_No(), tender.getAnnouncement_Date(),
+                        tender.getLast_Date(), tender.getOpening_Date());
                 return ResponseEntity.badRequest()
                         .body("{\"error\": \"All required tender fields must be filled out.\"}");
             }
@@ -255,7 +256,10 @@ public class TenderController {
             tenderService.updateTender(id, title, username, last_Date, opening_Date, file);
             return ResponseEntity.ok("Tender updated successfully!");
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Failed to update tender: " + e.getMessage());
+            log.error("Error occurred while updating tender", e); // ✅ Proper logging
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Something went wrong. Please try again.");
         }
     }
 
@@ -279,7 +283,7 @@ public class TenderController {
                 double mb = bytes / (1024.0 * 1024.0); // Convert to MB
                 size = String.format("%.2f MB", mb);
             } catch (IOException e) {
-                log.error("Error occurred while display tender: {}", e.getMessage());
+                log.error("Error occurred while display tender ", e);
 
             }
 
