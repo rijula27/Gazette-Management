@@ -47,9 +47,19 @@ function setCharSpacing(on) {
 // Load saved preferences on page load
 window.addEventListener("DOMContentLoaded", function () {
     // Load contrast
-    const contrast = localStorage.getItem("contrast") || "default";
-    switchStyle(contrast);
+    // const contrast = localStorage.getItem("contrast") || "default";
+    // switchStyle(contrast);
 
+
+    const allowedContrast = ["black", "white", "default"];
+
+    const contrast = localStorage.getItem("contrast");
+
+    switchStyle(
+        allowedContrast.includes(contrast) ? contrast : "default"
+    );
+
+    
     // Load spacing
     const spacing = localStorage.getItem("letterSpacing");
     if (spacing) {

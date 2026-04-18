@@ -18,8 +18,31 @@ public class CaptchaController {
     private DefaultKaptcha captchaProducer;
 
     // Endpoint to generate and serve the CAPTCHA image
+    // @GetMapping("/captcha-image")
+    // public void getCaptchaImage(HttpSession session, HttpServletResponse
+    // response) throws Exception {
+    // response.setContentType("image/png");
+    // response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    // response.setHeader("Pragma", "no-cache");
+    // response.setDateHeader("Expires", 0);
+
+    // String captchaText = captchaProducer.createText();
+    // session.setAttribute("captcha", captchaText);
+
+    // BufferedImage captchaImage = captchaProducer.createImage(captchaText);
+
+    // ServletOutputStream out = response.getOutputStream();
+    // ImageIO.write(captchaImage, "png", out);
+    // try {
+    // out.flush();
+    // } finally {
+    // out.close();
+    // }
+    // }
+
     @GetMapping("/captcha-image")
     public void getCaptchaImage(HttpSession session, HttpServletResponse response) throws Exception {
+
         response.setContentType("image/png");
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
         response.setHeader("Pragma", "no-cache");
@@ -30,12 +53,9 @@ public class CaptchaController {
 
         BufferedImage captchaImage = captchaProducer.createImage(captchaText);
 
-        ServletOutputStream out = response.getOutputStream();
-        ImageIO.write(captchaImage, "png", out);
-        try {
+        try (ServletOutputStream out = response.getOutputStream()) {
+            ImageIO.write(captchaImage, "png", out);
             out.flush();
-        } finally {
-            out.close();
         }
     }
 }

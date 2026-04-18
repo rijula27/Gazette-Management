@@ -115,6 +115,47 @@ form.addEventListener("submit", function (e) {
 
 
 // Confirm Delete
+// function confirmDelete(el) {
+//   const deleteId = $(el).data('id');
+
+//   Swal.fire({
+//     title: 'Are you sure?',
+//     text: "You won't be able to revert this!",
+//     icon: 'warning',
+//     showCancelButton: true,
+//     allowOutsideClick: false,
+//     allowEscapeKey: false,
+//     confirmButtonColor: '#d33',
+//     cancelButtonColor: '#3085d6',
+//     confirmButtonText: 'Yes, delete it!',
+//     cancelButtonText: 'Cancel'
+//   }).then((result) => {
+//     if (result.isConfirmed) {
+//       if (!deleteId || !/^\d+$/.test(String(deleteId))) {
+//         console.error("Invalid delete ID:", deleteId);
+//         return;
+//       }
+
+//       const numericId = parseInt(deleteId, 10);
+//       const redirectUrl = "/about/delete/" + numericId;
+
+
+//       // Show tick animation
+//       Swal.fire({
+//         title: 'Deleted!',
+//         text: 'Section has been removed.',
+//         icon: 'success',
+//         timer: 1500,
+//         showConfirmButton: false,
+//         willClose: () => {
+//           // Redirect after animation
+//           window.location.replace(redirectUrl);
+//         }
+//       });
+//     }
+//   });
+// }
+
 function confirmDelete(el) {
   const deleteId = $(el).data('id');
 
@@ -131,27 +172,27 @@ function confirmDelete(el) {
     cancelButtonText: 'Cancel'
   }).then((result) => {
     if (result.isConfirmed) {
+
+      // Strict validation
       if (!deleteId || !/^\d+$/.test(String(deleteId))) {
         console.error("Invalid delete ID:", deleteId);
         return;
       }
 
-      const numericId = parseInt(deleteId, 10);
-      const redirectUrl = "/about/delete/" + numericId;
+      const numericId = Number(deleteId);
+      const redirectUrl = `/about/delete/${numericId}`;
 
-
-      // Show tick animation
       Swal.fire({
         title: 'Deleted!',
         text: 'Section has been removed.',
         icon: 'success',
         timer: 1500,
-        showConfirmButton: false,
-        willClose: () => {
-          // Redirect after animation
-          window.location.replace(redirectUrl);
-        }
+        showConfirmButton: false
+      }).then(() => {
+        // Single safe redirect point
+        window.location.replace(redirectUrl);
       });
+
     }
   });
 }

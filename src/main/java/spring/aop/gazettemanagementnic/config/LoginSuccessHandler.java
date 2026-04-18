@@ -58,12 +58,14 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             default -> "/index";
         };
 
-        List<String> allowedUrls = List.of("/creator", "/publisher/publisher_display", "/admin/admin_display",
-                "/index");
+        // List<String> allowedUrls = List.of("/creator", "/publisher/publisher_display", "/admin/admin_display",
+        //         "/index");
 
-        if (!allowedUrls.contains(targetUrl)) {
-            targetUrl = "/index";
-        }
+        // if (!allowedUrls.contains(targetUrl)) {
+        //     targetUrl = "/index";
+        // }
+
+        
 
         response.sendRedirect(targetUrl);
     }

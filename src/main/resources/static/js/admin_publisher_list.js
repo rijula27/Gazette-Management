@@ -38,8 +38,58 @@ window.onclick = function (event) {
 
 
 // Confirm Delete
+// function confirmDelete(el) {
+//   const deleteId = $(el).data('id');
+
+//   Swal.fire({
+//     title: 'Are you sure?',
+//     text: "You won't be able to revert this!",
+//     icon: 'warning',
+//     showCancelButton: true,
+//     allowOutsideClick: false,
+//     allowEscapeKey: false,
+//     confirmButtonColor: '#d33',
+//     cancelButtonColor: '#3085d6',
+//     confirmButtonText: 'Yes, delete it!',
+//     cancelButtonText: 'Cancel'
+//   }).then((result) => {
+//     if (result.isConfirmed) {
+//       if (!deleteId || !/^\d+$/.test(String(deleteId))) {
+//         console.error("Invalid delete ID:", deleteId);
+//         return;
+//       }
+
+//       // const numericId = parseInt(deleteId, 10);
+//       // const redirectUrl = "/admin/delete_publisher/" + numericId;
+
+//       const numericId = Number(deleteId);
+
+//       if (!Number.isInteger(numericId) || numericId <= 0) {
+//         console.error("Invalid delete ID:", deleteId);
+//         return;
+//       }
+
+//       const redirectUrl = `/admin/delete_publisher/${numericId}`;
+
+//       // Show tick animation
+//       Swal.fire({
+//         title: 'Deleted!',
+//         text: 'Publisher has been removed.',
+//         icon: 'success',
+//         timer: 1500,
+//         showConfirmButton: false,
+//         willClose: () => {
+//           // Redirect after animation
+//           window.location.replace(redirectUrl);
+//         }
+//       });
+//     }
+//   });
+// }
+
 function confirmDelete(el) {
-  const deleteId = $(el).data('id');
+  // const deleteId = $(el).data('id');
+  const deleteId = String($(el).data('id'));
 
   Swal.fire({
     title: 'Are you sure?',
@@ -53,28 +103,27 @@ function confirmDelete(el) {
     confirmButtonText: 'Yes, delete it!',
     cancelButtonText: 'Cancel'
   }).then((result) => {
-    if (result.isConfirmed) {
-      if (!deleteId || !/^\d+$/.test(String(deleteId))) {
-        console.error("Invalid delete ID:", deleteId);
-        return;
-      }
+    if (!result.isConfirmed) return;
 
-      const numericId = parseInt(deleteId, 10);
-      const redirectUrl = "/admin/delete_publisher/" + numericId;
+    const numericId = Number(deleteId);
 
-      // Show tick animation
-      Swal.fire({
-        title: 'Deleted!',
-        text: 'Publisher has been removed.',
-        icon: 'success',
-        timer: 1500,
-        showConfirmButton: false,
-        willClose: () => {
-          // Redirect after animation
-          window.location.replace(redirectUrl);
-        }
-      });
+    // strict validation (important for SAST)
+    if (!Number.isSafeInteger(numericId) || numericId <= 0) {
+      console.error("Invalid delete ID:", deleteId);
+      return;
     }
+
+    const redirectUrl = `/admin/delete_publisher/${encodeURIComponent(numericId)}`;
+
+    Swal.fire({
+      title: 'Deleted!',
+      text: 'Publisher has been removed.',
+      icon: 'success',
+      timer: 1500,
+      showConfirmButton: false
+    }).then(() => {
+      window.location.replace(redirectUrl);
+    });
   });
 }
 

@@ -58,8 +58,18 @@ function confirmDelete(el) {
         return;
       }
 
-      const numericId = parseInt(deleteId, 10);
-      const redirectUrl = "/admin/delete_creator/" + numericId;
+      // const numericId = parseInt(deleteId, 10);
+      // // const redirectUrl = "/admin/delete_creator/" + numericId;
+      // const redirectUrl = `/admin/delete_creator/${encodeURIComponent(numericId)}`;
+
+      const numericId = Number(deleteId);
+
+      if (!Number.isInteger(numericId) || numericId <= 0) {
+        console.error("Invalid delete ID:", deleteId);
+        return;
+      }
+
+      const redirectUrl = `/admin/delete_creator/${numericId}`;
       // Show tick animation
       Swal.fire({
         title: 'Deleted!',

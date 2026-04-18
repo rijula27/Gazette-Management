@@ -207,8 +207,12 @@ function confirmDelete(el) {
                 return;
             }
 
-            const numericId = parseInt(deleteId, 10);
-            const redirectUrl = "/admin/admin_delete/" + numericId;
+            // const numericId = parseInt(deleteId, 10);
+            // // const redirectUrl = "/admin/admin_delete/" + numericId;
+            // const redirectUrl = `/admin/admin_delete/${encodeURIComponent(numericId)}`;
+            const numericId = Number(deleteId);
+            const redirectUrl = `/admin/admin_delete/${numericId}`;
+
 
             // Show success animation with slight delay before redirection
             Swal.fire({
@@ -217,10 +221,9 @@ function confirmDelete(el) {
                 icon: "success",
                 timer: 1500,
                 showConfirmButton: false,
-                didClose: () => {
-                    // Redirect after SweetAlert closes
-                    window.location.replace(redirectUrl);
-                }
+
+            }).then(() => {
+                window.location.replace(redirectUrl);
             });
         }
     });

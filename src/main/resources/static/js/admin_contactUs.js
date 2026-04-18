@@ -342,11 +342,10 @@ function confirmDelete(el) {
         text: 'Contact has been removed.',
         icon: 'success',
         timer: 1500,
-        showConfirmButton: false,
-        willClose: () => {
-          // Redirect after animation
-          window.location.replace(redirectUrl);
-        }
+        showConfirmButton: false
+      }).then(() => {
+        // Redirect after animation
+        window.location.replace(redirectUrl);
       });
     }
   });
