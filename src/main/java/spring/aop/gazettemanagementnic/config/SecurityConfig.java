@@ -37,15 +37,38 @@ public class SecurityConfig {
                                                                                               // endpoints except
                                                                                               // captcha-image
                                 .authenticationProvider(daoAuthenticationProvider())
+                                // .headers(headers -> headers
+                                // .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Prevent
+                                // // clickjacking
+                                // // .xssProtection(Customizer.withDefaults()) // Enable XSS protection
+
+                                // .xssProtection(xss -> xss.headerValue(
+                                // XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
+                                // .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+
                                 .headers(headers -> headers
                                                 .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Prevent
                                                                                                          // clickjacking
-                                                // .xssProtection(Customizer.withDefaults()) // Enable XSS protection
-
 
                                                 .xssProtection(xss -> xss.headerValue(
                                                                 XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
-                                                .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+
+                                                .contentSecurityPolicy(csp -> csp
+                                                                .policyDirectives(
+                                                                                "default-src 'self'; " +
+                                                                                                "script-src 'self'; " +
+                                                                                                "style-src 'self'; "
+                                                                                                +
+                                                                                                "img-src 'self' data:; "
+                                                                                                +
+                                                                                                "font-src 'self' data:; "
+                                                                                                +
+                                                                                                "connect-src 'self'; " +
+                                                                                                "object-src 'none'; " +
+                                                                                                "base-uri 'self'; " +
+                                                                                                "frame-ancestors 'self'; "
+                                                                                                +
+                                                                                                "form-action 'self';")))
                                 .authorizeHttpRequests(authorize -> authorize
                                                 .requestMatchers("/login", "/index", "/", "/home", "/about",
                                                                 "/functions", "/gazette/display",
@@ -58,7 +81,7 @@ public class SecurityConfig {
                                                                 "/accessibilityStatement", "/siteMap", "/help",
                                                                 "/accessibilityBrowsers", "/test", "/screenReader",
                                                                 "/contact/display", "/about/display",
-                                                                "/gallery/images/**", "/captcha-image", "/css/**",
+                                                                "/gallery/images/**", "/captcha-image", "/css/**", "/webfonts/**",
                                                                 "/js/**", "/images/**")
                                                 .permitAll()
                                                 .requestMatchers("/gazette/pdf/**", "/tender/pdf/**", "/pdf/**")

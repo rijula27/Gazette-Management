@@ -453,3 +453,54 @@ function formatDate(dateString) {
     const dd = String(date.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
 }
+
+
+
+$(document).ready(function () {
+
+    // Dropdown toggle
+    $(document).on('click', '.dropdown-toggle', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleDropdown(this);
+    });
+
+    // Edit button
+    $(document).on('click', '.edit-btn', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openEditModal(this);
+    });
+
+    // Delete button
+    $(document).on('click', '.delete-btn', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        confirmDelete(this);
+    });
+
+    // Send button
+    $(document).on('click', '.send-btn', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        sendPublisher(this);
+    });
+
+    // Confirm update button
+    $(document).on('click', '#confirmUpdateBtn', function () {
+        confirmEdit();
+    });
+
+});
+
+
+// ======================================
+// CLOSE DROPDOWN WHEN CLICK OUTSIDE
+// ======================================
+window.onclick = function (event) {
+    if (!event.target.matches('.dropdown-toggle')) {
+        document.querySelectorAll('.dropdown-menu').forEach(drop => {
+            drop.style.display = 'none';
+        });
+    }
+};

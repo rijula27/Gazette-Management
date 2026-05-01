@@ -1,0 +1,26 @@
+
+
+        .content{
+            max-width: 900px; 
+            margin: 40px auto; 
+            padding: 20px; 
+            background-color: #ffffff; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+            text-align: center;
+        }
+.h1-head {
+    font-size: 2em !important;
+    color: #333 !important;
+    margin-bottom: 20px !important;
+    font-weight: 600 !important;
+    border-bottom: 2px solid #ddd !important;
+    padding-bottom: 10px !important;
+}
+        .main-img{
+            width: 100%; 
+            max-width: 100%; 
+            height: auto; 
+            border-radius: 8px; 
+            border: 1px solid #ccc;
+        }

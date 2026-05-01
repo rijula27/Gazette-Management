@@ -234,20 +234,34 @@ function confirmDelete(el) {
 
 
 
-function toggleDropdown(button) {
-    const menu = button.nextElementSibling;
-    const isVisible = menu.style.display === 'block';
+// function toggleDropdown(button) {
+//     const menu = button.nextElementSibling;
+//     const isVisible = menu.style.display === 'block';
 
-    // Close all dropdowns
-    document.querySelectorAll('.dropdown-menu').forEach(drop => drop.style.display = 'none');
+//     // Close all dropdowns
+//     document.querySelectorAll('.dropdown-menu').forEach(drop => drop.style.display = 'none');
 
-    // Toggle current
-    menu.style.display = isVisible ? 'none' : 'block';
-}
+//     // Toggle current
+//     menu.style.display = isVisible ? 'none' : 'block';
+// }
 
 // Optional: Close dropdowns if clicked outside
-window.onclick = function (event) {
-    if (!event.target.matches('.dropdown-toggle')) {
-        document.querySelectorAll('.dropdown-menu').forEach(drop => drop.style.display = 'none');
-    }
-};
+$(document).on('click', '.dropdown-toggle', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const menu = $(this).next('.dropdown-menu');
+
+    $('.dropdown-menu').not(menu).hide();
+    menu.toggle();
+});
+
+$(document).on('click', function () {
+    $('.dropdown-menu').hide();
+});
+
+$(document).on('click', '.delete-btn', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    confirmDelete(this);
+});

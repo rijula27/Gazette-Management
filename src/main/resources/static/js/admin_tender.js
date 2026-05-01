@@ -234,17 +234,27 @@ function confirmDelete(el) {
 
 
 
-function toggleDropdown(button) {
-    const menu = button.nextElementSibling;
-    const isVisible = menu.style.display === 'block';
 
-    document.querySelectorAll('.dropdown-menu').forEach(drop => drop.style.display = 'none');
+// Dropdown toggle
+$(document).on('click', '.dropdown-toggle', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
 
-    menu.style.display = isVisible ? 'none' : 'block';
-}
+    const menu = $(this).next('.dropdown-menu');
 
-window.onclick = function (event) {
-    if (!event.target.matches('.dropdown-toggle')) {
-        document.querySelectorAll('.dropdown-menu').forEach(drop => drop.style.display = 'none');
-    }
-};
+    $('.dropdown-menu').not(menu).hide();
+    menu.toggle();
+});
+
+// Close all dropdowns when clicking outside
+$(document).on('click', function () {
+    $('.dropdown-menu').hide();
+});
+
+// Delete button click
+$(document).on('click', '.delete-btn', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    confirmDelete(this);
+});

@@ -1,0 +1,114 @@
+body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    .main-content {
+      padding: 40px 20px;
+    }
+
+    .content-left {
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), #ffffff),
+        url('/images/front.jpg') no-repeat center center / cover;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-text {
+      font-weight: 600;
+    }
+
+    .section-heading {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #2a3f5f;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 10px;
+    }
+
+    .address-section {
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+      margin-bottom: 40px;
+    }
+
+    .address-section h3 {
+      font-size: 22px;
+      color: #1f3b73;
+      margin-bottom: 15px;
+    }
+
+    address {
+      line-height: 1.8;
+      color: #444;
+    }
+
+    .tables-container {
+      display: flex;
+      flex-direction: column;
+      gap: 35px;
+    }
+
+    .table-wrapper {
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: auto;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-wrapper h3 {
+      background: #e6effc;
+      padding: 16px 20px;
+      font-size: 20px;
+      color: #1f3b73;
+      border-bottom: 2px solid #d4e0f0;
+      margin: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table th,
+    table td {
+      padding: 14px 18px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    table th {
+      background-color: #f5f9ff;
+      font-weight: 600;
+      color: #2f3d4a;
+    }
+
+    table tr:hover {
+      background-color: #f0f8ff;
+    }
+
+    @media (max-width: 768px) {
+      .content-left {
+        padding: 20px;
+      }
+
+      .section-heading {
+        font-size: 24px;
+      }
+
+      .table-wrapper h3 {
+        font-size: 18px;
+      }
+
+      table th,
+      table td {
+        padding: 10px 12px;
+      }
+    }

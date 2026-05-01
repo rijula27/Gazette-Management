@@ -131,3 +131,15 @@
             font-size: 14px;
             color: #003367;
         }
+
+
+        #sessionExpiredMessage{
+            background-color: #ff9800; 
+            border-color: #ff9800
+        }
+
+        #logoutMessage{
+            background-color: #4caf50; 
+            border-color: #4caf50; 
+            color: white"
+        }

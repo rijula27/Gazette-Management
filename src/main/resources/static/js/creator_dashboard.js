@@ -405,3 +405,36 @@ window.onclick = function (event) {
 
 
 
+
+$(document).ready(function () {
+
+    $(document).on('click', '.dropdown-toggle', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleDropdown(this);
+    });
+
+
+        // Edit
+    $(document).on('click', '.edit-btn', function (e) {
+        e.preventDefault();
+        openEditModal(this);
+    });
+
+    // Delete
+    $(document).on('click', '.delete-btn', function (e) {
+        e.preventDefault();
+        confirmDelete(this);
+    });
+
+    // Send
+    $(document).on('click', '.send-btn', function (e) {
+        e.preventDefault();
+        sendPublisher(this);
+    });
+
+    $(document).on('click', '#confirmEditBtn', function () {
+        confirmEdit();
+    });
+
+});

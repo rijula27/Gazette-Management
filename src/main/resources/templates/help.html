@@ -1,259 +1,192 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Help: Printing and Stationery Department - Government of Meghalaya
+    </title>
+    <link rel="stylesheet" href="/css/style.css" />
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Help: Printing and Stationery Department - Government of Meghalaya</title>
-  <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" th:href="@{/css/all.min.css}" />
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="/css/top_nav.css">
-  <script type='text/javascript' src='/js/jquery.min.js'></script>
-  <script type="text/javascript" src="/js/jquery.creaseFont.min.js"></script>
-  <script src="/js/theme.js" type="text/javascript"></script>
-  <script src="/js/top_nav.js"></script>
-  <style>
-    main {
-      margin: 40px auto;
-      width: 90%;
-      padding: 20px;
-      background-color: #ffffff;
-      border-radius: 10px;
-      box-shadow:
-        0 4px 12px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      font-family: 'Segoe UI', sans-serif;
-      line-height: 1.6;
-      background-color: #f9f9f9;
-      color: #333;
-    }
+    <link rel="stylesheet" th:href="@{/css/top_nav.css}" />
+    <link rel="stylesheet" th:href="@{/css/help.css}" />
 
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/jquery.creaseFont.min.js}"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <script th:src="@{/js/top_nav.js}"></script>
+  </head>
 
+  <body>
+    <div th:replace="~{/index :: header_top}"></div>
 
-    main h2 {
-      color: #003366;
-      margin-bottom: 10px;
-    }
+    <div th:replace="~{/index :: header}"></div>
 
-    h3 {
-      color: #005b8e;
-      margin-top: 30px;
-      margin-bottom: 10px;
-    }
+    <main>
+      <div class="help-container">
+        <h2>Help</h2>
 
-    .help-container {
-      max-width: 100%;
-      margin: auto;
-      /* background: white; */
-      padding: 30px;
-      /* border-radius: 10px; */
-      /* box-shadow: 0 0 15px rgba(0,0,0,0.05); */
-    }
+        <h3><strong>Viewing Different File Formats</strong></h3>
+        <table class="gridtable">
+          <thead>
+            <tr>
+              <th>Document Type</th>
+              <th>Download</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Portable Document Format (P.D.F.) content</td>
+              <td>
+                <a
+                  href="http://www.adobe.com/products/acrobat/readstep2.html"
+                  target="_blank"
+                  >Adobe Acrobat Reader</a
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>Word Files</td>
+              <td>
+                <a
+                  href="http://www.microsoft.com/downloads/details.aspx?familyid=941b3470-3ae9-4aee-8f43-c6bb74cd1466&displaylang=en"
+                  target="_blank"
+                  >Microsoft Office Compatibility Pack for Word (2007)</a
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>Excel Files</td>
+              <td>
+                <a
+                  href="https://www.microsoft.com/en-us/download/details.aspx?id=10"
+                  target="_blank"
+                  >Excel Viewer</a
+                ><br />
+                <a
+                  href="http://www.microsoft.com/downloads/details.aspx?familyid=941b3470-3ae9-4aee-8f43-c6bb74cd1466&displaylang=en"
+                  target="_blank"
+                  >Compatibility Pack for Excel (2007)</a
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>PowerPoint Presentations</td>
+              <td>
+                <a
+                  href="https://www.microsoft.com/en-us/download/details.aspx?id=13"
+                  target="_blank"
+                  >PowerPoint Viewer</a
+                ><br />
+                <a
+                  href="http://www.microsoft.com/downloads/details.aspx?familyid=941b3470-3ae9-4aee-8f43-c6bb74cd1466&displaylang=en"
+                  target="_blank"
+                  >Compatibility Pack for PowerPoint (2007)</a
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>Flash Content</td>
+              <td>
+                <a href="http://get.adobe.com/flashplayer/" target="_blank"
+                  >Adobe Flash Player</a
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>Audio Files</td>
+              <td>
+                <a
+                  href="http://windows.microsoft.com/en-us/windows/download-windows-media-player"
+                  target="_blank"
+                  >Windows Media Player</a
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-    .gridtable {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-    }
+        <h3><strong>Accessibility Help</strong></h3>
+        <p>
+          Use the accessibility options provided by this Website to control the
+          screen display. These options allow increasing the text spacing,
+          changing the text size and colour scheme for clear visibility and
+          better readability.
+        </p>
 
-    .gridtable th,
-    .gridtable td {
-      border: 1px solid #ccc;
-      padding: 12px;
-      text-align: left;
-      vertical-align: top;
-    }
+        <h3><strong>Text Size Icons</strong></h3>
+        <ul>
+          <li class="icon-text">
+            <img
+              src="/images/stock_increase-font.png"
+              class="icon"
+              alt="Increase font size"
+            />
+            Increase text size: Up to 3 levels
+          </li>
+          <li class="icon-text">
+            <img
+              src="/images/stock_decrease-font.png"
+              class="icon"
+              alt="Decrease font size"
+            />
+            Decrease text size: Down to 3 levels
+          </li>
+          <li class="icon-text">
+            <img
+              src="/images/stock_font-size.png"
+              class="icon"
+              alt="Default font size"
+            />
+            Reset to default text size
+          </li>
+        </ul>
 
-    .gridtable th {
-      background-color: #003366;
-      color: #fff;
-    }
+        <h3><strong>Changing the Colour Scheme</strong></h3>
+        <p>Change the color scheme for better visibility:</p>
+        <ul>
+          <li class="icon-text">
+            <img src="images/default.png" class="icon" alt="Default Scheme" />
+            Default contrast scheme
+          </li>
+          <li class="icon-text">
+            <img src="images/black.png" class="icon" alt="Yellow on Black" />
+            Yellow text on Black background
+          </li>
+          <li class="icon-text">
+            <img src="images/white.png" class="icon" alt="Black on White" />
+            Black text on White background
+          </li>
+        </ul>
+        <p><strong>Note:</strong> Images are not affected by color changes.</p>
 
-    a {
-      color: #0066cc;
-      text-decoration: none;
-    }
+        <h3><strong>Changing the Text Spacing</strong></h3>
+        <p>
+          To improve readability for visually impaired users, increase spacing
+          between letters.
+        </p>
+        <p>
+          Click
+          <button class="button">On</button>
+          to increase spacing and
+          <button class="button">Off</button>
+          to reset to default.
+        </p>
 
-    a:hover {
-      text-decoration: underline;
-    }
+        <h3><strong>Related Links</strong></h3>
+        <ul>
+          <li><a href="/accessibilityStatement">Accessibility Statement</a></li>
+          <li>
+            <a href="accessibilityBrowsers"
+              >Accessibility Options in Browsers</a
+            >
+          </li>
+        </ul>
+      </div>
+    </main>
 
-    ul {
-      padding-left: 20px;
-      margin-top: 10px;
-      list-style-type: none;
-    }
-
-    ul li {
-      margin-bottom: 10px;
-    }
-
-    .icon-text {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .button {
-      background-color: #005b8e;
-      color: white;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 4px;
-      cursor: pointer;
-      margin: 0 4px;
-    }
-
-    .button:hover {
-      background-color: #00416a;
-    }
-
-    img.icon {
-      width: 24px;
-      height: 24px;
-    }
-
-    @media screen and (max-width: 600px) {
-
-      .gridtable th,
-      .gridtable td {
-        font-size: 14px;
-      }
-
-      .help-container {
-        padding: 20px;
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <div th:replace="~{/index :: header_top}"></div>
-
-  <div th:replace="~{/index :: header}"></div>
-
-  <main>
-    <div class="help-container">
-      <h2>Help</h2>
-
-      <h3><strong>Viewing Different File Formats</strong></h3>
-      <table class="gridtable">
-        <thead>
-          <tr>
-            <th>Document Type</th>
-            <th>Download</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Portable Document Format (P.D.F.) content</td>
-            <td><a href="http://www.adobe.com/products/acrobat/readstep2.html" target="_blank">Adobe Acrobat Reader</a>
-            </td>
-          </tr>
-          <tr>
-            <td>Word Files</td>
-            <td><a
-                href="http://www.microsoft.com/downloads/details.aspx?familyid=941b3470-3ae9-4aee-8f43-c6bb74cd1466&displaylang=en"
-                target="_blank">Microsoft Office Compatibility Pack for Word (2007)</a></td>
-          </tr>
-          <tr>
-            <td>Excel Files</td>
-            <td>
-              <a href="https://www.microsoft.com/en-us/download/details.aspx?id=10" target="_blank">Excel Viewer</a><br>
-              <a href="http://www.microsoft.com/downloads/details.aspx?familyid=941b3470-3ae9-4aee-8f43-c6bb74cd1466&displaylang=en"
-                target="_blank">Compatibility Pack for Excel (2007)</a>
-            </td>
-          </tr>
-          <tr>
-            <td>PowerPoint Presentations</td>
-            <td>
-              <a href="https://www.microsoft.com/en-us/download/details.aspx?id=13" target="_blank">PowerPoint
-                Viewer</a><br>
-              <a href="http://www.microsoft.com/downloads/details.aspx?familyid=941b3470-3ae9-4aee-8f43-c6bb74cd1466&displaylang=en"
-                target="_blank">Compatibility Pack for PowerPoint (2007)</a>
-            </td>
-          </tr>
-          <tr>
-            <td>Flash Content</td>
-            <td><a href="http://get.adobe.com/flashplayer/" target="_blank">Adobe Flash Player</a></td>
-          </tr>
-          <tr>
-            <td>Audio Files</td>
-            <td><a href="http://windows.microsoft.com/en-us/windows/download-windows-media-player"
-                target="_blank">Windows Media Player</a></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h3><strong>Accessibility Help</strong></h3>
-      <p>Use the accessibility options provided by this Website to control the screen display. These options allow
-        increasing the text spacing, changing the text size and colour scheme for clear visibility and better
-        readability.</p>
-
-      <h3><strong>Text Size Icons</strong></h3>
-      <ul>
-        <li class="icon-text"><img src="/images/stock_increase-font.png" class="icon" alt="Increase font size"> Increase
-          text size: Up to 3 levels</li>
-        <li class="icon-text"><img src="/images/stock_decrease-font.png" class="icon" alt="Decrease font size"> Decrease
-          text size: Down to 3 levels</li>
-        <li class="icon-text"><img src="/images/stock_font-size.png" class="icon" alt="Default font size"> Reset to
-          default text size</li>
-      </ul>
-
-      <h3><strong>Changing the Colour Scheme</strong></h3>
-      <p>Change the color scheme for better visibility:</p>
-      <ul>
-        <li class="icon-text"><img src="images/default.png" class="icon" alt="Default Scheme"> Default contrast scheme
-        </li>
-        <li class="icon-text"><img src="images/black.png" class="icon" alt="Yellow on Black"> Yellow text on Black
-          background</li>
-        <li class="icon-text"><img src="images/white.png" class="icon" alt="Black on White"> Black text on White
-          background</li>
-      </ul>
-      <p><strong>Note:</strong> Images are not affected by color changes.</p>
-
-      <h3><strong>Changing the Text Spacing</strong></h3>
-      <p>To improve readability for visually impaired users, increase spacing between letters.</p>
-      <p>
-        Click
-        <button class="button">On</button>
-        to increase spacing and
-        <button class="button">Off</button>
-        to reset to default.
-      </p>
-
-      <h3><strong>Related Links</strong></h3>
-      <ul>
-        <li><a href="/accessibilityStatement">Accessibility Statement</a></li>
-        <li><a href="accessibilityBrowsers">Accessibility Options in Browsers</a></li>
-      </ul>
-    </div>
-
-  </main>
-
-
-  <div th:replace="~{/index :: footer}"></div>
-
-
-  <!-- <script src="/js/tender.js"></script> -->
-  <script>
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-      // Menu toggle functionality
-      const menuToggle = document.querySelector('.menu-toggle');
-      const nav = document.querySelector('nav ul');
-
-      if (menuToggle) {
-        menuToggle.addEventListener('click', () => {
-          nav.classList.toggle('active');
-        });
-      }
-
-
-    });
-  </script>
-</body>
-
+    <div th:replace="~{/index :: footer}"></div>
+  </body>
 </html>

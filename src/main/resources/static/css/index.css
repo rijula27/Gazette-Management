@@ -1,0 +1,55 @@
+/* RESET */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* NAV TOGGLE */
+nav ul {
+    display: flex;
+}
+
+nav ul.active {
+    display: block;
+}
+
+/* GALLERY */
+.slide-wrapper {
+    display: none;
+}
+
+.slide-wrapper.active {
+    display: block;
+}
+
+/* THEMES */
+body.black {
+    background-color: black;
+    color: yellow;
+}
+
+body.white {
+    background-color: white;
+    color: black;
+}
+
+body.default {
+    background-color: initial;
+    color: initial;
+}
+
+#wraper-title{
+    margin-left: 5px
+}
+
+#wraper-size{
+    margin-left: 5px; 
+    color: gray; 
+    font-size: 0.9em
+}
+
+#wraper-icon {
+    height: 25px !important;
+    vertical-align: middle !important;
+    margin-left: 5px !important;
+}

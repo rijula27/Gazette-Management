@@ -447,3 +447,43 @@ function submitEditForm() {
 
 
 
+// ===================================
+// REMOVE INLINE onclick -> USE EVENTS
+// ===================================
+$(document).ready(function () {
+
+    // Edit
+    $(document).on('click', '.edit-btn', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openEditModal(this);
+    });
+
+    // Delete
+    $(document).on('click', '.delete-btn', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        confirmDelete(this);
+    });
+
+    // Send Back
+    $(document).on('click', '.sendback-btn', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        sendBack_Creator(this);
+    });
+
+    // Publish
+    $(document).on('click', '.publish-btn', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        published(this);
+    });
+
+    // Confirm update button
+    $(document).on('click', '#confirmUpdateBtn', function (e) {
+        e.preventDefault();
+        confirmEdit();
+    });
+
+});

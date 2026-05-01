@@ -248,3 +248,23 @@ window.onclick = function (event) {
         document.querySelectorAll('.dropdown-menu').forEach(drop => drop.style.display = 'none');
     }
 };
+
+
+
+// ADD THIS AT BOTTOM OF JS FILE
+
+// Dropdown button click
+$(document).on("click", ".dropdown-toggle", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    toggleDropdown(this);
+});
+
+// Delete button click
+$(document).on("click", ".delete-btn", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    confirmDelete(this);
+});

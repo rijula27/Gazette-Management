@@ -459,3 +459,41 @@ function formatDate(dateString) {
     const dd = String(date.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
 }
+
+
+
+// =========================
+// ACTION BUTTON EVENTS
+// =========================
+$(document).ready(function () {
+
+    // Edit
+    $(document).on('click', '.edit-btn', function (e) {
+        e.preventDefault();
+        openEditModal(this);
+    });
+
+    // Delete
+    $(document).on('click', '.delete-btn', function (e) {
+        e.preventDefault();
+        confirmDelete(this);
+    });
+
+    // Send Back
+    $(document).on('click', '.sendback-btn', function (e) {
+        e.preventDefault();
+        sendBack_Creator(this);
+    });
+
+    // Publish
+    $(document).on('click', '.publish-btn', function (e) {
+        e.preventDefault();
+        published(this);
+    });
+
+    $(document).on('click', '.confirm-edit-btn', function () {
+        e.preventDefault();
+        confirmEdit();
+    });
+
+});

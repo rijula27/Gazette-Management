@@ -17,24 +17,60 @@ function closeEditModal() {
   location.reload();
 }
 
-// Toggle Dropdown
-function toggleDropdown(button) {
-  const allDropdowns = document.querySelectorAll(".dropdown-menu");
-  allDropdowns.forEach(menu => {
-    if (menu !== button.nextElementSibling) {
-      menu.style.display = "none";
-    }
-  });
-  const menu = button.nextElementSibling;
-  menu.style.display = (menu.style.display === "block") ? "none" : "block";
-}
+document.addEventListener("DOMContentLoaded", function () {
+  const addBtn = document.getElementById("addPublisherBtn");
 
-// Close dropdown on outside click
-window.onclick = function (event) {
-  if (!event.target.matches('.dropdown-toggle')) {
-    document.querySelectorAll(".dropdown-menu").forEach(d => d.style.display = "none");
+  if (addBtn) {
+    addBtn.addEventListener("click", openModal);
   }
-}
+
+  const closeBtn = document.getElementById("closePublisherModalBtn");
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closeModal);
+  }
+
+
+    const closeEditBtn = document.getElementById("closeEditPublisherModalBtn");
+
+  if (closeEditBtn) {
+    closeEditBtn.addEventListener("click", closeEditModal);
+  }
+}); 
+
+
+
+// Dropdown toggle
+$(document).on("click", ".dropdown-toggle", function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const menu = $(this).next(".dropdown-menu");
+
+  $(".dropdown-menu").not(menu).hide();
+  menu.toggle();
+});
+
+// Close dropdown when clicking outside
+$(document).on("click", function () {
+  $(".dropdown-menu").hide();
+});
+
+// Edit button click
+$(document).on("click", ".edit-btn", function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  editPublisher(this);
+});
+
+// Delete button click
+$(document).on("click", ".delete-btn", function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  confirmDelete(this);
+});
 
 
 // Confirm Delete
@@ -252,7 +288,8 @@ function editPublisher(element) {
   document.getElementById("existingUserName").value = userName;
 
   // Show the edit modal
-  $('#editPublisherModal').modal('show');
+  // $('#editPublisherModal').modal('show');
+  document.getElementById("editPublisherModal").style.display = "block";
 }
 
 

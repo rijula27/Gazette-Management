@@ -1,0 +1,280 @@
+ /* General Container Styling */
+        .dashboard-container {
+            /* max-width: 1100px; */
+            margin: -70px auto;
+            padding: 20px;
+            /* background: #ffffff; */
+            /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
+            border-radius: 12px;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        /* Title Styling */
+        .dashboard-title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 30px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        /* Search Bar */
+        .search-container {
+            max-width: 400px;
+            margin: 0 auto 20px;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #searchInput:focus {
+            border-color: #2980b9;
+            box-shadow: 0 0 8px rgba(41, 128, 185, 0.2);
+            outline: none;
+        }
+
+        /* Table Wrapper */
+        .table-wrapper {
+            /* overflow-x: auto; */
+            background: #f9f9f9;
+            padding: 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Table */
+        .dashboard-table {
+            text-align: center;
+            overflow: hidden;
+            overflow-y: scroll;
+
+            border-collapse: separate;
+            /* ← Change this */
+            border-spacing: 0;
+            /* ← Optional: remove spacing between cells */
+            border: 1px solid #ccc;
+            /* ← Ensure outer border is visible */
+            border-radius: 15px;
+
+        }
+
+
+        .dashboard-table thead tr th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .dashboard-table thead tr th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        .dashboard-table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 12px;
+        }
+
+        .dashboard-table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 12px;
+        }
+
+        /* Table Header */
+        .dashboard-table thead {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .dashboard-table th {
+            padding: 14px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Table Rows */
+        .dashboard-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        /* Hover Effect */
+        .dashboard-table tbody tr:hover {
+            background-color: #f1f1f1;
+            transition: background 0.3s;
+        }
+
+        /* Alternate Row Color */
+        .dashboard-table tbody tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        /* No Results Row */
+        #noResultsRow {
+            color: #888;
+            font-style: italic;
+            font-size: 16px;
+        }
+
+        /* Dropdown Styling */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Dropdown Button */
+        .dropdown-toggle {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .dropdown-toggle:hover {
+            background-color: #2980b9;
+        }
+
+        /* Dropdown Menu */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 120%;
+            left: 0;
+            background-color: white;
+            min-width: 160px;
+            border: 1px solid #ccc;
+            z-index: 10;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Dropdown Links */
+        .dropdown-menu a {
+            display: block;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            transition: background 0.2s ease-in-out;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f4f4f4;
+            color: #000;
+        }
+
+        #paginationControls {
+            display: flex;
+            justify-content: center;
+            /* Center the buttons horizontally */
+            gap: 5px;
+            /* Add space between buttons */
+            margin-top: 10px;
+            /* Add margin for spacing */
+        }
+
+        .page-link {
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            background-color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .page-link.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .page-link:hover {
+            background-color: #f0f0f0;
+        }
+
+        .fixed-action-column-small {
+            width: 80px;
+            min-width: 80px;
+            max-width: 80px;
+            text-align: center;
+        }
+
+        .fixed-action-column {
+            width: 150px;
+            min-width: 150px;
+            max-width: 150px;
+            text-align: center;
+        }
+
+
+        #paginationControls .page-link {
+            margin: 5px;
+            padding: 6px 14px;
+            background-color: #003367;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        #paginationControls .page-link:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #paginationControls {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+
+        /* td {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: center;
+}
+
+.fixed-action-column-small{
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+    text-align: center;
+} */
+
+        .fixed-action-column {
+            width: 150px;
+            min-width: 150px;
+            max-width: 150px;
+            text-align: center;
+        }
+
+
+        a,
+        a:visited,
+        a:hover,
+        a:active {
+            text-decoration: none;
+            border-bottom: none;
+        }

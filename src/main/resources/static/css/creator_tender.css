@@ -57,3 +57,102 @@ label {
     padding-left: 0px;
     transition: all 0.3s ease;
 }
+
+
+body {
+            background: #f4f6f9;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            margin-top: 60px;
+        }
+
+        .card-header {
+            background: linear-gradient(to right, #007bff, #0056b3);
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .form-label {
+            font-weight: 600;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .icon-input {
+            position: relative;
+        }
+
+        .icon-input i {
+            position: absolute;
+            left: 22px;
+            top: 70%;
+            transform: translateY(-50%);
+            color: #007bff;
+        }
+
+        .icon-input input {
+            padding-left: 40px;
+        }
+
+        .file-label-display {
+            flex: 1;
+            padding: 0.5rem;
+            background: #e9ecef;
+            border-radius: 10px;
+            margin-right: 10px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .custom-file-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .custom-file-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .custom-file-input {
+            display: none;
+        }
+
+        #content{
+             width: 100%;
+        }

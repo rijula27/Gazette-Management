@@ -350,3 +350,48 @@ function confirmDelete(el) {
     }
   });
 }
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const addBtn = document.getElementById("add-btn");
+
+  if (addBtn) {
+    addBtn.addEventListener("click", openModal);
+  }
+
+    const closeBtn = document.getElementById("closeAddModalBtn");
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closeAddModal);
+  }
+
+    const closeEditBtn = document.getElementById("closeEditModalBtn");
+
+  if (closeEditBtn) {
+    closeEditBtn.addEventListener("click", closeEditModal);
+  }
+});
+
+
+// ADD THIS IN JS FILE
+
+// Dropdown toggle
+$(document).on("click", ".dropdown-toggle", function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+  toggleDropdown(this);
+});
+
+// Edit click
+$(document).on("click", ".edit-btn", function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+  openEditModal(this);
+});
+
+// Delete click
+$(document).on("click", ".delete-btn", function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+  confirmDelete(this);
+});

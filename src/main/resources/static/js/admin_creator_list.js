@@ -17,24 +17,47 @@ function closeEditModal() {
   location.reload();
 }
 
-// Toggle Dropdown
-function toggleDropdown(button) {
-  const allDropdowns = document.querySelectorAll(".dropdown-menu");
-  allDropdowns.forEach(menu => {
-    if (menu !== button.nextElementSibling) {
-      menu.style.display = "none";
-    }
-  });
-  const menu = button.nextElementSibling;
-  menu.style.display = (menu.style.display === "block") ? "none" : "block";
-}
-
-// Close dropdown on outside click
-window.onclick = function (event) {
-  if (!event.target.matches('.dropdown-toggle')) {
-    document.querySelectorAll(".dropdown-menu").forEach(d => d.style.display = "none");
+document.addEventListener("DOMContentLoaded", function () {
+  const addBtn = document.getElementById("addCreatorBtn");
+  if (addBtn) {
+    addBtn.addEventListener("click", openModal);
   }
-}
+});
+
+
+
+
+// Dropdown toggle
+$(document).on("click", ".dropdown-toggle", function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const menu = $(this).next(".dropdown-menu");
+
+  $(".dropdown-menu").not(menu).hide();
+  menu.toggle();
+});
+
+// Close dropdown when clicking outside
+$(document).on("click", function () {
+  $(".dropdown-menu").hide();
+});
+
+// Edit button click
+$(document).on("click", ".edit-btn", function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  editCreator(this);
+});
+
+// Delete button click
+$(document).on("click", ".delete-btn", function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  confirmDelete(this);
+});
 
 // Confirm Delete
 function confirmDelete(el) {
@@ -208,11 +231,15 @@ function editCreator(element) {
   const userId = element.getAttribute("data-id");
   const userName = element.getAttribute("data-name");
 
-  // Set the username in the existingUserName field
-  document.getElementById("existingUserName").value = userName;
+  // // Set the username in the existingUserName field
+  // document.getElementById("existingUserName").value = userName;
 
-  // Show the edit modal
-  $('#editCreatorModal').modal('show');
+  // // Show the edit modal
+  // $('#editCreatorModal').modal('show');
+
+    document.getElementById("existingUserName").value = userName;
+
+  document.getElementById("editCreatorModal").style.display = "block";
 }
 
 
@@ -278,7 +305,9 @@ edit_form.addEventListener("submit", function (e) {
   };
 
   // Show confirmation modal for saving
-  $('#saveEditCreatorModal').modal('show');
+  // $('#saveEditCreatorModal').modal('show');
+  document.getElementById("editCreatorModal").style.display = "none";
+$('#saveEditCreatorModal').modal('show');
 });
 
 document.getElementById("confirmUpdate").addEventListener("click", async function () {
@@ -327,3 +356,21 @@ document.getElementById("confirmUpdate").addEventListener("click", async functio
 
 
 
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const addBtn = document.getElementById("addCreatorBtn");
+  if (addBtn) {
+    addBtn.addEventListener("click", openModal);
+  }
+
+  const closeBtn = document.getElementById("closeAddModalBtn");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closeModal);
+  }
+
+  const closeEditBtn = document.getElementById("closeEditModalBtn");
+  if (closeEditBtn) {
+    closeEditBtn.addEventListener("click", closeEditModal);
+  }
+});
