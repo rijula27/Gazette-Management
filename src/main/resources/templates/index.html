@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Printing and Stationery Department - Government of Meghalaya</title>
-    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
     <!-- <link rel="stylesheet" th:href="@{/css/all.min.css}"> -->
     <!-- <link href="/css/black.css" rel="alternate stylesheet" type="text/css" title="black"/> -->
     <!-- <link href="/css/white.css" rel="alternate stylesheet" type="text/css" title="white"/> -->
@@ -27,7 +27,7 @@
           <form
             method="get"
             action="https://www.google.com/search"
-            target="_blank"
+            target="_blank" rel="noopener noreferrer"
             autocomplete="off"
           >
             <label for="search-form"><i class="fas fa-search"></i></label>
@@ -125,19 +125,19 @@
             <li>
               <a
                 href="https://megpgrams.gov.in/lodgegrievance.htm?orc=29"
-                target="_blank"
+                target="_blank" rel="noopener noreferrer"
                 >Lodge your grievance</a
               >
             </li>
             <li>
-              <a href="https://megrti.gov.in/" target="_blank"
+              <a href="https://megrti.gov.in/" target="_blank" rel="noopener noreferrer"
                 >Right to Information</a
               >
             </li>
             <li>
               <a
                 href="https://meghalaya.gov.in/key-contacts/department/35"
-                target="_blank"
+                target="_blank" rel="noopener noreferrer"
                 >Key contacts</a
               >
             </li>
@@ -150,17 +150,17 @@
             <li>
               <a
                 href="https://egazette.gov.in/(S(fjtsivlmksfdwrwkow0mygzl))/default.aspx"
-                target="_blank"
+                target="_blank" rel="noopener noreferrer"
                 >The Gazette of India</a
               >
             </li>
             <li>
-              <a href="https://megipr.gov.in/" target="_blank"
+              <a href="https://megipr.gov.in/" target="_blank" rel="noopener noreferrer"
                 >Information & Public Relations Department</a
               >
             </li>
             <li>
-              <a href="https://megassembly.gov.in/" target="_blank"
+              <a href="https://megassembly.gov.in/" target="_blank" rel="noopener noreferrer"
                 >Meghalaya Legislative Assembly</a
               >
             </li>
@@ -173,21 +173,21 @@
             <li>
               <a
                 href="https://investmeghalaya.gov.in/loginWindow.do"
-                target="_blank"
+                target="_blank" rel="noopener noreferrer"
                 >Annual subscription for complete Gazette with extra ordinary</a
               >
             </li>
             <li>
               <a
                 href="https://investmeghalaya.gov.in/loginWindow.do"
-                target="_blank"
+                target="_blank" rel="noopener noreferrer"
                 >Printing Request</a
               >
             </li>
             <li>
               <a
                 href="https://investmeghalaya.gov.in/loginWindow.do"
-                target="_blank"
+                target="_blank" rel="noopener noreferrer"
                 >Demand Request for issue of Stationery Articles or Schedule
                 Forms or Service Books</a
               >
@@ -253,7 +253,7 @@
         <h3>Important PDF</h3>
         <ul>
           <li th:each="wrapper : ${importantPdfs}">
-            <a th:href="@{/pdf/{id}(id=${wrapper.pdf.pdfId})}" target="_blank">
+            <a th:href="@{/pdf/{id}(id=${wrapper.pdf.pdfId})}" target="_blank" rel="noopener noreferrer"> 
               <span th:text="${wrapper.pdf.pdfTitle}" id="wraper-title"></span>
               <span
                 th:text="' (' + ${wrapper.size} + ')'"
@@ -267,21 +267,21 @@
     </main>
     <section class="imageLink">
       <!-- <a href="http://india.gov.in" target="_blank"><img src="/images/banner1.jpg" alt=""></a> -->
-      <a style="height: 90%" href="http://meghalaya.gov.in/" target="_blank"
+      <a style="height: 90%" href="http://meghalaya.gov.in/" target="_blank" rel="noopener noreferrer"
         ><img src="/images/gov_meghalaya.png" alt=""
       /></a>
-      <a style="height: 40%" href="https://www.data.gov.in/help" target="_blank"
+      <a style="height: 40%" href="https://www.data.gov.in/help" target="_blank" rel="noopener noreferrer"
         ><img src="/images/datagov.png" alt=""
       /></a>
-      <a href="http://india.gov.in//" target="_blank"
+      <a href="http://india.gov.in//" target="_blank" rel="noopener noreferrer"
         ><img src="/images/India_Portal.png" alt=""
       /></a>
 
-      <a style="height: 35%" href="https://www.nic.gov.in/" target="_blank"
+      <a style="height: 35%" href="https://www.nic.gov.in/" target="_blank" rel="noopener noreferrer"
         ><img src="/images/NIC.png" alt=""
       /></a>
 
-      <a href="http://mygov.in//" target="_blank"
+      <a href="http://mygov.in//" target="_blank" rel="noopener noreferrer"
         ><img src="/images/My_Gov.png" alt=""
       /></a>
     </section>

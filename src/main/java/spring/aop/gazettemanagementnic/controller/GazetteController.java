@@ -18,6 +18,7 @@ import spring.aop.gazettemanagementnic.service.GCUserService;
 import spring.aop.gazettemanagementnic.service.GazetteService;
 
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.TextStyle;
@@ -28,6 +29,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+
+
 
 @Slf4j
 @Controller
@@ -46,32 +49,35 @@ public class GazetteController {
     @PostMapping("/upload")
     public String uploadGazette(@RequestParam("gazettePart") String part,
             @RequestParam("pdfFile") MultipartFile file,
-            @RequestParam("date") LocalDate date,
+            @RequestParam(value = "date", required = false) LocalDate date,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
-        String username = (String) session.getAttribute("loggedInUser");
 
+        String username = (String) session.getAttribute("loggedInUser");
         if (username == null) {
             return "redirect:/login";
         }
 
         try {
-
-            final long MAX_SIZE = 20 * 1024 * 1024; // 20MB
-
-            if (file.getSize() > MAX_SIZE) {
-
-                return "redirect:/creator"; // Redirect with error message
-            }
-
             gazetteService.saveGazette(part, file, date, username);
-
-            // Redirect with success message
-            redirectAttributes.addAttribute("success", "Gazette saved successfully!");
+            redirectAttributes.addFlashAttribute("success", "Gazette saved successfully!");
             return "redirect:/creator";
 
-        } catch (IOException e) {
-            redirectAttributes.addAttribute("error", "Error uploading file: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.error("Validation error in gazette upload: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/creator";
+
+        } catch (FileAlreadyExistsException e) {
+            log.error("File already exists: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("error",
+                    "Gazette already exists for this date and part");
+            return "redirect:/creator";
+
+        } catch (Exception e) {
+            log.error("Unexpected error in gazette upload: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error",
+                    "An error occurred. Please try again.");
             return "redirect:/creator";
         }
     }
@@ -104,11 +110,16 @@ public class GazetteController {
             gazetteService.updateGazette(id, part, file, username, date);
             return ResponseEntity.ok("{\"message\": \"Gazette updated successfully!\"}");
 
+        } catch (IllegalArgumentException e) {
+            log.error("Validation error in gazette edit: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"error\": \"" + e.getMessage() + "\"}");
+
         } catch (Exception e) {
-            // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            // .body(e.getMessage());
+            // ✅ Generic message only — no details leaked
+            log.error("Unexpected error in gazette edit: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+                    .body("{\"error\": \"An error occurred. Please try again.\"}");
         }
     }
 

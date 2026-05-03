@@ -5,14 +5,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Screen Reader: Printing and Stationery Department - Government of Meghalaya</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
 
   <link rel="stylesheet" th:href="@{/css/all.min.css}">
-  <link rel="stylesheet" href="/css/top_nav.css">
-  <script type='text/javascript' src='/js/jquery.min.js'></script>
-  <script type="text/javascript" src="/js/jquery.creaseFont.min.js"></script>
-  <script src="/js/theme.js" type="text/javascript"></script>
-  <script src="/js/top_nav.js"></script>
+  <link rel="stylesheet" th:href="@{/css/top_nav.css}">
+  <script type='text/javascript' th:src='@{/js/jquery.min.js}'></script>
+  <script type="text/javascript" th:src="@{/js/jquery.creaseFont.min.js}"></script>
+  <script th:src="@{/js/theme.js}" type="text/javascript"></script>
+  <script th:src="@{/js/top_nav.js}"></script>
   <style>
     main {
       margin: 40px auto;
@@ -141,7 +141,7 @@
         comprehend webpage content. Visit the following links to learn more:
       </p>
       <ul>
-        <li><a href="http://www.screenreader.net/" target="_blank"
+        <li><a href="http://www.screenreader.net/" target="_blank" 
             rel="noopener noreferrer">http://www.screenreader.net</a></li>
         <li><a href="http://www.freedomscientific.com/" target="_blank"
             rel="noopener noreferrer">http://www.freedomscientific.com</a></li>

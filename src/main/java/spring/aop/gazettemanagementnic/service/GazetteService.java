@@ -44,6 +44,14 @@ public class GazetteService {
 
     public void saveGazette(String part, MultipartFile file, LocalDate date, String username) throws IOException {
 
+        // ✅ ADD THIS — validate file first
+        validatePdfFile(file);
+
+        // ✅ ADD THIS — validate date
+        if (date == null) {
+            throw new IllegalArgumentException("Date cannot be null");
+        }
+
         GCUser gcUser = gcUserRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found for username: " + username));
 
@@ -102,6 +110,33 @@ public class GazetteService {
             throw new IllegalArgumentException("Invalid part value: " + part);
         }
         return part;
+    }
+
+    private void validatePdfFile(MultipartFile file) throws IOException {
+        // Check if file is null or empty
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("File cannot be empty");
+        }
+
+        // Validate file extension
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || !originalFilename.toLowerCase().endsWith(".pdf")) {
+            throw new IllegalArgumentException("Only PDF files are allowed");
+        }
+
+        // Validate MIME type
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.equals("application/pdf")) {
+            throw new IllegalArgumentException("Invalid file type. Only PDF allowed");
+        }
+
+        // Validate magic bytes — first 4 bytes must be %PDF
+        byte[] bytes = new byte[4];
+        file.getInputStream().read(bytes);
+        if (bytes[0] != 0x25 || bytes[1] != 0x50 ||
+                bytes[2] != 0x44 || bytes[3] != 0x46) {
+            throw new IllegalArgumentException("File content is not a valid PDF");
+        }
     }
 
     // New method to display all gazettes without any filtering
@@ -172,6 +207,16 @@ public class GazetteService {
 
     public void updateGazette(Long id, String part, MultipartFile file, String username, LocalDate date)
             throws IOException {
+
+        // ✅ ADD THIS — validate file if present
+        if (file != null && !file.isEmpty()) {
+            validatePdfFile(file);
+        }
+
+        // ✅ ADD THIS — validate date
+        if (date == null) {
+            throw new IllegalArgumentException("Date cannot be null");
+        }
 
         int year = date.getYear();
         int month = date.getMonthValue();
@@ -302,7 +347,7 @@ public class GazetteService {
     }
 
     public ResponseEntity<Resource> getGazettePdfResponse(Long id) throws IOException {
-        Optional<Gazette> optionalGazette = gazetteRepository.findById(id); 
+        Optional<Gazette> optionalGazette = gazetteRepository.findById(id);
 
         if (optionalGazette.isPresent()) {
 

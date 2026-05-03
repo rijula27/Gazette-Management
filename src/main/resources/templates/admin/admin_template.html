@@ -5,12 +5,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin: Printing and Stationery Department - Government of Meghalaya</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="/css/admin_template.css">
-  <link rel="stylesheet" href="/css/admin_creator_list.css">
+  <link rel="stylesheet" th:href="@{/css/all.min.css}">
+  <link rel="stylesheet" th:href="@{/css/admin_template.css}">
+  <link rel="stylesheet" th:href="@{/css/admin_creator_list.css}">
 
-  <link rel="stylesheet" href="/css/sweetalert2.min.css">
-  <script src="/js/sweetalert2.all.min.js"></script>
+  <link rel="stylesheet" th:href="@{/css/sweetalert2.min.css}">
+  <script th:src="@{/js/sweetalert2.all.min.js}"></script>
   <style>
     .edit-profile {
       display: none;
@@ -148,7 +148,7 @@
 
 
 
-  <script src="/js/extra.js"></script>
+  <script th:src="@{/js/extra.js"}></script>
 
 
 </body>

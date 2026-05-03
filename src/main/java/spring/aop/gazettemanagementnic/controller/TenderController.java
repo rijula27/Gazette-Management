@@ -48,6 +48,78 @@ public class TenderController {
     @Autowired
     private GCUserService gcUserService;
 
+    // @PostMapping(value = "/uploadTender", consumes =
+    // MediaType.MULTIPART_FORM_DATA_VALUE)
+    // public ResponseEntity<String> uploadTender(
+    // @RequestPart("tender") Tender tender,
+    // @RequestPart("pdfFile") MultipartFile pdfFile,
+    // HttpSession session) {
+
+    // String username = (String) session.getAttribute("loggedInUser");
+
+    // if (username == null) {
+    // return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+    // .body("{\"error\": \"User not authorized. Please log in.\"}");
+    // }
+
+    // try {
+    // if (tender.getTitle() == null || tender.getTitle().trim().isEmpty()
+    // || tender.getRef_No() == null || tender.getRef_No().trim().isEmpty()
+    // || tender.getAnnouncement_Date() == null
+    // || tender.getLast_Date() == null
+    // || tender.getOpening_Date() == null) {
+    // log.info(
+    // "missing required fields: title={}, ref_No={}, announcement_Date={},
+    // last_Date={}, opening_Date={}",
+    // tender.getTitle(), tender.getRef_No(), tender.getAnnouncement_Date(),
+    // tender.getLast_Date(), tender.getOpening_Date());
+    // return ResponseEntity.badRequest()
+    // .body("{\"error\": \"All required tender fields must be filled out.\"}");
+    // }
+
+    // if (pdfFile == null || pdfFile.isEmpty()) {
+    // return ResponseEntity.badRequest()
+    // .body("{\"error\": \"Please upload a valid PDF file.\"}");
+    // }
+
+    // // Check file size
+    // final long MAX_SIZE = 20 * 1024 * 1024; // 20MB
+    // if (pdfFile.getSize() > MAX_SIZE) {
+    // return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+    // .body("{\"error\": \"File size exceeds the 20MB limit.\"}");
+    // }
+
+    // // Check file type
+    // String contentType = pdfFile.getContentType();
+    // if (!"application/pdf".equalsIgnoreCase(contentType)) {
+    // return ResponseEntity.badRequest()
+    // .body("{\"error\": \"Only PDF files are allowed.\"}");
+    // }
+
+    // if (tenderService.isTenderExist(tender.getTitle(), tender.getRef_No())) {
+    // return ResponseEntity.status(HttpStatus.CONFLICT)
+    // .body("{\"error\": \"A tender with the same title and reference number
+    // already exists.\"}");
+    // }
+
+    // tenderService.save_tender(
+    // username,
+    // tender.getTitle(),
+    // tender.getRef_No(),
+    // tender.getAnnouncement_Date(),
+    // tender.getLast_Date(),
+    // tender.getOpening_Date(),
+    // pdfFile,
+    // tender.getKeywords());
+
+    // return ResponseEntity.ok("{\"message\": \"Tender uploaded successfully.\"}");
+
+    // } catch (IOException e) {
+    // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    // .body("{\"error\": \"An error occurred while processing the file.\"}");
+    // }
+    // }
+
     @PostMapping(value = "/uploadTender", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadTender(
             @RequestPart("tender") Tender tender,
@@ -55,44 +127,24 @@ public class TenderController {
             HttpSession session) {
 
         String username = (String) session.getAttribute("loggedInUser");
-
         if (username == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("{\"error\": \"User not authorized. Please log in.\"}");
         }
 
         try {
+            // Validate required fields
             if (tender.getTitle() == null || tender.getTitle().trim().isEmpty()
                     || tender.getRef_No() == null || tender.getRef_No().trim().isEmpty()
                     || tender.getAnnouncement_Date() == null
                     || tender.getLast_Date() == null
                     || tender.getOpening_Date() == null) {
-                log.info(
-                        "missing required fields: title={}, ref_No={}, announcement_Date={}, last_Date={}, opening_Date={}",
-                        tender.getTitle(), tender.getRef_No(), tender.getAnnouncement_Date(),
-                        tender.getLast_Date(), tender.getOpening_Date());
                 return ResponseEntity.badRequest()
                         .body("{\"error\": \"All required tender fields must be filled out.\"}");
             }
 
-            if (pdfFile == null || pdfFile.isEmpty()) {
-                return ResponseEntity.badRequest()
-                        .body("{\"error\": \"Please upload a valid PDF file.\"}");
-            }
-
-            // Check file size
-            final long MAX_SIZE = 20 * 1024 * 1024; // 20MB
-            if (pdfFile.getSize() > MAX_SIZE) {
-                return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
-                        .body("{\"error\": \"File size exceeds the 20MB limit.\"}");
-            }
-
-            // Check file type
-            String contentType = pdfFile.getContentType();
-            if (!"application/pdf".equalsIgnoreCase(contentType)) {
-                return ResponseEntity.badRequest()
-                        .body("{\"error\": \"Only PDF files are allowed.\"}");
-            }
+            // ✅ File validation now handled inside service via validatePdfFile()
+            // No need to duplicate here — service throws IllegalArgumentException
 
             if (tenderService.isTenderExist(tender.getTitle(), tender.getRef_No())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -111,9 +163,29 @@ public class TenderController {
 
             return ResponseEntity.ok("{\"message\": \"Tender uploaded successfully.\"}");
 
+        } catch (IllegalArgumentException e) {
+            // ✅ Validation errors — show message
+            log.error("Validation error in tender upload: {}", e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body("{\"error\": \"" + e.getMessage() + "\"}");
+
+        } catch (SecurityException e) {
+            // ✅ Path traversal attempt
+            log.error("Security violation in tender upload: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"error\": \"Invalid file path.\"}");
+
         } catch (IOException e) {
+            // ✅ Generic IO error — no details leaked
+            log.error("IO error in tender upload: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("{\"error\": \"An error occurred while processing the file.\"}");
+
+        } catch (Exception e) {
+            // ✅ Catch everything else — no details leaked
+            log.error("Unexpected error in tender upload: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"An error occurred. Please try again.\"}");
         }
     }
 
@@ -255,11 +327,16 @@ public class TenderController {
             }
             tenderService.updateTender(id, title, username, last_Date, opening_Date, file);
             return ResponseEntity.ok("Tender updated successfully!");
-        } catch (Exception e) {
-            log.error("Error occurred while updating tender", e); // ✅ Proper logging
+        } catch (IllegalArgumentException e) {
+            log.error("Validation error in tender edit: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"error\": \"" + e.getMessage() + "\"}");
 
+        } catch (Exception e) {
+            // ✅ Generic message only
+            log.error("Error occurred while updating tender: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Something went wrong. Please try again.");
+                    .body("{\"error\": \"An error occurred. Please try again.\"}");
         }
     }
 

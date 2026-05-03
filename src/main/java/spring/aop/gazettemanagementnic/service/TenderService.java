@@ -43,26 +43,50 @@ public class TenderService {
             LocalDate announcementDate, LocalDate submissionLastDate, LocalDate openingDate,
             MultipartFile file, String keywords) throws IOException {
 
-        GCUser gcUser = gcUserRepository.findByUsername(username).get();
+        // ✅ Validate file
+        validatePdfFile(file);
+
+        // ✅ Validate dates
+        if (announcementDate == null || submissionLastDate == null || openingDate == null) {
+            throw new IllegalArgumentException("Dates cannot be null");
+        }
+
+        GCUser gcUser = gcUserRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
         int year = announcementDate.getYear();
 
-        FilePath filePath = filePathRepository.findByPathDescription("Tender Local Path").get();
+        FilePath filePath = filePathRepository.findByPathDescription("Tender Local Path")
+                .orElseThrow(() -> new RuntimeException("Tender path not found"));
 
-        String uploadDir = filePath.getFullPath() + year + "\\";
-
-        File directory = new File(uploadDir);
-        if (!directory.exists()) {
-            directory.mkdirs();
+        // ✅ Safe directory using File.separator
+        File baseDir = new File(filePath.getFullPath(), String.valueOf(year)).getCanonicalFile();
+        if (!baseDir.exists()) {
+            baseDir.mkdirs();
         }
 
-        String fileName = title + ".pdf";
+        // ✅ Sanitize title for filename
+        String sanitizedTitle = title.trim()
+                .replaceAll("[^a-zA-Z0-9-_ ]", "");
+        if (sanitizedTitle.isBlank()) {
+            throw new IllegalArgumentException("Invalid tender title");
+        }
+        if (sanitizedTitle.length() > 100) {
+            throw new IllegalArgumentException("Title too long");
+        }
 
-        File destinationFile = new File(uploadDir + fileName);
+        String fileName = sanitizedTitle + ".pdf";
+
+        // ✅ Path traversal check
+        File destinationFile = new File(baseDir, fileName).getCanonicalFile();
+        if (!destinationFile.getPath().startsWith(baseDir.getPath() + File.separator)) {
+            throw new SecurityException("Path traversal attempt detected");
+        }
 
         file.transferTo(destinationFile);
 
-        Status createStatus = statusRepository.findByState("Create").get();
+        Status createStatus = statusRepository.findByState("Create")
+                .orElseThrow(() -> new RuntimeException("Status not found"));
 
         Tender tender = new Tender();
         tender.setTitle(title);
@@ -75,6 +99,7 @@ public class TenderService {
         tender.setStatus(createStatus);
         tender.setFilePath(filePath);
         tender.setGcUser_edit(null);
+
         tenderRepository.save(tender);
         return "Tender saved successfully!";
     }
@@ -223,6 +248,10 @@ public class TenderService {
             LocalDate openingDate,
             MultipartFile file) throws IOException {
 
+        if (file != null && !file.isEmpty()) {
+            validatePdfFile(file);
+        }
+
         Optional<Tender> optionalTender = tenderRepository.findById(id);
         if (optionalTender.isEmpty()) {
             throw new RuntimeException("Tender not found with ID: " + id);
@@ -321,6 +350,30 @@ public class TenderService {
 
             tenderRepository.save(tender);
 
+        }
+    }
+
+    private void validatePdfFile(MultipartFile file) throws IOException {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("File cannot be empty");
+        }
+
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || !originalFilename.toLowerCase().endsWith(".pdf")) {
+            throw new IllegalArgumentException("Only PDF files are allowed");
+        }
+
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.equals("application/pdf")) {
+            throw new IllegalArgumentException("Invalid file type. Only PDF allowed");
+        }
+
+        // Magic bytes check — PDF must start with %PDF
+        byte[] bytes = new byte[4];
+        file.getInputStream().read(bytes);
+        if (bytes[0] != 0x25 || bytes[1] != 0x50 ||
+                bytes[2] != 0x44 || bytes[3] != 0x46) {
+            throw new IllegalArgumentException("File content is not a valid PDF");
         }
     }
 

@@ -3,12 +3,12 @@ package spring.aop.gazettemanagementnic.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
@@ -46,19 +46,16 @@ public class SecurityConfig {
                                 // XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
                                 // .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
 
+                                // ✅ CORRECT
                                 .headers(headers -> headers
-                                                .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Prevent
-                                                                                                         // clickjacking
-
+                                                .frameOptions(frameOptions -> frameOptions.sameOrigin())
                                                 .xssProtection(xss -> xss.headerValue(
                                                                 XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
-
                                                 .contentSecurityPolicy(csp -> csp
                                                                 .policyDirectives(
                                                                                 "default-src 'self'; " +
                                                                                                 "script-src 'self'; " +
-                                                                                                "style-src 'self'; "
-                                                                                                +
+                                                                                                "style-src 'self'; " +
                                                                                                 "img-src 'self' data:; "
                                                                                                 +
                                                                                                 "font-src 'self' data:; "
@@ -68,8 +65,13 @@ public class SecurityConfig {
                                                                                                 "base-uri 'self'; " +
                                                                                                 "frame-ancestors 'self'; "
                                                                                                 +
-                                                                                                "form-action 'self';")))
+                                                                                                "form-action 'self';"))
+
+                                                .referrerPolicy(referrer -> referrer
+                                                                .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)))
+
                                 .authorizeHttpRequests(authorize -> authorize
+                                                .requestMatchers(HttpMethod.OPTIONS, "/**").denyAll()
                                                 .requestMatchers("/login", "/index", "/", "/home", "/about",
                                                                 "/functions", "/gazette/display",
                                                                 "/gazette/years/*/months",
@@ -81,7 +83,8 @@ public class SecurityConfig {
                                                                 "/accessibilityStatement", "/siteMap", "/help",
                                                                 "/accessibilityBrowsers", "/test", "/screenReader",
                                                                 "/contact/display", "/about/display",
-                                                                "/gallery/images/**", "/captcha-image", "/css/**", "/webfonts/**",
+                                                                "/gallery/images/**", "/captcha-image", "/css/**",
+                                                                "/webfonts/**",
                                                                 "/js/**", "/images/**")
                                                 .permitAll()
                                                 .requestMatchers("/gazette/pdf/**", "/tender/pdf/**", "/pdf/**")
