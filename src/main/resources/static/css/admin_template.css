@@ -144,3 +144,20 @@ body {
     height: calc(100vh - 60px);
   }
 }
+
+    .edit-profile {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: #ffffff;
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      z-index: 10;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .navbar-right:hover .edit-profile {
+      display: block;
+    }

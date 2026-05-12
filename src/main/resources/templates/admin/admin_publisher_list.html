@@ -11,15 +11,9 @@
     <link rel="stylesheet" th:href="@{/css/admin_template.css}" />
     <link rel="stylesheet" th:href="@{/css/admin_creator_list.css}" />
 
-    <style>
-      #responseMessage {
-        border-radius: 5px;
-        font-weight: bold;
-      }
-    </style>
 
     <link rel="stylesheet" th:href="@{/css/sweetalert2.min.css}" />
-    <script src="@{/js/sweetalert2.all.min.js}"></script>
+    <script th:src="@{/js/sweetalert2.all.min.js}"></script>
   </head>
 
   <body>
@@ -316,7 +310,7 @@
               Cancel
             </button>
             <button class="btn btn-primary" id="confirmUpdatePublisher">
-              Savefdf
+              Save
             </button>
           </div>
         </div>

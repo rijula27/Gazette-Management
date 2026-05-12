@@ -57,30 +57,32 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* ================= THEME SWITCH ================= */
-    const themeButtons = document.querySelectorAll(".theme-btn");
+    // /* ================= THEME SWITCH ================= */
+    // const themeButtons = document.querySelectorAll(".theme-btn");
 
-    themeButtons.forEach(btn => {
-        btn.addEventListener("click", function (e) {
-            e.preventDefault();
-            const theme = this.dataset.theme;
-            document.body.className = theme; // apply class
-        });
-    });
+    // themeButtons.forEach(btn => {
+    //     btn.addEventListener("click", function (e) {
+    //         e.preventDefault();
+    //         const theme = this.dataset.theme;
+    //         // document.body.className = theme; // apply class
+    //         document.body.classList.remove("black", "white", "default");
+    //         document.body.classList.add(theme);
+    //     });
+    // });
 
     /* ================= CHARACTER SPACING ================= */
-    const spacingButtons = document.querySelectorAll(".char-spacing-btn");
+    // const spacingButtons = document.querySelectorAll(".char-spacing-btn");
 
-    spacingButtons.forEach(btn => {
-        btn.addEventListener("click", function () {
-            const spacing = this.dataset.spacing;
+    // spacingButtons.forEach(btn => {
+    //     btn.addEventListener("click", function () {
+    //         const spacing = this.dataset.spacing;
 
-            if (spacing === "on") {
-                document.body.style.letterSpacing = "1px";
-            } else {
-                document.body.style.letterSpacing = "normal";
-            }
-        });
-    });
+    //         if (spacing === "on") {
+    //             document.body.style.letterSpacing = "1px";
+    //         } else {
+    //             document.body.style.letterSpacing = "normal";
+    //         }
+    //     });
+    // });
 
 });

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import spring.aop.gazettemanagementnic.dto.ContactEditDto;
 import spring.aop.gazettemanagementnic.dto.ContactUsDto;
 import spring.aop.gazettemanagementnic.entity.ContactUs;
 import spring.aop.gazettemanagementnic.service.ContactUsService;
@@ -63,6 +64,8 @@ public class ContactUsController {
     @ResponseBody
     public ResponseEntity<String> saveContact(@Valid @RequestBody ContactUsDto dto,
             HttpSession session) {
+
+                log.info("sdklfjslkd ");
 
         String adminName = (String) session.getAttribute("loggedInUser");
 
@@ -124,8 +127,10 @@ public class ContactUsController {
 
     @PostMapping("/edit")
     @ResponseBody
-    public ResponseEntity<String> editContact(@Valid @RequestBody ContactUsDto dto,
+    public ResponseEntity<String> editContact(@Valid @RequestBody ContactEditDto dto,
             HttpSession session) {
+
+                log.info("lsjdfsdlkljjsj");
 
         String adminName = (String) session.getAttribute("loggedInUser");
 

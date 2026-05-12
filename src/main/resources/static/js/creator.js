@@ -68,13 +68,43 @@ document.getElementById('saveButton').addEventListener('click', function () {
 
 
 // api call display
-document.addEventListener("DOMContentLoaded", () => {
-    const urlParams = new URLSearchParams(window.location.search);
+// document.addEventListener("DOMContentLoaded", () => {
+//     const urlParams = new URLSearchParams(window.location.search);
 
-    if (urlParams.has('success')) {
+//     if (urlParams.has('success')) {
+//         Swal.fire({
+//             title: 'Upload Successful!',
+//             text: urlParams.get('success'),
+//             icon: 'success',
+//             confirmButtonColor: '#28a745',
+//             timer: 3000,
+//             showConfirmButton: false
+//         });
+//     }
+
+//     if (urlParams.has('error')) {
+//         Swal.fire({
+//             title: 'Upload Failed!',
+//             text: urlParams.get('error'),
+//             icon: 'error',
+//             confirmButtonColor: '#d33'
+//         });
+//     }
+
+//     const newUrl = window.location.origin + window.location.pathname;
+//     window.history.replaceState({}, document.title, newUrl);
+// });
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const success = document.getElementById("successMsg").value;
+    const error = document.getElementById("errorMsg").value;
+
+    if (success) {
         Swal.fire({
             title: 'Upload Successful!',
-            text: urlParams.get('success'),
+            text: success,
             icon: 'success',
             confirmButtonColor: '#28a745',
             timer: 3000,
@@ -82,19 +112,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    if (urlParams.has('error')) {
+    if (error) {
         Swal.fire({
             title: 'Upload Failed!',
-            text: urlParams.get('error'),
+            text: error,
             icon: 'error',
             confirmButtonColor: '#d33'
         });
     }
-
-    const newUrl = window.location.origin + window.location.pathname;
-    window.history.replaceState({}, document.title, newUrl);
 });
-
 
 
 

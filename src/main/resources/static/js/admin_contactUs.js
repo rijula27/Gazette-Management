@@ -78,7 +78,7 @@ form.addEventListener("submit", function (e) {
     return;
   }
 
-  if (!formDataJson.phno || formDataJson.phno.length >= 10) {
+  if (!formDataJson.phno || formDataJson.phno.length >= 11) {
     Swal.fire({
       icon: 'warning',
       title: 'Invalid Number',

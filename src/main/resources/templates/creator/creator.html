@@ -12,7 +12,7 @@
     <link rel="stylesheet" th:href="@{/css/creator_template.css}">
     <link rel="stylesheet" th:href="@{/css/creator.css}">
     <link rel="stylesheet" th:href="@{/css/sweetalert2.min.css}">
-    
+
     <script th:src="@{/js/sweetalert2.all.min.js}"></script>
 
 </head>
@@ -26,6 +26,9 @@
 
         <!-- Card Content -->
         <div th:replace="~{creator/creator_template :: sidebar}"></div>
+        
+        <input type="hidden" id="successMsg" th:value="${success}">
+        <input type="hidden" id="errorMsg" th:value="${error}">
 
         <main class="content" id="content">
 
@@ -88,9 +91,9 @@
 
     <div th:replace="~{creator/creator_template :: footer}"></div>
 
-    <script src="/js/extra.js"></script>
+    <script th:src="@{/js/extra.js}"></script>
 
-    <script src="/js/creator.js"></script>
+    <script th:src="@{/js/creator.js}"></script>
 
 
 </body>

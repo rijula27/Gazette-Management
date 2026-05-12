@@ -310,7 +310,7 @@ edit_form.addEventListener("submit", function (e) {
 $('#saveEditCreatorModal').modal('show');
 });
 
-document.getElementById("confirmUpdate").addEventListener("click", async function () {
+$(document).on("click", "#confirmUpdate", async function () {
   try {
     const csrfToken = document.querySelector('input[name="_csrf"]')?.value || '';
     const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';

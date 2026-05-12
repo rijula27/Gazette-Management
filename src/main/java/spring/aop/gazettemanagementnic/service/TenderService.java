@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.extern.slf4j.Slf4j;
 import spring.aop.gazettemanagementnic.entity.FilePath;
 import spring.aop.gazettemanagementnic.entity.GCUser;
 import spring.aop.gazettemanagementnic.entity.Status;
@@ -24,6 +25,7 @@ import spring.aop.gazettemanagementnic.repository.GCUserRepository;
 import spring.aop.gazettemanagementnic.repository.StatusRepository;
 import spring.aop.gazettemanagementnic.repository.TenderRepository;
 
+@Slf4j
 @Service
 public class TenderService {
 
@@ -142,11 +144,13 @@ public class TenderService {
     }
 
     public void deleteTender(Long id) {
+        log.info("Attempting to delete tender with ID: " + id);
 
         Optional<Tender> optionalTender = tenderRepository.findById(id);
 
         if (optionalTender.isPresent()) {
 
+            log.info("Tender found with ID: " + id);
             Tender tender = optionalTender.get();
 
             FilePath tenderPath = tender.getFilePath();
@@ -162,6 +166,7 @@ public class TenderService {
             File File = new File(deletedDir + fileName);
 
             if (File.exists()) {
+                log.info(" file exist : " + fileName);
                 if (File.delete()) {
                     tenderRepository.deleteById(id);
                 }

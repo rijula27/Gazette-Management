@@ -27,7 +27,7 @@
             <div class="tender-list">
                 <div class="tender-header">
                     <h2>Active Tenders</h2>
-                    <h3><a href="/tender/displayArchive" class="archive-link">Archive</a></h3>
+                    <h3><a th:href="@{/tender/displayArchive}" class="archive-link">Archive</a></h3>
                 </div>
                 <ul class="tender-items" id="tender-items">
                     <th:block th:each="wrapper : ${tendersWithSize}">
@@ -35,7 +35,7 @@
                             <a th:href="@{/tender/pdf/{id}(id=${wrapper.tender.tId})}" target="_blank" rel="noopener noreferrer">
                                 <span th:text="${wrapper.tender.title}" class="wraper-title"></span>
                                 <span th:text="' (' + ${wrapper.fileSize} + ')'" class="wraper-text"></span>
-                                <img src="/images/pdf-icon.png" alt="pdf-icon" class="wraper-img">
+                                <img th:src="@{/images/pdf-icon.png}" alt="pdf-icon" class="wraper-img">
                             </a>
                         </li>
                     </th:block>

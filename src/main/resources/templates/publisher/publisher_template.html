@@ -32,13 +32,13 @@
     <aside th:fragment="sidebar" class="sidebar" id="sidebar">
       <nav>
         <ul>
-          <li><a href="/publisher/publisher_display"><i class="fas fa-tachometer-alt"></i> Gazette Dashboard</a></li>
-          <li><a href="/publisher/publisher_tender_display"><i class="fas fa-file-alt"></i> Tender Dashboard</a></li>
-          <li><a href="/publisher/publisher_submission_history"><i class="fas fa-history"></i> Gazette Submission
+          <li><a th:href="@{/publisher/publisher_display}"><i class="fas fa-tachometer-alt"></i> Gazette Dashboard</a></li>
+          <li><a th:href="@{/publisher/publisher_tender_display}"><i class="fas fa-file-alt"></i> Tender Dashboard</a></li>
+          <li><a th:href="@{/publisher/publisher_submission_history}"><i class="fas fa-history"></i> Gazette Submission
               History</a></li>
-          <li><a href="/publisher/publisher_tender_submission_history"><i class="fas fa-history"></i> Tender Submission
+          <li><a th:href="@{/publisher/publisher_tender_submission_history}"><i class="fas fa-history"></i> Tender Submission
               History</a></li>
-          <li><a href="/logout" id="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+          <li><a th:href="@{/logout}" id="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
 
           <!-- <li><a href="/publisher/publisher_display"><i class="fas fa-home"></i>Gazette Dashboard</a></li>
           <li><a href="/publisher/publisher_tender_display"><i class="fas fa-home"></i>Tender Dashboard</a></li>

@@ -33,14 +33,14 @@
     <aside th:fragment="sidebar" class="sidebar" id="sidebar">
       <nav>
         <ul>
-          <li><a href="/creator"><i class="fas fa-upload"></i> Upload Gazette</a></li>
-          <li><a href="/creator/display"><i class="fas fa-tachometer-alt"></i> Gazette Dashboard</a></li>
-          <li><a href="/creator_tender"><i class="fas fa-file-upload"></i> Upload Tender</a></li>
-          <li><a href="/creator/tender_display"><i class="fas fa-file-alt"></i> Tender Dashboard</a></li>
-          <li><a href="/creator/submission_history"><i class="fas fa-history"></i> Gazette Submission History</a></li>
-          <li><a href="/creator/tender_submission_history"><i class="fas fa-history"></i> Tender Submission History</a>
+          <li><a th:href="@{/creator}"><i class="fas fa-upload"></i> Upload Gazette</a></li>
+          <li><a th:href="@{/creator/display}"><i class="fas fa-tachometer-alt"></i> Gazette Dashboard</a></li>
+          <li><a th:href="@{/creator_tender}"><i class="fas fa-file-upload"></i> Upload Tender</a></li>
+          <li><a th:href="@{/creator/tender_display}"><i class="fas fa-file-alt"></i> Tender Dashboard</a></li>
+          <li><a th:href="@{/creator/submission_history}"><i class="fas fa-history"></i> Gazette Submission History</a></li>
+          <li><a th:href="@{/creator/tender_submission_history}"><i class="fas fa-history"></i> Tender Submission History</a>
           </li>
-          <li><a href="/logout" id="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+          <li><a th:href="@{/logout}" id="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
 
           <!-- <li><a href="/creator"><i class="fas fa-upload"></i> Upload Gazette</a></li>
           <li><a href="/creator/display"><i class="fas fa-home"></i> Gazette Dashboard</a></li>

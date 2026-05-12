@@ -7,6 +7,36 @@ document.addEventListener('DOMContentLoaded', () => {
             nav.classList.toggle('active');
         });
     }
+
+
+        /* ================= THEME SWITCH ================= */
+    const themeButtons = document.querySelectorAll(".theme-btn");
+
+    themeButtons.forEach(btn => {
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            const theme = this.dataset.theme;
+            // document.body.className = theme; // apply class
+            document.body.classList.remove("black", "white", "default");
+            document.body.classList.add(theme);
+        });
+    });
+
+
+    const spacingButtons = document.querySelectorAll(".char-spacing-btn");
+
+    spacingButtons.forEach(btn => {
+        btn.addEventListener("click", function () {
+            const spacing = this.dataset.spacing;
+
+            if (spacing === "on") {
+                document.body.style.letterSpacing = "1px";
+            } else {
+                document.body.style.letterSpacing = "normal";
+            }
+        });
+    });
+
 });
 
 // ✅ Override document.cookie for creaseFont — redirect to localStorage

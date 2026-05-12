@@ -41,7 +41,7 @@
               <td>Portable Document Format (P.D.F.) content</td>
               <td>
                 <a
-                  href="http://www.adobe.com/products/acrobat/readstep2.html"
+                  th:href="@{http://www.adobe.com/products/acrobat/readstep2.html}"
                   target="_blank" rel="noopener noreferrer"
                   >Adobe Acrobat Reader</a
                 >
@@ -51,7 +51,7 @@
               <td>Word Files</td>
               <td>
                 <a
-                  href="http://www.microsoft.com/downloads/details.aspx?familyid=941b3470-3ae9-4aee-8f43-c6bb74cd1466&displaylang=en"
+                  th:href="@{http://www.microsoft.com/downloads/details.aspx?familyid=941b3470-3ae9-4aee-8f43-c6bb74cd1466&displaylang=en}"
                   target="_blank" rel="noopener noreferrer"
                   >Microsoft Office Compatibility Pack for Word (2007)</a
                 >
@@ -61,12 +61,12 @@
               <td>Excel Files</td>
               <td>
                 <a
-                  href="https://www.microsoft.com/en-us/download/details.aspx?id=10"
+                  th:href="@{https://www.microsoft.com/en-us/download/details.aspx?id=10}"
                   target="_blank" rel="noopener noreferrer"
                   >Excel Viewer</a
                 ><br />
                 <a
-                  href="http://www.microsoft.com/downloads/details.aspx?familyid=941b3470-3ae9-4aee-8f43-c6bb74cd1466&displaylang=en"
+                  th:href="@{http://www.microsoft.com/downloads/details.aspx?familyid=941b3470-3ae9-4aee-8f43-c6bb74cd1466&displaylang=en}"
                   target="_blank" rel="noopener noreferrer"
                   >Compatibility Pack for Excel (2007)</a
                 >
@@ -76,12 +76,12 @@
               <td>PowerPoint Presentations</td>
               <td>
                 <a
-                  href="https://www.microsoft.com/en-us/download/details.aspx?id=13"
+                  th:href="@{https://www.microsoft.com/en-us/download/details.aspx?id=13}"
                   target="_blank" rel="noopener noreferrer"
                   >PowerPoint Viewer</a
                 ><br />
                 <a
-                  href="http://www.microsoft.com/downloads/details.aspx?familyid=941b3470-3ae9-4aee-8f43-c6bb74cd1466&displaylang=en"
+                  th:href="@{http://www.microsoft.com/downloads/details.aspx?familyid=941b3470-3ae9-4aee-8f43-c6bb74cd1466&displaylang=en}"
                   target="_blank" rel="noopener noreferrer"
                   >Compatibility Pack for PowerPoint (2007)</a
                 >
@@ -90,7 +90,7 @@
             <tr>
               <td>Flash Content</td>
               <td>
-                <a href="http://get.adobe.com/flashplayer/" target="_blank" rel="noopener noreferrer"
+                <a th:href="@{http://get.adobe.com/flashplayer/}" target="_blank" rel="noopener noreferrer"
                   >Adobe Flash Player</a
                 >
               </td>
@@ -99,7 +99,7 @@
               <td>Audio Files</td>
               <td>
                 <a
-                  href="http://windows.microsoft.com/en-us/windows/download-windows-media-player"
+                  th:href="@{http://windows.microsoft.com/en-us/windows/download-windows-media-player}"
                   target="_blank" rel="noopener noreferrer"
                   >Windows Media Player</a
                 >
@@ -120,7 +120,7 @@
         <ul>
           <li class="icon-text">
             <img
-              src="/images/stock_increase-font.png"
+              th:src="@{/images/stock_increase-font.png}"
               class="icon"
               alt="Increase font size"
             />
@@ -128,7 +128,7 @@
           </li>
           <li class="icon-text">
             <img
-              src="/images/stock_decrease-font.png"
+              th:src="@{/images/stock_decrease-font.png}"
               class="icon"
               alt="Decrease font size"
             />
@@ -136,7 +136,7 @@
           </li>
           <li class="icon-text">
             <img
-              src="/images/stock_font-size.png"
+              th:src="@{/images/stock_font-size.png}"
               class="icon"
               alt="Default font size"
             />
@@ -148,15 +148,15 @@
         <p>Change the color scheme for better visibility:</p>
         <ul>
           <li class="icon-text">
-            <img src="images/default.png" class="icon" alt="Default Scheme" />
+            <img th:src="@{/images/default.png}" class="icon" alt="Default Scheme" />
             Default contrast scheme
           </li>
           <li class="icon-text">
-            <img src="images/black.png" class="icon" alt="Yellow on Black" />
+            <img th:src="@{/images/black.png}" class="icon" alt="Yellow on Black" />
             Yellow text on Black background
           </li>
           <li class="icon-text">
-            <img src="images/white.png" class="icon" alt="Black on White" />
+            <img th:src="@{/images/white.png}" class="icon" alt="Black on White" />
             Black text on White background
           </li>
         </ul>
@@ -177,9 +177,9 @@
 
         <h3><strong>Related Links</strong></h3>
         <ul>
-          <li><a href="/accessibilityStatement">Accessibility Statement</a></li>
+          <li><a th:href="@{/accessibilityStatement}">Accessibility Statement</a></li>
           <li>
-            <a href="accessibilityBrowsers"
+            <a th:href="@{/accessibilityBrowsers}"
               >Accessibility Options in Browsers</a
             >
           </li>

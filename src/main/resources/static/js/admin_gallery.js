@@ -157,3 +157,14 @@ function deleteImage(imageId) {
         }
     });
 }
+
+
+$(document).on('click', '.delete-btn', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const imageId = $(this).data('id');
+    console.log("Delete clicked:", imageId); // debug
+
+    deleteImage(imageId);
+});

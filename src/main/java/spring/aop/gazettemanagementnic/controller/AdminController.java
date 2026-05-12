@@ -146,6 +146,27 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/tender_delete/{id}")
+    @ResponseBody
+    public ResponseEntity<?> deleteTender(@PathVariable("id") Long id, HttpSession session) {
+        String username = (String) session.getAttribute("loggedInUser");
+        if (username != null) {
+            try {
+
+                log.info("Attempting to delete tender with ID: " + id);
+                tenderService.deleteTender(id);
+                return ResponseEntity.ok("{\"message\": \"Tender deleted successfully!\"}");
+            } catch (Exception e) {
+                log.error("Error occurred while deleting tender with ID: " + id, e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("{\"error\": \"Failed to delete Tender.\"}");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("{\"error\": \"User not authorized.\"}");
+        }
+    }
+
     @GetMapping("/delete_creator/{id}")
     public String deleteCreator(@PathVariable("id") Long id, Model model, HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");

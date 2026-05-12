@@ -32,17 +32,17 @@
           <div class="sitemap-column">
             <h3>Navigation</h3>
             <ul>
-              <li><a href="/index">Home</a></li>
-              <li><a href="/about">About Us</a></li>
-              <li><a href="/functions">Functions</a></li>
-              <li><a href="/gazette/display">Gazette</a></li>
-              <li><a href="/organizationChart">Organisation Chart</a></li>
-              <li><a href="/tender/display">Tenders</a></li>
+              <li><a th:href="@{/index}">Home</a></li>
+              <li><a th:href="@{/about}">About Us</a></li>
+              <li><a th:href="@{/functions}">Functions</a></li>
+              <li><a th:href="@{/gazette/display}">Gazette</a></li>
+              <li><a th:href="@{/organizationChart}">Organisation Chart</a></li>
+              <li><a th:href="@{/tender/display}">Tenders</a></li>
               <li class="nested">
-                <a href="/tender/displayArchive">↳ Archive</a>
+                <a th:href="@{/tender/displayArchive}">↳ Archive</a>
               </li>
-              <li><a href="/contact/display">Contact Us</a></li>
-              <!-- <li><a href="pdfs/Citizen_Charter.pdf" target="_blank" rel="noopener noreferrer">Citizen's Charter</a></li> -->
+              <li><a th:href="@{/contact/display}">Contact Us</a></li>
+              <!-- <li><a th:href="@{/pdfs/Citizen_Charter.pdf}" target="_blank" rel="noopener noreferrer">Citizen's Charter</a></li> -->
             </ul>
           </div>
 
@@ -52,7 +52,7 @@
             <ul>
               <li>
                 <a
-                  href="https://megpgrams.gov.in/lodgegrievance.htm?orc=29"
+                  th:href="@{https://megpgrams.gov.in/lodgegrievance.htm?orc=29}"
                   target="_blank"
                   rel="noopener noreferrer"
                   >Lodge your grievance</a
@@ -60,7 +60,7 @@
               </li>
               <li>
                 <a
-                  href="https://megrti.gov.in/"
+                  th:href="@{https://megrti.gov.in/}"
                   target="_blank"
                   rel="noopener noreferrer"
                   >Right to Information</a
@@ -68,7 +68,7 @@
               </li>
               <li>
                 <a
-                  href="https://meghalaya.gov.in/key-contacts/department/35"
+                  th:href="@{https://meghalaya.gov.in/key-contacts/department/35}"
                   target="_blank"
                   rel="noopener noreferrer"
                   >Key Contacts</a
@@ -80,7 +80,7 @@
             <ul>
               <li>
                 <a
-                  href="https://egazette.gov.in/(S(fjtsivlmksfdwrwkow0mygzl))/default.aspx"
+                  th:href="@{https://egazette.gov.in/(S(fjtsivlmksfdwrwkow0mygzl))/default.aspx}"
                   target="_blank"
                   rel="noopener noreferrer"
                   >The Gazette of India</a
@@ -88,7 +88,7 @@
               </li>
               <li>
                 <a
-                  href="https://megipr.gov.in/"
+                  th:href="@{https://megipr.gov.in/}"
                   target="_blank"
                   rel="noopener noreferrer"
                   >Information & Public Relations Department</a
@@ -96,7 +96,7 @@
               </li>
               <li>
                 <a
-                  href="https://megassembly.gov.in/"
+                  th:href="@{https://megassembly.gov.in/}"
                   target="_blank"
                   rel="noopener noreferrer"
                   >Meghalaya Legislative Assembly</a
@@ -108,7 +108,7 @@
             <ul>
               <li>
                 <a
-                  href="https://investmeghalaya.gov.in/loginWindow.do"
+                  th:href="@{https://investmeghalaya.gov.in/loginWindow.do}"
                   target="_blank"
                   rel="noopener noreferrer"
                   >Annual subscription for complete Gazette with extra
@@ -117,7 +117,7 @@
               </li>
               <li>
                 <a
-                  href="https://investmeghalaya.gov.in/loginWindow.do"
+                  th:href="@{https://investmeghalaya.gov.in/loginWindow.do}"
                   target="_blank"
                   rel="noopener noreferrer"
                   >Printing Request</a
@@ -125,7 +125,7 @@
               </li>
               <li>
                 <a
-                  href="https://investmeghalaya.gov.in/loginWindow.do"
+                  th:href="@{https://investmeghalaya.gov.in/loginWindow.do}"
                   target="_blank"
                   rel="noopener noreferrer"
                   >Demand Request for issue of Stationery Articles or Schedule
@@ -147,7 +147,7 @@
                   th:text="${pdf.pdfTitle}"
                   >Information & Public Relations</a
                 ><img
-                  src="/images/pdf-icon.png"
+                  th:src="@{/images/pdf-icon.png}"
                   alt="PDF"
                   width="16"
                   height="16"
@@ -158,15 +158,15 @@
 
             <h3>Support</h3>
             <ul>
-              <li><a href="/policies">Policies</a></li>
+              <li><a th:href="@{/policies}">Policies</a></li>
               <li><a href="#">Site Map</a></li>
               <li>
-                <a href="/accessibilityStatement">Accessibility Statement</a>
+                <a th:href="@{/accessibilityStatement}">Accessibility Statement</a>
               </li>
               <li class="nested">
-                <a href="/accessibilityBrowsers">Accessibility Browsers</a>
+                <a th:href="@{/accessibilityBrowsers}">Accessibility Browsers</a>
               </li>
-              <li><a href="/help">Help</a></li>
+              <li><a th:href="@{/help}">Help</a></li>
             </ul>
           </div>
         </div>

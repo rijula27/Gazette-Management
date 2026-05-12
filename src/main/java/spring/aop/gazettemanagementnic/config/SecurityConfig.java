@@ -81,7 +81,8 @@ public class SecurityConfig {
                                                                 "/tender", "/tender/displayArchive", "/contactUs",
                                                                 "/organizationChart", "/policies",
                                                                 "/accessibilityStatement", "/siteMap", "/help",
-                                                                "/accessibilityBrowsers", "/test", "/screenReader",
+                                                                "/accessibilityBrowsers", 
+                                                                "/test", "/screenReader",
                                                                 "/contact/display", "/about/display",
                                                                 "/gallery/images/**", "/captcha-image", "/css/**",
                                                                 "/webfonts/**",
@@ -105,6 +106,7 @@ public class SecurityConfig {
                                                                 "/publisher_tender_submission_history",
                                                                 "/publisher_tender", "/publisher/publisher_display",
                                                                 "/publisher/publisher_delete/**",
+                                                                "/publisher/tender_delete/**",
                                                                 "/publisher/sendBack_Creator/**",
                                                                 "/publisher/published/**",
                                                                 "/publisher/publisher_submission_history",
@@ -124,7 +126,8 @@ public class SecurityConfig {
                                                                 "/admin_contactUs", "/contact/save", "/contact/edit",
                                                                 "/contact/delete/**", "/admin_aboutUs", "/about/save",
                                                                 "/about/aboutDisplay", "/admin_gallery",
-                                                                "/gallery/upload", "/gallery/imageDisplay")
+                                                                "/gallery/upload",
+                                                                "/gallery/imageDisplay")
                                                 .hasAuthority("ADMIN")
                                                 .requestMatchers("/gazette/edit", "/tender/edit")
                                                 .hasAnyAuthority("CREATOR", "PUBLISHER")
@@ -142,22 +145,22 @@ public class SecurityConfig {
                                                 .invalidateHttpSession(true) // Invalidate session
                                                 .clearAuthentication(true) // Clear authentication in SecurityContext
                                                 .deleteCookies("JSESSIONID") // Delete session cookie
-                                                .permitAll())
-                                .sessionManagement(session -> session
-                                                // Generate new session ID after login (prevents session fixation
-                                                // attacks)
-                                                .invalidSessionUrl("/login?session=expired")
-                                                .sessionConcurrency(concurrency -> concurrency
-                                                                .sessionRegistry(sessionRegistry()) // Use
-                                                                                                    // SessionRegistry
-                                                                                                    // to track sessions
-                                                                .maximumSessions(1) // Only 1 active session per user
-                                                                .maxSessionsPreventsLogin(true) // Prevent new login if
-                                                                                                // already logged in
-                                                                                                // elsewhere
-                                                                .expiredUrl("/login?session=expired") // Redirect when
-                                                                                                      // forced logout
-                                                ));
+                                                .permitAll());
+                                // .sessionManagement(session -> session
+                                //                 // Generate new session ID after login (prevents session fixation
+                                //                 // attacks)
+                                //                 .invalidSessionUrl("/login?session=expired")
+                                //                 .sessionConcurrency(concurrency -> concurrency
+                                //                                 .sessionRegistry(sessionRegistry()) // Use
+                                //                                                                     // SessionRegistry
+                                //                                                                     // to track sessions
+                                //                                 .maximumSessions(1) // Only 1 active session per user
+                                //                                 .maxSessionsPreventsLogin(true) // Prevent new login if
+                                //                                                                 // already logged in
+                                //                                                                 // elsewhere
+                                //                                 .expiredUrl("/login?session=expired") // Redirect when
+                                //                                                                       // forced logout
+                                //                 ));
 
                 return http.build();
         }

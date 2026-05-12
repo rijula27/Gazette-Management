@@ -68,3 +68,15 @@ body {
   height: 20px;
   cursor: pointer;
 }
+
+body.black,
+body.black * {
+    background-color: black !important;
+    color: yellow !important;
+}
+
+body.white,
+body.white * {
+    background-color: white !important;
+    color: black !important;
+}

@@ -183,3 +183,22 @@ function closeEditModal() {
 }
 
 
+
+document.addEventListener("DOMContentLoaded", function () {
+    const adminIcons = document.querySelectorAll(".admin-edit-btn");
+
+    adminIcons.forEach(icon => {
+        icon.addEventListener("click", function () {
+            editAdmin(this);
+        });
+    });
+});
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const closeBtn = document.querySelector(".close-edit-admin");
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", closeEditAdminModal);
+    }
+});

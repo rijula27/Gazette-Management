@@ -203,7 +203,7 @@ function confirmDelete(el) {
                     Swal.showLoading();
 
                     $.ajax({
-                        url: '/creator/tender_delete/' + deleteId,
+                        url: '/admin/tender_delete/' + deleteId,
                         type: 'GET',
                         success: function (response) {
                             Swal.fire({

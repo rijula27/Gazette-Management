@@ -16,7 +16,7 @@
         <p th:if="${status}" class="text-muted">Error Code: <span th:text="${status}"></span></p>
         <p th:if="${error}" class="text-muted" th:text="${error}"></p>
         <p th:if="${message}" class="text-muted" th:text="${message}"></p>
-        <a href="/" class="btn btn-primary mt-3">Return to Home</a>
+        <a th:href="@{/}" class="btn btn-primary mt-3">Return to Home</a>
     </div>
 </body>
 

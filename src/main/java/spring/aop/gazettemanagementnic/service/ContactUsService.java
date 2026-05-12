@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import spring.aop.gazettemanagementnic.dto.ContactEditDto;
 import spring.aop.gazettemanagementnic.dto.ContactUsDto;
 import spring.aop.gazettemanagementnic.entity.ContactUs;
 import spring.aop.gazettemanagementnic.entity.GCUser;
@@ -154,7 +155,7 @@ public class ContactUsService {
     // }
     // }
 
-    public String editContact(ContactUsDto dto, String adminName) {
+    public String editContact(ContactEditDto  dto, String adminName) {
 
         ContactUs contactUs = contactUsRepository.findById(dto.getContactId())
                 .orElseThrow(() -> new IllegalArgumentException("Contact not found"));

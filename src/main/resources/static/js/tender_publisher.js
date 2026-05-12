@@ -236,7 +236,7 @@ function confirmDelete(el) {
                     Swal.showLoading();
 
                     $.ajax({
-                        url: '/creator/tender_delete/' + deleteId,
+                        url: '/publisher/tender_delete/' + deleteId,
                         type: 'GET',
                         success: function (response) {
                             Swal.fire({
@@ -390,25 +390,6 @@ function openEditModal(el) {
 
 
 
-// confirm edit
-function confirmEdit() {
-    $('#editModal').modal('hide');
-    Swal.fire({
-        title: "Confirm Edit?",
-        text: "Do you want to update this tender?",
-        icon: "info",
-        showCancelButton: true,
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        confirmButtonColor: "#17a2b8",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, update it!"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            submitEditForm();
-        }
-    });
-}
 
 
 
@@ -492,8 +473,28 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.confirm-edit-btn', function () {
-        e.preventDefault();
         confirmEdit();
     });
 
 });
+
+
+// confirm edit
+function confirmEdit() {
+    $('#editModal').modal('hide');
+    Swal.fire({
+        title: "Confirm Edit?",
+        text: "Do you want to update this tender?",
+        icon: "info",
+        showCancelButton: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        confirmButtonColor: "#17a2b8",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, update it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            submitEditForm();
+        }
+    });
+}

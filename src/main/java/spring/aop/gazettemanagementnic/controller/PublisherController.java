@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import spring.aop.gazettemanagementnic.entity.Gazette;
 import spring.aop.gazettemanagementnic.entity.Tender;
 import spring.aop.gazettemanagementnic.service.GazetteService;
 import spring.aop.gazettemanagementnic.service.TenderService;
 
+@Slf4j
 @Controller
 @RequestMapping("/publisher")
 public class PublisherController {
@@ -58,6 +60,28 @@ public class PublisherController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("{\"error\": \"Failed to delete gazette. Please try again later.\"}");
+        }
+    }
+
+
+    @GetMapping("/tender_delete/{id}")
+    @ResponseBody
+    public ResponseEntity<?> deleteTender(@PathVariable("id") Long id, HttpSession session) {
+        String username = (String) session.getAttribute("loggedInUser");
+        if (username != null) {
+            try {
+
+                log.info("Attempting to delete tender with ID: " + id);
+                tenderService.deleteTender(id);
+                return ResponseEntity.ok("{\"message\": \"Tender deleted successfully!\"}");
+            } catch (Exception e) {
+                log.error("Error occurred while deleting tender with ID: " + id, e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("{\"error\": \"Failed to delete Tender.\"}");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("{\"error\": \"User not authorized.\"}");
         }
     }
 
