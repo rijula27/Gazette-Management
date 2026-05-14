@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
@@ -49,6 +50,20 @@ public class GlobalExceptionHandler {
             .header("Content-Security-Policy", "frame-ancestors 'self'")
             .header("X-XSS-Protection", "1; mode=block")
             // ✅ ADD THIS
+            .header("Referrer-Policy", "strict-origin-when-cross-origin")
+            .body("Not found.");
+    }
+
+
+     // ✅ ADD THIS — handles invalid paths like /index//etc/passwd
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<String> handleNoHandlerFound(NoHandlerFoundException ex, HttpServletRequest request) {
+        logger.debug("No handler found for: {}", request.getRequestURI());
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .header("X-Frame-Options", "SAMEORIGIN")
+            .header("Content-Security-Policy", "frame-ancestors 'self'")
+            .header("X-XSS-Protection", "1; mode=block")
             .header("Referrer-Policy", "strict-origin-when-cross-origin")
             .body("Not found.");
     }
