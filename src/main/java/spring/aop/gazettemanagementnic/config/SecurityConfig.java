@@ -72,6 +72,7 @@ public class SecurityConfig {
 
                                 .authorizeHttpRequests(authorize -> authorize
                                                 .requestMatchers(HttpMethod.OPTIONS, "/**").denyAll()
+    
                                                 .requestMatchers("/login", "/index", "/", "/home", "/about",
                                                                 "/functions", "/gazette/display",
                                                                 "/gazette/years/*/months",
