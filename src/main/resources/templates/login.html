@@ -54,12 +54,9 @@
             autocomplete="off" />
         </div>
 
-        <input type="hidden" id="captchaValue" th:value="${captcha}">
 
         <div class="captcha-container">
-          <canvas id="captchaCanvas" width="150" height="50" title="Click to refresh CAPTCHA">
-          </canvas>
-
+          <img id="captchaImage" th:src="@{/captcha-image}" alt="CAPTCHA" class="captcha-image">
           <button type="button" id="refreshCaptchaBtn" class="refresh-button" title="Refresh CAPTCHA">
             <i class="fa-solid fa-rotate-right"></i>
           </button>
@@ -71,7 +68,7 @@
             autocomplete="off">
         </div>
 
-        
+
         <button type="submit" class="submit-button">Login</button>
       </form>
     </div>

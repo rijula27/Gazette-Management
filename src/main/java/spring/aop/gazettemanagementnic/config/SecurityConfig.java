@@ -85,7 +85,8 @@ public class SecurityConfig {
                                                                 "/accessibilityBrowsers", 
                                                                 "/test", "/screenReader",
                                                                 "/contact/display", "/about/display",
-                                                                "/gallery/images/**", "/captcha-image", "/css/**",
+                                                                "/gallery/images/**", "/captcha-image",
+                                                                "/refresh-captcha", "/css/**",
                                                                 "/webfonts/**",
                                                                 "/js/**", "/images/**")
                                                 .permitAll()

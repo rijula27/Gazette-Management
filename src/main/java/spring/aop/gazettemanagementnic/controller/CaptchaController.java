@@ -40,22 +40,22 @@ public class CaptchaController {
     // }
     // }
 
-    @GetMapping("/captcha-image")
-    public void getCaptchaImage(HttpSession session, HttpServletResponse response) throws Exception {
+    // @GetMapping("/captcha-image")
+    // public void getCaptchaImage(HttpSession session, HttpServletResponse response) throws Exception {
 
-        response.setContentType("image/png");
-        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-        response.setHeader("Pragma", "no-cache");
-        response.setDateHeader("Expires", 0);
+    //     response.setContentType("image/png");
+    //     response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    //     response.setHeader("Pragma", "no-cache");
+    //     response.setDateHeader("Expires", 0);
 
-        String captchaText = captchaProducer.createText();
-        session.setAttribute("captcha", captchaText);
+    //     String captchaText = captchaProducer.createText();
+    //     session.setAttribute("captcha", captchaText);
 
-        BufferedImage captchaImage = captchaProducer.createImage(captchaText);
+    //     BufferedImage captchaImage = captchaProducer.createImage(captchaText);
 
-        try (ServletOutputStream out = response.getOutputStream()) {
-            ImageIO.write(captchaImage, "png", out);
-            out.flush();
-        }
-    }
+    //     try (ServletOutputStream out = response.getOutputStream()) {
+    //         ImageIO.write(captchaImage, "png", out);
+    //         out.flush();
+    //     }
+    // }
 }
