@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Optional;
 
 import spring.aop.gazettemanagementnic.entity.GCUser;
+import spring.aop.gazettemanagementnic.service.AuthService;
 import spring.aop.gazettemanagementnic.service.GCUserService;
 
 import java.util.Collections;
@@ -29,24 +30,45 @@ public class AuthController {
     @Autowired
     private GCUserService gcUserService;
 
-    // Display the login page (the CAPTCHA image is served separately)
-    @GetMapping("/login")
-    public String showLoginPage(Model model, @RequestParam(value = "error", required = false) String error,
-            @RequestParam(value = "logout", required = false) String logout,
-            @RequestParam(value = "session", required = false) String session) {
+    @Autowired
+    private AuthService authService;
 
-        // Handle different redirect scenarios
+
+    @GetMapping("/login")
+    public String showLoginPage(
+            Model model,
+            HttpSession httpSession,
+            @RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "logout", required = false) String logout,
+            @RequestParam(value = "session", required = false) String sessionParam) {
+
+        // Handle login error
         if (error != null && !error.isEmpty()) {
             model.addAttribute("error", error);
         }
 
-        if ("expired".equals(session)) {
-            model.addAttribute("sessionExpired", "Your session has timed out. Please login again.");
+        // Handle session timeout
+        if ("expired".equals(sessionParam)) {
+            model.addAttribute(
+                    "sessionExpired",
+                    "Your session has timed out. Please login again.");
         }
 
+        // Handle logout success
         if ("true".equals(logout)) {
-            model.addAttribute("logoutSuccess", "You have been successfully logged out.");
+            model.addAttribute(
+                    "logoutSuccess",
+                    "You have been successfully logged out.");
         }
+
+        // Generate new CAPTCHA
+        String captcha = authService.generateCaptcha();
+
+        // Store CAPTCHA in session
+        httpSession.setAttribute("CAPTCHA", captcha);
+
+        // Send CAPTCHA to view
+        model.addAttribute("captcha", captcha);
 
         return "login";
     }
@@ -56,9 +78,25 @@ public class AuthController {
     @PostMapping("/login")
     public String processLogin(@RequestParam("username") String username,
             @RequestParam("password") String password,
+            @RequestParam("captcha") String captchaInput,
             HttpSession session,
             Model model,
             HttpServletRequest request) {
+
+        String sessionCaptcha = (String) session.getAttribute("CAPTCHA");
+
+        if (sessionCaptcha == null ||
+                !sessionCaptcha.equals(captchaInput)) {
+
+            model.addAttribute("error", "Invalid CAPTCHA");
+
+            String newCaptcha = authService.generateCaptcha();
+
+            session.setAttribute("CAPTCHA", newCaptcha);
+            model.addAttribute("captcha", newCaptcha);
+
+            return "login";
+        }
 
         // if (sessionCaptcha != null && captchaInput.equals(sessionCaptcha)) {
         if (username != null && username.length() > 9 && username.length() < 21 && username.contains("_")) {
@@ -77,13 +115,16 @@ public class AuthController {
 
                     // request.setAttribute("username", username);
                     // request.setAttribute("password", password);
+                    session.removeAttribute("CAPTCHA");
                     return "forward:/custom_login";
 
                 } else {
+                    refreshCaptcha(session, model);
                     model.addAttribute("error", "Invalid username or password.");
                     return "login";
                 }
             } else {
+                refreshCaptcha(session, model);
                 // model.addAttribute("error", "Password must be exactly 12 characters long.");
                 model.addAttribute("error", "Invalid username or password.");
                 return "login";
@@ -92,14 +133,13 @@ public class AuthController {
         } else {
             // model.addAttribute("error", "Username must be 10 to 15 characters long and
             // contain an underscore.");
+            refreshCaptcha(session, model);
             model.addAttribute("error", "Invalid username or password.");
             return "login";
         }
 
-
     }
 
- 
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
         // Invalidate the current session
@@ -118,5 +158,11 @@ public class AuthController {
 
         // Redirect to login page with logout message
         return "redirect:/login?logout=true";
+    }
+
+    private void refreshCaptcha(HttpSession session, Model model) {
+        String captcha = authService.generateCaptcha();
+        session.setAttribute("CAPTCHA", captcha);
+        model.addAttribute("captcha", captcha);
     }
 }

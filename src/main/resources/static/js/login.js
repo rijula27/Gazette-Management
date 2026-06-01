@@ -1,52 +1,87 @@
-// Generate canvas CAPTCHA
-        function generateCaptcha() {
-            const canvas = document.getElementById("captchaCanvas");
-            const ctx = canvas.getContext("2d");
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#f0f0f0";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+document.addEventListener("DOMContentLoaded", function () {
 
-            // Draw random lines
-            for (let i = 0; i < 5; i++) {
-                ctx.strokeStyle = `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(
-                    Math.random() * 255
-                )}, ${Math.floor(Math.random() * 255)}, 0.7)`;
-                ctx.beginPath();
-                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
-                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
-                ctx.stroke();
-            }
+    const canvas = document.getElementById("captchaCanvas");
+    const refreshBtn = document.getElementById("refreshCaptchaBtn");
 
-            // Generate CAPTCHA text
-            const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            let captcha = "";
-            for (let i = 0; i < 6; i++) {
-                captcha += characters.charAt(Math.floor(Math.random() * characters.length));
-            }
+    function drawCaptcha() {
 
-            ctx.font = "24px Arial";
-            ctx.fillStyle = "#000";
-            ctx.textBaseline = "middle";
-            ctx.fillText(captcha, 40, canvas.height / 2);
-            canvas.setAttribute("data-captcha", captcha);
+        const captchaValue =
+            document.getElementById("captchaValue").value;
+
+        const ctx = canvas.getContext("2d");
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#f0f0f0";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw random lines
+        for (let i = 0; i < 5; i++) {
+
+            ctx.strokeStyle =
+                `rgba(${Math.floor(Math.random() * 255)},
+                       ${Math.floor(Math.random() * 255)},
+                       ${Math.floor(Math.random() * 255)},
+                       0.7)`;
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                Math.random() * canvas.width,
+                Math.random() * canvas.height
+            );
+
+            ctx.lineTo(
+                Math.random() * canvas.width,
+                Math.random() * canvas.height
+            );
+
+            ctx.stroke();
         }
 
-        // Validate CAPTCHA before submission
-        document.getElementById("loginform").addEventListener("submit", function (event) {
-            const userCaptcha = document.getElementById("captchaInput").value.trim();
-            const generatedCaptcha = document.getElementById("captchaCanvas").getAttribute("data-captcha");
-            const errorDiv = document.getElementById("errorMessage");
+        // Draw random dots
+        for (let i = 0; i < 30; i++) {
 
-            // Clear previous errors
-            errorDiv.textContent = "";
+            ctx.fillStyle =
+                `rgba(${Math.floor(Math.random() * 255)},
+                       ${Math.floor(Math.random() * 255)},
+                       ${Math.floor(Math.random() * 255)},
+                       0.5)`;
 
-            if (userCaptcha !== generatedCaptcha) {
-                errorDiv.textContent = "CAPTCHA does not match. Please try again.";
-                errorDiv.style.opacity = "1";
-                generateCaptcha();
-                event.preventDefault(); // prevent form submission
-            }
-        });
+            ctx.beginPath();
 
-        // Generate CAPTCHA on page load
-        window.onload = generateCaptcha;
+            ctx.arc(
+                Math.random() * canvas.width,
+                Math.random() * canvas.height,
+                1.5,
+                0,
+                2 * Math.PI
+            );
+
+            ctx.fill();
+        }
+
+        ctx.font = "24px Arial";
+        ctx.fillStyle = "#000";
+        ctx.textBaseline = "middle";
+
+        ctx.fillText(
+            captchaValue,
+            30,
+            canvas.height / 2
+        );
+    }
+
+    drawCaptcha();
+
+    // Refresh CAPTCHA by reloading login page
+    refreshBtn.addEventListener("click", function () {
+        window.location.reload();
+    });
+
+    // Optional: clicking canvas also refreshes
+    canvas.addEventListener("click", function () {
+        window.location.reload();
+    });
+
+});
