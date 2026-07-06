@@ -58,10 +58,10 @@ public class ImageGalleryService {
         }
 
         final long MAX_SIZE = 5 * 1024 * 1024;
-if (image.getSize() > MAX_SIZE) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body("File size exceeds limit");
-}
+        if (image.getSize() > MAX_SIZE) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("File size exceeds limit");
+        }
 
         // ✅ Validate filename
         String originalFilename = image.getOriginalFilename();
@@ -139,7 +139,27 @@ if (image.getSize() > MAX_SIZE) {
         // ✅ Save file
         image.transferTo(resolvedPath.toFile());
 
-        description = (description != null) ? description.trim() : null;
+        if (description != null) {
+
+            description = description.trim();
+
+            // Maximum length
+            if (description.length() > 500) {
+                throw new IllegalArgumentException("Description cannot exceed 500 characters.");
+            }
+
+            // Reject HTML/XML tags
+            if (description.matches(".*<[^>]+>.*")) {
+                throw new IllegalArgumentException("HTML or script tags are not allowed in the description.");
+            }
+
+            // Allow only expected characters
+            String descriptionPattern = "^[A-Za-z0-9 .,'()&/_\\-:;!?@#%\\n\\r]*$";
+
+            if (!description.matches(descriptionPattern)) {
+                throw new IllegalArgumentException("Description contains invalid characters.");
+            }
+        }
         // ✅ Save to DB
         ImageGallery imageGallery = new ImageGallery();
         imageGallery.setImageTitle(uniqueFilename);

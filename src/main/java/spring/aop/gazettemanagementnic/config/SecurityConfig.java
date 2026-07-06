@@ -8,13 +8,21 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
-import spring.aop.gazettemanagementnic.service.GCUserService;
 
+import lombok.extern.slf4j.Slf4j;
+import spring.aop.gazettemanagementnic.service.GCUserService;
+import spring.aop.gazettemanagementnic.utils.AesUtil;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+
+@Slf4j
 @Configuration
 public class SecurityConfig {
 
@@ -25,18 +33,49 @@ public class SecurityConfig {
         private PasswordEncoder passwordEncoder;
 
         @Autowired
+        private AesAuthenticationProvider aesAuthenticationProvider;
+
+        @Autowired
+        private CaptchaValidationFilter captchaValidationFilter;
+
+        @Autowired
         private LoginSuccessHandler loginSuccessHandler;
 
         @Autowired
-        private CustomAuthenticationFailureHandler authenticationFailureHandler;
+        private LoginFailureHandler loginFailureHandler;
 
+        @Autowired
+        private OptionsRequestBlockFilter optionsRequestBlockFilter;
+
+        // @Autowired
+        // private LoginSuccessHandler loginSuccessHandler;
+
+        // @Autowired
+        // private CustomAuthenticationFailureHandler authenticationFailureHandler;
+
+        // @Autowired
+        // private AesUtil aesUtil;
+
+        // @Bean
+        // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
+        // Exception {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
                                 .csrf(csrf -> csrf.ignoringRequestMatchers("/captcha-image")) // Enable CSRF for all
                                                                                               // endpoints except
                                                                                               // captcha-image
-                                .authenticationProvider(daoAuthenticationProvider())
+                                // .authenticationProvider(daoAuthenticationProvider())
+                                .authenticationProvider(aesAuthenticationProvider)
+
+                                // Block OPTIONS requests FIRST
+                                .addFilterBefore(
+                                                optionsRequestBlockFilter,
+                                                UsernamePasswordAuthenticationFilter.class)
+
+                                .addFilterBefore(
+                                                captchaValidationFilter,
+                                                UsernamePasswordAuthenticationFilter.class)
                                 // .headers(headers -> headers
                                 // .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Prevent
                                 // // clickjacking
@@ -71,8 +110,8 @@ public class SecurityConfig {
                                                                 .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)))
 
                                 .authorizeHttpRequests(authorize -> authorize
-                                                .requestMatchers(HttpMethod.OPTIONS, "/**").denyAll()
-    
+                                                // .requestMatchers(HttpMethod.OPTIONS, "/**").authenticated()
+
                                                 .requestMatchers("/login", "/index", "/", "/home", "/about",
                                                                 "/functions", "/gazette/display",
                                                                 "/gazette/years/*/months",
@@ -82,7 +121,7 @@ public class SecurityConfig {
                                                                 "/tender", "/tender/displayArchive", "/contactUs",
                                                                 "/organizationChart", "/policies",
                                                                 "/accessibilityStatement", "/siteMap", "/help",
-                                                                "/accessibilityBrowsers", 
+                                                                "/accessibilityBrowsers",
                                                                 "/test", "/screenReader",
                                                                 "/contact/display", "/about/display",
                                                                 "/gallery/images/**", "/captcha-image",
@@ -129,17 +168,24 @@ public class SecurityConfig {
                                                                 "/contact/delete/**", "/admin_aboutUs", "/about/save",
                                                                 "/about/aboutDisplay", "/admin_gallery",
                                                                 "/gallery/upload",
-                                                                "/gallery/imageDisplay")
+                                                                "/gallery/imageDisplay",
+                                                                "/audit/audit-page")
                                                 .hasAuthority("ADMIN")
                                                 .requestMatchers("/gazette/edit", "/tender/edit")
                                                 .hasAnyAuthority("CREATOR", "PUBLISHER")
                                                 .anyRequest().authenticated())
+                                // .formLogin(form -> form
+                                // .loginPage("/login")
+                                // .loginProcessingUrl("/login")
+                                // .defaultSuccessUrl("/dashboard", true)
+                                // .failureUrl("/login?error=true")
+                                // .permitAll())
+
                                 .formLogin(form -> form
-                                                .loginPage("/login") // Custom login page
-                                                .loginProcessingUrl("/custom_login") // Custom login processing URL
+                                                .loginPage("/login")
+                                                .loginProcessingUrl("/login")
                                                 .successHandler(loginSuccessHandler)
-                                                .failureHandler(authenticationFailureHandler) // Custom failure handler
-                                                                                              // for concurrent sessions
+                                                .failureHandler(loginFailureHandler)
                                                 .permitAll())
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")
@@ -148,31 +194,61 @@ public class SecurityConfig {
                                                 .clearAuthentication(true) // Clear authentication in SecurityContext
                                                 .deleteCookies("JSESSIONID") // Delete session cookie
                                                 .permitAll());
-                                // .sessionManagement(session -> session
-                                //                 // Generate new session ID after login (prevents session fixation
-                                //                 // attacks)
-                                //                 .invalidSessionUrl("/login?session=expired")
-                                //                 .sessionConcurrency(concurrency -> concurrency
-                                //                                 .sessionRegistry(sessionRegistry()) // Use
-                                //                                                                     // SessionRegistry
-                                //                                                                     // to track sessions
-                                //                                 .maximumSessions(1) // Only 1 active session per user
-                                //                                 .maxSessionsPreventsLogin(true) // Prevent new login if
-                                //                                                                 // already logged in
-                                //                                                                 // elsewhere
-                                //                                 .expiredUrl("/login?session=expired") // Redirect when
-                                //                                                                       // forced logout
-                                //                 ));
+                // .sessionManagement(session -> session
+                // // Generate new session ID after login (prevents session fixation
+                // // attacks)
+                // .invalidSessionUrl("/login?session=expired")
+                // .sessionConcurrency(concurrency -> concurrency
+                // .sessionRegistry(sessionRegistry()) // Use
+                // // SessionRegistry
+                // // to track sessions
+                // .maximumSessions(1) // Only 1 active session per user
+                // .maxSessionsPreventsLogin(true) // Prevent new login if
+                // // already logged in
+                // // elsewhere
+                // .expiredUrl("/login?session=expired") // Redirect when
+                // // forced logout
+                // ));
+
+                // CustomAuthenticationFilter customAuthenticationFilter = new
+                // CustomAuthenticationFilter(
+                // authenticationManager, aesUtil);
+
+                // customAuthenticationFilter.setFilterProcessesUrl("/custom_login");
+
+                // customAuthenticationFilter.setAuthenticationSuccessHandler(loginSuccessHandler);
+
+                // customAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler);
+
+                // http.addFilterAt(
+                // customAuthenticationFilter,
+                // UsernamePasswordAuthenticationFilter.class);
+
+                http
+                                // your existing configuration
+                                .sessionManagement(session -> session
+                                                .maximumSessions(1)
+                                                .maxSessionsPreventsLogin(true) // expire old session and allow new
+                                                                                 // login
+                                );
 
                 return http.build();
         }
 
+        // @Bean
+        // public DaoAuthenticationProvider daoAuthenticationProvider() {
+        // DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        // provider.setUserDetailsService(gcUserService);
+        // provider.setPasswordEncoder(passwordEncoder);
+        // return provider;
+        // }
+
         @Bean
-        public DaoAuthenticationProvider daoAuthenticationProvider() {
-                DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-                provider.setUserDetailsService(gcUserService);
-                provider.setPasswordEncoder(passwordEncoder);
-                return provider;
+        public AuthenticationManager authenticationManager(
+                        AuthenticationConfiguration configuration)
+                        throws Exception {
+
+                return configuration.getAuthenticationManager();
         }
 
         @Bean

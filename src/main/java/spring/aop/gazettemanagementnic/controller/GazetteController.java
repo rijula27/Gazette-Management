@@ -30,7 +30,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 
 @Slf4j
 @Controller
@@ -50,13 +51,11 @@ public class GazetteController {
     public String uploadGazette(@RequestParam("gazettePart") String part,
             @RequestParam("pdfFile") MultipartFile file,
             @RequestParam(value = "date", required = false) LocalDate date,
-            HttpSession session,
+            Authentication authentication,
             RedirectAttributes redirectAttributes) {
 
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username == null) {
-            return "redirect:/login";
-        }
+        User user = (User) authentication.getPrincipal();
+        String username = user.getUsername();
 
         try {
             gazetteService.saveGazette(part, file, date, username);
@@ -88,14 +87,10 @@ public class GazetteController {
             @RequestParam("part") String part,
             @RequestParam(value = "pdfFile", required = false) MultipartFile file,
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            HttpSession session) {
+            Authentication authentication) {
 
-        String username = (String) session.getAttribute("loggedInUser");
-
-        if (username == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"User not authorized.\"}");
-        }
+        User user = (User) authentication.getPrincipal();
+        String username = user.getUsername();
 
         try {
             // Validate file if it's not null
@@ -125,7 +120,7 @@ public class GazetteController {
 
     // view pdf
     @GetMapping("/pdf/{id}")
-    public ResponseEntity<?> viewGazettePdf(@PathVariable Long id, HttpSession session) throws IOException {
+    public ResponseEntity<?> viewGazettePdf(@PathVariable Long id, Authentication authentication) throws IOException {
 
         // Get gazette by ID first (public check, no auth needed yet)
         java.util.Optional<Gazette> gazetteOpt = gazetteRepository.findById(id);
@@ -143,11 +138,8 @@ public class GazetteController {
             return gazetteService.getGazettePdfResponse(id);
         }
 
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("User not authenticated. Please login to view this resource.");
-        }
+        User user = (User) authentication.getPrincipal();
+        String username = user.getUsername();
 
         // java.util.Optional<GCUser> userOpt =
         // gcUserRepository.findByUsername(username);

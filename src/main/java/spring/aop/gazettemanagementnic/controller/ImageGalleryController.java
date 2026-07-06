@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,6 +35,9 @@ import spring.aop.gazettemanagementnic.repository.ImageGalleryRepository;
 import spring.aop.gazettemanagementnic.service.FilePathService;
 import spring.aop.gazettemanagementnic.service.ImageGalleryService;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
+
 @Slf4j
 @Controller
 @RequestMapping("/gallery")
@@ -52,9 +56,10 @@ public class ImageGalleryController {
     public ResponseEntity<?> uploadImage(
             @RequestParam("image") MultipartFile image,
             @RequestParam("description") String description,
-            HttpSession session) {
+            Authentication authentication) {
 
-        String adminName = (String) session.getAttribute("loggedInUser");
+        User user = (User) authentication.getPrincipal();
+        String adminName = user.getUsername();
 
         if (adminName == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Please log in.");
@@ -78,38 +83,31 @@ public class ImageGalleryController {
     }
 
     @GetMapping("/imageDisplay")
-    public String imageGallery_Display(Model model, HttpSession session) {
+    public String imageGallery_Display(Model model) {
 
         log.info("=== ENTERED imageDisplay ===");
 
-        String username = (String) session.getAttribute("loggedInUser");
-        log.info("Session username = {}", username);
+        log.info("Before service call");
 
-        if (username != null) {
-            log.info("Before service call");
+        List<ImageGallery> image = imageGalleryService.displayImage();
 
-            List<ImageGallery> image = imageGalleryService.displayImage();
+        log.info("After service call");
+        log.info("image object = {}", image);
+        log.info("image size = {}", (image != null ? image.size() : "NULL"));
 
-            log.info("After service call");
-            log.info("image object = {}", image);
-            log.info("image size = {}", (image != null ? image.size() : "NULL"));
-
-            if (image != null && !image.isEmpty()) {
-                for (ImageGallery img : image) {
-                    log.info("Image ID: {}", img.getImageId());
-                    log.info("Title: {}", img.getImageTitle());
-                    log.info("Description: {}", img.getDescription());
-                }
-            } else {
-                log.info("Image list is empty or null");
+        if (image != null && !image.isEmpty()) {
+            for (ImageGallery img : image) {
+                log.info("Image ID: {}", img.getImageId());
+                log.info("Title: {}", img.getImageTitle());
+                log.info("Description: {}", img.getDescription());
             }
-
-            model.addAttribute("images", image);
-            return "admin/admin_gallery";
         } else {
-            log.info("No session user, redirecting login");
-            return "redirect:/login";
+            log.info("Image list is empty or null");
         }
+
+        model.addAttribute("images", image);
+        return "admin/admin_gallery";
+
     }
 
     // @GetMapping("/images/{imageId:.+}")
@@ -231,7 +229,7 @@ public class ImageGalleryController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     @ResponseBody
     public ResponseEntity<String> deleteImage(@PathVariable Long id) {
         try {

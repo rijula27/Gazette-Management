@@ -31,28 +31,19 @@ public class PublisherController {
     private TenderService tenderService;
 
     @GetMapping("/publisher_display")
-    public String displayGazettePublisher(Model model, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-
-        if (username != null) {
+    public String displayGazettePublisher(Model model) {
+        
             List<Gazette> gazettes = gazetteService.displayGazette_Publisher();
             model.addAttribute("gazettes", gazettes);
             return "publisher/publisher";
-        } else {
-            return "login";
-        }
+        
 
     }
 
     @GetMapping("/publisher_delete/{id}")
     @ResponseBody
-    public ResponseEntity<?> deleteGazette(@PathVariable("id") Long id, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-
-        if (username == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"User not authorized. Please log in.\"}");
-        }
+    public ResponseEntity<?> deleteGazette(@PathVariable("id") Long id) {
+        
 
         try {
             gazetteService.deleteGazette(id);
@@ -66,9 +57,8 @@ public class PublisherController {
 
     @GetMapping("/tender_delete/{id}")
     @ResponseBody
-    public ResponseEntity<?> deleteTender(@PathVariable("id") Long id, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
+    public ResponseEntity<?> deleteTender(@PathVariable("id") Long id) {
+        
             try {
 
                 log.info("Attempting to delete tender with ID: " + id);
@@ -79,21 +69,13 @@ public class PublisherController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body("{\"error\": \"Failed to delete Tender.\"}");
             }
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"User not authorized.\"}");
-        }
+        
     }
 
     @GetMapping("/sendBack_Creator/{id}")
     @ResponseBody
-    public ResponseEntity<?> sendBackCreator(@PathVariable("id") Long id, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-
-        if (username == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"User not authorized. Please log in.\"}");
-        }
+    public ResponseEntity<?> sendBackCreator(@PathVariable("id") Long id) {
+        
         try {
             gazetteService.send_Back_Creator(id);
             return ResponseEntity.ok("{\"message\": \"Gazette send successfully!\"}");
@@ -105,13 +87,8 @@ public class PublisherController {
 
     @GetMapping("/published/{id}")
     @ResponseBody
-    public ResponseEntity<?> published(@PathVariable("id") Long id, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-
-        if (username == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"User not authorized. Please log in.\"}");
-        }
+    public ResponseEntity<?> published(@PathVariable("id") Long id) {
+        
         try {
             gazetteService.published(id);
             return ResponseEntity.ok("{\"message\": \"Gazette published successfully!\"}");
@@ -122,12 +99,8 @@ public class PublisherController {
     }
 
     @GetMapping("/publisher_submission_history")
-    public String publisherSubmissionHistory(Model model, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-
-        if (username == null) {
-            return "redirect:/login"; // Redirect if user is not logged in
-        }
+    public String publisherSubmissionHistory(Model model) {
+        
 
         // Fetch user's gazettes
         List<Gazette> gazettes = gazetteService.displayPublisherAllGazette();
@@ -155,13 +128,9 @@ public class PublisherController {
     }
 
     @GetMapping("/publisher_tender_display")
-    public String display_Tender_Publisher(Model model, HttpSession session) {
+    public String display_Tender_Publisher(Model model) {
 
-        String username = (String) session.getAttribute("loggedInUser");
-
-        if (username == null) {
-            return "redirect:/login"; // Redirect if user is not logged in
-        }
+        
 
         List<Tender> tenders = tenderService.display_Tender_Publisher();
         model.addAttribute("tenders", tenders);
@@ -170,13 +139,8 @@ public class PublisherController {
 
     @GetMapping("/sendBack_tender_Creator/{id}")
     @ResponseBody
-    public ResponseEntity<?> sendBackTenderCreator(@PathVariable("id") Long id, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-
-        if (username == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"User not authorized. Please log in.\"}");
-        }
+    public ResponseEntity<?> sendBackTenderCreator(@PathVariable("id") Long id) {
+        
         try {
             tenderService.send_Back_tender_Creator(id);
             return ResponseEntity.ok("{\"message\": \"Gazette send successfully!\"}");
@@ -188,13 +152,8 @@ public class PublisherController {
 
     @GetMapping("/published_tender/{id}")
     @ResponseBody
-    public ResponseEntity<?> publishedTender(@PathVariable("id") Long id, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-
-        if (username == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"User not authorized. Please log in.\"}");
-        }
+    public ResponseEntity<?> publishedTender(@PathVariable("id") Long id) {
+        
         try {
             tenderService.published_tender(id);
             return ResponseEntity.ok("{\"message\": \"Gazette published successfully!\"}");
@@ -205,12 +164,8 @@ public class PublisherController {
     }
 
     @GetMapping("/publisher_tender_submission_history")
-    public String publisherTenderSubmissionHistory(Model model, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-
-        if (username == null) {
-            return "redirect:/login";
-        }
+    public String publisherTenderSubmissionHistory(Model model) {
+        
 
         // Fetch user's gazettes
         List<Tender> tenders = tenderService.displayPublisherAllTender();

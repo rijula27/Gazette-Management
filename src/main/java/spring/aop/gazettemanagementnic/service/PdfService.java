@@ -158,7 +158,6 @@
 //     }
 // }
 
-
 package spring.aop.gazettemanagementnic.service;
 
 import java.io.IOException;
@@ -224,9 +223,33 @@ public class PdfService {
         }
 
         // ✅ Validate title (only for DB, NOT for filename)
-        String sanitizedTitle = title.replaceAll("[^a-zA-Z0-9\\-_ ]", "").trim();
-        if (sanitizedTitle.isEmpty()) {
-            throw new IllegalArgumentException("Invalid PDF title");
+        // String sanitizedTitle = title.replaceAll("[^a-zA-Z0-9\\-_ ]", "").trim();
+        // if (sanitizedTitle.isEmpty()) {
+        // throw new IllegalArgumentException("Invalid PDF title");
+        // }
+
+        // Validate title
+        if (title == null || title.trim().isEmpty()) {
+            throw new IllegalArgumentException("PDF title is required.");
+        }
+
+        String sanitizedTitle = title.trim();
+
+        // Maximum length
+        if (sanitizedTitle.length() > 150) {
+            throw new IllegalArgumentException("PDF title cannot exceed 150 characters.");
+        }
+
+        // Reject HTML/JavaScript tags
+        if (sanitizedTitle.matches(".*<[^>]+>.*")) {
+            throw new IllegalArgumentException("HTML or script tags are not allowed in the title.");
+        }
+
+        // Allow only expected characters
+        String titlePattern = "^[A-Za-z0-9 .,'()&/_-]+$";
+        if (!sanitizedTitle.matches(titlePattern)) {
+            throw new IllegalArgumentException(
+                    "Title contains invalid characters.");
         }
 
         // ✅ Generate SAFE filename (CRITICAL FIX)
@@ -258,7 +281,7 @@ public class PdfService {
         // ✅ Save to DB
         Pdf pdf = new Pdf();
         pdf.setPdfTitle(sanitizedTitle); // store clean title
-        pdf.setPdfFileName(fileName);    // store actual filename
+        pdf.setPdfFileName(fileName); // store actual filename
         pdf.setFilePath(filePath);
         pdf.setDate(date);
         pdf.setGcUser(gcUser);

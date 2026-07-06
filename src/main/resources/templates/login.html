@@ -14,6 +14,7 @@
 
 
   <script th:src="@{/js/jquery.min.js}"></script>
+  <script th:src="@{/js/crypto-js.min.js}"></script>
   <script th:src="@{/js/jquery.creaseFont.min.js}"></script>
 </head>
 
@@ -27,6 +28,8 @@
   <main class="main-content">
     <!-- Error message for failed login -->
     <div id="errorMessage" th:if="${error}" class="error" th:text="${error}"></div>
+    <div id="errorMessage" th:if="${sessionError}" class="error" th:text="${sessionError}"> </div>
+    
 
     <!-- Session timeout message -->
     <div id="sessionExpiredMessage" th:if="${param.session == 'expired'}" class="error">

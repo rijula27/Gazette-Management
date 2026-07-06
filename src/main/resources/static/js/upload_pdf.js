@@ -39,6 +39,11 @@ document.getElementById('pdfFile').addEventListener('change', (event) => {
 
 // loading and confirmation
 document.getElementById('saveButton').addEventListener('click', function () {
+    const title = document.getElementById('title').value;
+
+    if (!validatePdfTitle(title)) {
+        return;
+    }
     Swal.fire({
         title: 'Are you sure?',
         text: 'Do you want to submit this pdf?',
@@ -95,4 +100,63 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const newUrl = window.location.origin + window.location.pathname;
     window.history.replaceState({}, document.title, newUrl);
+});
+
+
+
+function validatePdfTitle(title) {
+
+    title = title.trim();
+
+    if (title.length === 0) {
+        Swal.fire("Invalid Title", "PDF title is required.", "warning");
+        return false;
+    }
+
+    if (title.length > 150) {
+        Swal.fire("Invalid Title", "PDF title cannot exceed 150 characters.", "warning");
+        return false;
+    }
+
+    // Reject HTML tags
+    if (/<[^>]*>/g.test(title)) {
+        Swal.fire(
+            "Invalid Title",
+            "HTML or script tags are not allowed.",
+            "warning"
+        );
+        return false;
+    }
+
+    // Allow only expected characters
+    const pattern = /^[A-Za-z0-9\s.,()&\/\-_:]+$/;
+
+    if (!pattern.test(title)) {
+        Swal.fire(
+            "Invalid Title",
+            "Title contains invalid characters.",
+            "warning"
+        );
+        return false;
+    }
+
+    return true;
+}
+
+
+const titleInput = document.getElementById("title");
+
+titleInput.addEventListener("input", function () {
+
+    let value = this.value;
+
+    value = value.replace(/<[^>]*>/g, "");
+
+    value = value.replace(/[^A-Za-z0-9\s.,()&\/\-_:]/g, "");
+
+    if (value.length > 150) {
+        value = value.substring(0, 150);
+    }
+
+    this.value = value;
 });

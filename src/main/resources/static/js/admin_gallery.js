@@ -57,12 +57,17 @@ document.querySelector('.form-upload').addEventListener('submit', function (e) {
         return;
     }
 
-    if (!descInput.value.trim()) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Description Required',
-            text: 'Please enter a description for the image.',
-        });
+    // if (!descInput.value.trim()) {
+    //     Swal.fire({
+    //         icon: 'warning',
+    //         title: 'Description Required',
+    //         text: 'Please enter a description for the image.',
+    //     });
+    //     return;
+    // }
+    const description = descInput.value.trim();
+
+    if (!validateImageDescription(description)) {
         return;
     }
 
@@ -139,7 +144,7 @@ function deleteImage(imageId) {
     }).then((result) => {
         if (result.isConfirmed) {
             fetch(`/gallery/delete/${imageId}`, {
-                method: 'DELETE',
+                method: 'POST',
                 headers: {
                     [csrfHeader]: csrfToken
                 }
@@ -167,4 +172,73 @@ $(document).on('click', '.delete-btn', function (e) {
     console.log("Delete clicked:", imageId); // debug
 
     deleteImage(imageId);
+});
+
+
+function validateImageDescription(description) {
+
+    description = description.trim();
+
+    if (description.length === 0) {
+        Swal.fire(
+            "Invalid Description",
+            "Image description is required.",
+            "warning"
+        );
+        return false;
+    }
+
+    if (description.length > 255) {
+        Swal.fire(
+            "Invalid Description",
+            "Description cannot exceed 255 characters.",
+            "warning"
+        );
+        return false;
+    }
+
+    // Reject HTML tags
+    if (/<[^>]*>/g.test(description)) {
+        Swal.fire(
+            "Invalid Description",
+            "HTML or script tags are not allowed.",
+            "warning"
+        );
+        return false;
+    }
+
+    // Allow only expected characters
+    const pattern = /^[A-Za-z0-9\s.,()&\/\-_:]+$/;
+
+    if (!pattern.test(description)) {
+        Swal.fire(
+            "Invalid Description",
+            "Description contains invalid characters.",
+            "warning"
+        );
+        return false;
+    }
+
+    return true;
+}
+
+
+const descInput = document.getElementById("imageDescription");
+
+descInput.addEventListener("input", function () {
+
+    let value = this.value;
+
+    // Remove HTML tags
+    value = value.replace(/<[^>]*>/g, "");
+
+    // Allow only expected characters
+    value = value.replace(/[^A-Za-z0-9\s.,()&\/\-_:]/g, "");
+
+    // Limit length
+    if (value.length > 255) {
+        value = value.substring(0, 255);
+    }
+
+    this.value = value;
 });

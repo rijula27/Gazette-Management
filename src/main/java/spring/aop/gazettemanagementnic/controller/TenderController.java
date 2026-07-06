@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ import spring.aop.gazettemanagementnic.service.TenderService;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
+
 @Slf4j
 @Controller
 @RequestMapping("/tender")
@@ -47,6 +51,12 @@ public class TenderController {
 
     @Autowired
     private GCUserService gcUserService;
+
+    private static final Pattern TITLE_PATTERN = Pattern.compile("^[A-Za-z0-9.,()\\-_/&\\s]{1,150}$");
+
+    private static final Pattern REF_PATTERN = Pattern.compile("^[A-Za-z0-9./()\\-_\\s]{1,100}$");
+
+    private static final Pattern KEYWORD_PATTERN = Pattern.compile("^[A-Za-z0-9,\\s]{0,500}$");
 
     // @PostMapping(value = "/uploadTender", consumes =
     // MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -120,75 +130,219 @@ public class TenderController {
     // }
     // }
 
+    // @PostMapping(value = "/uploadTender", consumes =
+    // MediaType.MULTIPART_FORM_DATA_VALUE)
+    // public ResponseEntity<String> uploadTender(
+    // @RequestPart("tender") Tender tender,
+    // @RequestPart("pdfFile") MultipartFile pdfFile,
+    // Authentication authentication) {
+
+    // User user = (User) authentication.getPrincipal();
+    // String username = user.getUsername();
+
+    // try {
+    // // Validate required fields
+    // if (tender.getTitle() == null || tender.getTitle().trim().isEmpty()
+    // || tender.getRef_No() == null || tender.getRef_No().trim().isEmpty()
+    // || tender.getAnnouncement_Date() == null
+    // || tender.getLast_Date() == null
+    // || tender.getOpening_Date() == null) {
+    // return ResponseEntity.badRequest()
+    // .body("{\"error\": \"All required tender fields must be filled out.\"}");
+    // }
+
+    // // ✅ File validation now handled inside service via validatePdfFile()
+    // // No need to duplicate here — service throws IllegalArgumentException
+
+    // if (tenderService.isTenderExist(tender.getTitle(), tender.getRef_No())) {
+    // return ResponseEntity.status(HttpStatus.CONFLICT)
+    // .body("{\"error\": \"A tender with the same title and reference number
+    // already exists.\"}");
+    // }
+
+    // tenderService.save_tender(
+    // username,
+    // tender.getTitle(),
+    // tender.getRef_No(),
+    // tender.getAnnouncement_Date(),
+    // tender.getLast_Date(),
+    // tender.getOpening_Date(),
+    // pdfFile,
+    // tender.getKeywords());
+
+    // return ResponseEntity.ok("{\"message\": \"Tender uploaded successfully.\"}");
+
+    // } catch (IllegalArgumentException e) {
+    // // ✅ Validation errors — show message
+    // log.error("Validation error in tender upload: {}", e.getMessage());
+    // return ResponseEntity.badRequest()
+    // .body("{\"error\": \"" + e.getMessage() + "\"}");
+
+    // } catch (SecurityException e) {
+    // // ✅ Path traversal attempt
+    // log.error("Security violation in tender upload: {}", e.getMessage());
+    // return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+    // .body("{\"error\": \"Invalid file path.\"}");
+
+    // } catch (IOException e) {
+    // // ✅ Generic IO error — no details leaked
+    // log.error("IO error in tender upload: {}", e.getMessage(), e);
+    // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    // .body("{\"error\": \"An error occurred while processing the file.\"}");
+
+    // } catch (Exception e) {
+    // // ✅ Catch everything else — no details leaked
+    // log.error("Unexpected error in tender upload: {}", e.getMessage(), e);
+    // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    // .body("{\"error\": \"An error occurred. Please try again.\"}");
+    // }
+    // }
+
     @PostMapping(value = "/uploadTender", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadTender(
             @RequestPart("tender") Tender tender,
             @RequestPart("pdfFile") MultipartFile pdfFile,
-            HttpSession session) {
+            Authentication authentication) {
 
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"User not authorized. Please log in.\"}");
-        }
+        User user = (User) authentication.getPrincipal();
+        String username = user.getUsername();
 
         try {
-            // Validate required fields
-            if (tender.getTitle() == null || tender.getTitle().trim().isEmpty()
-                    || tender.getRef_No() == null || tender.getRef_No().trim().isEmpty()
-                    || tender.getAnnouncement_Date() == null
-                    || tender.getLast_Date() == null
-                    || tender.getOpening_Date() == null) {
-                return ResponseEntity.badRequest()
-                        .body("{\"error\": \"All required tender fields must be filled out.\"}");
+
+            // ==========================
+            // Required Field Validation
+            // ==========================
+            if (tender.getTitle() == null || tender.getTitle().trim().isEmpty()) {
+                throw new IllegalArgumentException("Tender title is required.");
             }
 
-            // ✅ File validation now handled inside service via validatePdfFile()
-            // No need to duplicate here — service throws IllegalArgumentException
+            if (tender.getRef_No() == null || tender.getRef_No().trim().isEmpty()) {
+                throw new IllegalArgumentException("Reference Number is required.");
+            }
 
-            if (tenderService.isTenderExist(tender.getTitle(), tender.getRef_No())) {
+            if (tender.getAnnouncement_Date() == null) {
+                throw new IllegalArgumentException("Announcement Date is required.");
+            }
+
+            if (tender.getLast_Date() == null) {
+                throw new IllegalArgumentException("Last Date is required.");
+            }
+
+            if (tender.getOpening_Date() == null) {
+                throw new IllegalArgumentException("Opening Date is required.");
+            }
+
+            // ==========================
+            // Trim Inputs
+            // ==========================
+            String title = tender.getTitle().trim();
+            String refNo = tender.getRef_No().trim();
+            String keywords = tender.getKeywords() == null
+                    ? ""
+                    : tender.getKeywords().trim();
+
+            // ==========================
+            // Length Validation
+            // ==========================
+            if (title.length() > 150) {
+                throw new IllegalArgumentException(
+                        "Tender title cannot exceed 150 characters.");
+            }
+
+            if (refNo.length() > 100) {
+                throw new IllegalArgumentException(
+                        "Reference Number cannot exceed 100 characters.");
+            }
+
+            if (keywords.length() > 500) {
+                throw new IllegalArgumentException(
+                        "Keywords cannot exceed 500 characters.");
+            }
+
+            // ==========================
+            // Whitelist Validation
+            // ==========================
+            if (!TITLE_PATTERN.matcher(title).matches()) {
+                throw new IllegalArgumentException(
+                        "Tender title contains invalid characters.");
+            }
+
+            if (!REF_PATTERN.matcher(refNo).matches()) {
+                throw new IllegalArgumentException(
+                        "Reference Number contains invalid characters.");
+            }
+
+            if (!KEYWORD_PATTERN.matcher(keywords).matches()) {
+                throw new IllegalArgumentException(
+                        "Keywords contain invalid characters.");
+            }
+
+            // ==========================
+            // Date Validation
+            // ==========================
+            if (tender.getLast_Date().isBefore(tender.getAnnouncement_Date())) {
+                throw new IllegalArgumentException(
+                        "Last Date cannot be before Announcement Date.");
+            }
+
+            if (tender.getOpening_Date().isBefore(tender.getLast_Date())) {
+                throw new IllegalArgumentException(
+                        "Opening Date cannot be before Last Date.");
+            }
+
+            // ==========================
+            // Duplicate Validation
+            // ==========================
+            if (tenderService.isTenderExist(title, refNo)) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("{\"error\": \"A tender with the same title and reference number already exists.\"}");
+                        .body("{\"error\":\"A tender with the same title and reference number already exists.\"}");
             }
 
+            // ==========================
+            // Save
+            // ==========================
             tenderService.save_tender(
                     username,
-                    tender.getTitle(),
-                    tender.getRef_No(),
+                    title,
+                    refNo,
                     tender.getAnnouncement_Date(),
                     tender.getLast_Date(),
                     tender.getOpening_Date(),
                     pdfFile,
-                    tender.getKeywords());
+                    keywords);
 
-            return ResponseEntity.ok("{\"message\": \"Tender uploaded successfully.\"}");
+            return ResponseEntity.ok(
+                    "{\"message\":\"Tender uploaded successfully.\"}");
 
         } catch (IllegalArgumentException e) {
-            // ✅ Validation errors — show message
-            log.error("Validation error in tender upload: {}", e.getMessage());
+
+            log.error("Validation error: {}", e.getMessage());
+
             return ResponseEntity.badRequest()
-                    .body("{\"error\": \"" + e.getMessage() + "\"}");
+                    .body("{\"error\":\"" + e.getMessage() + "\"}");
 
         } catch (SecurityException e) {
-            // ✅ Path traversal attempt
-            log.error("Security violation in tender upload: {}", e.getMessage());
+
+            log.error("Security violation: {}", e.getMessage());
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"Invalid file path.\"}");
+                    .body("{\"error\":\"Invalid file path.\"}");
 
         } catch (IOException e) {
-            // ✅ Generic IO error — no details leaked
-            log.error("IO error in tender upload: {}", e.getMessage(), e);
+
+            log.error("IO Error", e);
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("{\"error\": \"An error occurred while processing the file.\"}");
+                    .body("{\"error\":\"An error occurred while processing the file.\"}");
 
         } catch (Exception e) {
-            // ✅ Catch everything else — no details leaked
-            log.error("Unexpected error in tender upload: {}", e.getMessage(), e);
+
+            log.error("Unexpected Error", e);
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("{\"error\": \"An error occurred. Please try again.\"}");
+                    .body("{\"error\":\"An unexpected error occurred.\"}");
         }
     }
-
     // @GetMapping("/pdf/{id}")
     // public ResponseEntity<?> viewTenderPdf(@PathVariable Long id, HttpSession
     // session) throws IOException {
@@ -236,7 +390,7 @@ public class TenderController {
     // }
 
     @GetMapping("/pdf/{id}")
-    public ResponseEntity<?> viewTenderPdf(@PathVariable Long id, HttpSession session) throws IOException {
+    public ResponseEntity<?> viewTenderPdf(@PathVariable Long id, Authentication authentication) throws IOException {
 
         // java.util.Optional<Tender> tenderOpt = tenderRepository.findById(id);
         Optional<Tender> tenderOpt = tenderService.findTenderById(id);
@@ -252,7 +406,8 @@ public class TenderController {
             return tenderService.getTenderPdfResponse(id);
         }
 
-        String username = (String) session.getAttribute("loggedInUser");
+        User user = (User) authentication.getPrincipal();
+        String username = user.getUsername();
         if (username == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("User not authenticated. Please login to view this resource.");
@@ -309,8 +464,10 @@ public class TenderController {
             @RequestParam(value = "pdfFile", required = false) MultipartFile file,
             @RequestParam("opening_Date") LocalDate opening_Date,
             @RequestParam("last_Date") LocalDate last_Date,
-            HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
+            Authentication authentication) {
+
+        User user = (User) authentication.getPrincipal();
+        String username = user.getUsername();
 
         if (username == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

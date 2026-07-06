@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import spring.aop.gazettemanagementnic.entity.GCUser;
 import spring.aop.gazettemanagementnic.repository.GCUserRepository;
 
@@ -20,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class GCUserService implements UserDetailsService {
 
@@ -29,16 +31,39 @@ public class GCUserService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    // @Override
+    // public UserDetails loadUserByUsername(String username) throws
+    // UsernameNotFoundException {
+    // log.info("Loading user from DB: {}", username);
+    // GCUser appUser = gcUserRepository.findByUsername(username)
+    // .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+
+    // log.info("Role: {}", appUser.getRole());
+    // log.info("Encoded Password: {}", appUser.getPassword());
+
+    // return new User(
+    // appUser.getUsername(),
+    // appUser.getPassword(), // Use the stored (bcrypt-encoded) password directly
+    // Collections.singleton(new SimpleGrantedAuthority(appUser.getRole())));
+
+    // }
+
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        GCUser appUser = gcUserRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
 
-        return new User(
-                appUser.getUsername(),
-                appUser.getPassword(), // Use the stored (bcrypt-encoded) password directly
-                Collections.singleton(new SimpleGrantedAuthority(appUser.getRole())));
+        log.info("Loading user from DB: {}", username);
 
+        GCUser user = gcUserRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+                log.info("Encoded Password: {}", user.getPassword());
+                
+        return User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .authorities(user.getRole())
+                .build();
     }
 
     // Helper method to retrieve a user by username
@@ -68,7 +93,7 @@ public class GCUserService implements UserDetailsService {
 
             GCUser gcUser = new GCUser();
 
-            if (!passwordEncoder.matches(userPassword, gcUser.getPassword())) {
+            // if (!passwordEncoder.matches(userPassword, gcUser.getPassword())) {
 
                 gcUser.setUsername(userName);
                 gcUser.setPassword(passwordEncoder.encode(userPassword));
@@ -77,9 +102,9 @@ public class GCUserService implements UserDetailsService {
 
                 gcUserRepository.save(gcUser);
                 return "User created successfully by admin: " + adminName;
-            } else {
-                return "Password already exist: " + adminName;
-            }
+            // } else {
+            //     return "Password already exist: " + adminName;
+            // }
         } else {
             throw new FileAlreadyExistsException("user with the same user name already exist");
         }
@@ -136,7 +161,7 @@ public class GCUserService implements UserDetailsService {
 
             GCUser gcUser = new GCUser();
 
-            if (!passwordEncoder.matches(userPassword, gcUser.getPassword())) {
+            // if (!passwordEncoder.matches(userPassword, gcUser.getPassword())) {
 
                 gcUser.setUsername(userName);
                 gcUser.setPassword(passwordEncoder.encode(userPassword));
@@ -145,9 +170,9 @@ public class GCUserService implements UserDetailsService {
 
                 gcUserRepository.save(gcUser);
                 return "User created successfully by admin: " + adminName;
-            } else {
-                return "Password already exist: " + adminName;
-            }
+            // } else {
+            //     return "Password already exist: " + adminName;
+            // }
         } else {
             throw new FileAlreadyExistsException("user with the same user name already exist");
         }

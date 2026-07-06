@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Audit Logs</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/all.min.css}">
+    <link rel="stylesheet" th:href="@{/css/admin_template.css}" />
+
+    <link rel="stylesheet" th:href="@{/css/admin_audit.css}">
+
+</head>
+
+<body>
+
+    <div th:replace="~{admin/admin_template :: navbar}"></div>
+
+    <div class="wrapper">
+
+        <div th:replace="~{admin/admin_template :: sidebar}"></div>
+
+        <main class="content" id="content">
+
+            <div class="dashboard-container">
+
+                <!-- Header -->
+                <div class="dashboard-header">
+
+                    <div>
+                        <h2 class="dashboard-title">
+                            Audit Logs
+                        </h2>
+
+                        <p class="dashboard-subtitle">
+                            Monitor login activities and user actions.
+                        </p>
+                    </div>
+
+                    <!-- <a th:href="@{/audit}" class="add-btn">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </a> -->
+
+                </div>
+
+                <!-- Filter Card -->
+
+                <!-- <div class="filter-card">
+
+                <form th:action="@{/audit}" method="get">
+
+                    <div class="filter-grid">
+
+                        <input
+                                type="text"
+                                name="username"
+                                placeholder="Username"
+                                th:value="${username}">
+
+                        <input
+                                type="text"
+                                name="module"
+                                placeholder="Module"
+                                th:value="${module}">
+
+                        <input
+                                type="text"
+                                name="action"
+                                placeholder="Action"
+                                th:value="${action}">
+
+                        <select name="status">
+
+                            <option value="">All Status</option>
+
+                            <option value="SUCCESS"
+                                    th:selected="${status=='SUCCESS'}">
+                                SUCCESS
+                            </option>
+
+                            <option value="FAILED"
+                                    th:selected="${status=='FAILED'}">
+                                FAILED
+                            </option>
+
+                        </select>
+
+                        <input
+                                type="date"
+                                name="fromDate"
+                                th:value="${fromDate}">
+
+                        <input
+                                type="date"
+                                name="toDate"
+                                th:value="${toDate}">
+
+                    </div>
+
+                    <div class="filter-buttons">
+
+                        <button class="search-btn">
+
+                            <i class="fas fa-search"></i>
+
+                            Search
+
+                        </button>
+
+                        <a th:href="@{/audit}" class="reset-btn">
+
+                            Reset
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div> -->
+
+                <!-- Table -->
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>#</th>
+
+                                <th>User Name</th>
+
+                                <th>Module</th>
+
+                                <th>Action</th>
+
+                                <th>Status</th>
+
+                                <th>IP Address</th>
+
+                                <th>Date & Time</th>
+
+                                <th>Description</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr th:if="${auditPage.empty}">
+
+                                <td colspan="8" class="empty">
+
+                                    No Audit Logs Found
+
+                                </td>
+
+                            </tr>
+
+                            <tr th:each="log,stat : ${auditPage.content}">
+
+                                <td th:text="${stat.count + (currentPage*10)}"></td>
+
+                                <td th:text="${log.username}"></td>
+
+                                <td th:text="${log.module}"></td>
+
+                                <td th:text="${log.action}"></td>
+
+                                <td>
+                                    <span th:if="${log.status=='SUCCESS'}" class="badge-success"
+                                        th:text="${log.status}">
+                                    </span>
+
+                                    <span th:if="${log.status=='FAILED'}" class="badge-failed" th:text="${log.status}">
+                                    </span>
+                                </td>
+
+                                <td th:text="${log.ipAddress}"></td>
+
+                                <td th:text="${#temporals.format(log.dateTime,'dd-MM-yyyy HH:mm:ss')}"></td>
+
+                                <td th:text="${log.description}"></td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <div class="pagination-container" th:if="${totalPages > 1}">
+
+                    <ul class="pagination">
+
+                        <!-- Previous -->
+                        <li th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a th:href="@{/audit/audit-page(
+                    page=${currentPage > 0 ? currentPage-1 : 0},
+                    username=${username},
+                    module=${module},
+                    action=${action},
+                    status=${status},
+                    fromDate=${fromDate},
+                    toDate=${toDate})}">
+                                &laquo;
+                            </a>
+                        </li>
+
+                        <!-- First Page -->
+                        <li th:if="${currentPage > 2}">
+                            <a th:href="@{/audit/audit-page(
+                    page=0,
+                    username=${username},
+                    module=${module},
+                    action=${action},
+                    status=${status},
+                    fromDate=${fromDate},
+                    toDate=${toDate})}">
+                                1
+                            </a>
+                        </li>
+
+                        <!-- Left Dots -->
+                        <li th:if="${currentPage > 3}">
+                            <span>...</span>
+                        </li>
+
+                        <!-- Middle Pages -->
+                        <li th:each="i : ${#numbers.sequence(
+                currentPage > 2 ? currentPage - 2 : 0,
+                currentPage + 2 < totalPages ? currentPage + 2 : totalPages - 1)}"
+                            th:classappend="${i == currentPage} ? 'active'">
+
+                            <a th:href="@{/audit/audit-page(
+                    page=${i},
+                    username=${username},
+                    module=${module},
+                    action=${action},
+                    status=${status},
+                    fromDate=${fromDate},
+                    toDate=${toDate})}" th:text="${i+1}">
+                            </a>
+                        </li>
+
+                        <!-- Right Dots -->
+                        <li th:if="${currentPage < totalPages - 4}">
+                            <span>...</span>
+                        </li>
+
+                        <!-- Last Page -->
+                        <li th:if="${totalPages > 1 && currentPage < totalPages - 3}">
+                            <a th:href="@{/audit/audit-page(
+                    page=${totalPages-1},
+                    username=${username},
+                    module=${module},
+                    action=${action},
+                    status=${status},
+                    fromDate=${fromDate},
+                    toDate=${toDate})}" th:text="${totalPages}">
+                            </a>
+                        </li>
+
+                        <!-- Next -->
+                        <li th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                            <a th:href="@{/audit/audit-page(
+                    page=${currentPage < totalPages-1 ? currentPage+1 : totalPages-1},
+                    username=${username},
+                    module=${module},
+                    action=${action},
+                    status=${status},
+                    fromDate=${fromDate},
+                    toDate=${toDate})}">
+                                &raquo;
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+
+        </main>
+
+    </div>
+
+
+    <div th:replace="~{admin/admin_template :: footer}"></div>
+
+</body>
+
+</html>

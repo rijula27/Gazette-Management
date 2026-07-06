@@ -1,72 +1,40 @@
 package spring.aop.gazettemanagementnic.config;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import spring.aop.gazettemanagementnic.entity.LoginLog;
-import spring.aop.gazettemanagementnic.repository.LoginLogRepository;
+import lombok.extern.slf4j.Slf4j;
+import spring.aop.gazettemanagementnic.service.AuditService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.List;
 
+@Slf4j
 @Component
-public class LoginSuccessHandler implements AuthenticationSuccessHandler {
+public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-    private LoginLogRepository loginLogRepository;
-
-    public LoginSuccessHandler(LoginLogRepository loginLogRepository) {
-        this.loginLogRepository = loginLogRepository;
-    }
+    @Autowired
+    private AuditService auditService;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-            Authentication authentication) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        Authentication authentication)
+            throws IOException, ServletException {
 
-        String username = authentication.getName();
-        String role = authentication.getAuthorities().stream()
-                .map(auth -> auth.getAuthority())
-                .findFirst().orElse("UNKNOWN");
+        auditService.log(
+                authentication.getName(),
+                authentication.getAuthorities().toString(),
+                "LOGIN",
+                "SUCCESS",
+                request,
+                "User logged in successfully");
 
-        String ipAddress = request.getRemoteAddr();
-        String userAgent = request.getHeader("User-Agent");
-
-        // Save login log
-        LoginLog log = new LoginLog();
-        log.setUsername(username);
-        log.setRole(role);
-        log.setLoginTime(LocalDateTime.now());
-        log.setIpAddress(ipAddress);
-        log.setUserAgent(userAgent);
-
-        loginLogRepository.save(log);
-
-        // Store username and login time in session for timeout validation
-        request.getSession().setAttribute("loggedInUser", username);
-        request.getSession().setAttribute("userRole", role);
-        request.getSession().setAttribute("loginTime", System.currentTimeMillis());
-
-        // Redirect by role
-        String targetUrl = switch (role) {
-            case "CREATOR" -> "/creator";
-            case "PUBLISHER" -> "/publisher/publisher_display";
-            case "ADMIN" -> "/admin/admin_display";
-            default -> "/index";
-        };
-
-        // List<String> allowedUrls = List.of("/creator", "/publisher/publisher_display", "/admin/admin_display",
-        //         "/index");
-
-        // if (!allowedUrls.contains(targetUrl)) {
-        //     targetUrl = "/index";
-        // }
-
-        
-
-        response.sendRedirect(targetUrl);
+        response.sendRedirect("/dashboard");
     }
 }
+

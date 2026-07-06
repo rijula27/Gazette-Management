@@ -258,3 +258,39 @@ $(document).on('click', '.delete-btn', function (e) {
 
     confirmDelete(this);
 });
+
+
+function validateTenderTitle(title) {
+
+    title = title.trim();
+
+    if (title.length === 0) {
+        Swal.fire("Invalid Title", "Tender title is required.", "warning");
+        return false;
+    }
+
+    if (title.length > 150) {
+        Swal.fire("Invalid Title", "Tender title cannot exceed 150 characters.", "warning");
+        return false;
+    }
+
+    // Block HTML tags
+    if (/<[^>]+>/.test(title)) {
+        Swal.fire("Invalid Title", "HTML or script tags are not allowed.", "warning");
+        return false;
+    }
+
+    // Allow only expected characters
+    const pattern = /^[A-Za-z0-9\s.,()&\/\-_:]+$/;
+
+    if (!pattern.test(title)) {
+        Swal.fire(
+            "Invalid Title",
+            "Tender title contains invalid characters.",
+            "warning"
+        );
+        return false;
+    }
+
+    return true;
+}

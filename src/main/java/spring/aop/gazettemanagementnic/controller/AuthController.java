@@ -2,6 +2,7 @@ package spring.aop.gazettemanagementnic.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import javax.imageio.ImageIO;
 import spring.aop.gazettemanagementnic.entity.GCUser;
 import spring.aop.gazettemanagementnic.service.AuthService;
 import spring.aop.gazettemanagementnic.service.GCUserService;
+import spring.aop.gazettemanagementnic.utils.AesUtil;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -37,11 +39,15 @@ import java.awt.image.BufferedImage;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+@Slf4j
 @Controller
 public class AuthController {
 
     @Autowired
     private GCUserService gcUserService;
+
+    @Autowired
+    private AesUtil aesUtil;
 
     @Autowired
     private AuthService authService;
@@ -52,11 +58,26 @@ public class AuthController {
             HttpSession httpSession,
             @RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout,
-            @RequestParam(value = "session", required = false) String sessionParam) {
+            @RequestParam(value = "session", required = false) String sessionParam,
+             @RequestParam(value = "alreadyLoggedIn", required = false) String alreadyLoggedIn,
+            @RequestParam(value = "captchaError", required = false) String captchaError) {
 
         // Handle login error
-        if (error != null && !error.isEmpty()) {
-            model.addAttribute("error", error);
+        // if (error != null && !error.isEmpty()) {
+        // model.addAttribute("error", error);
+        // }
+
+        if (captchaError != null) {
+            model.addAttribute("error", "Invalid CAPTCHA");
+        }
+
+        if (error != null) {
+            model.addAttribute("error", "Invalid username or password.");
+        }
+
+        if (alreadyLoggedIn != null) {
+            model.addAttribute("sessionError",
+                    "This account is already logged in on another device.");
         }
 
         // Handle session timeout
@@ -86,72 +107,92 @@ public class AuthController {
 
     // Process login submission
     // @PostMapping("/perform_login")
-    @PostMapping("/login")
-    public String processLogin(@RequestParam("username") String username,
-            @RequestParam("password") String password,
-            @RequestParam("captcha") String captchaInput,
-            HttpSession session,
-            Model model,
-            HttpServletRequest request) {
+    // @PostMapping("/login")
+    // public String processLogin(@RequestParam("username") String username,
+    // @RequestParam("password") String password,
+    // @RequestParam("captcha") String captchaInput,
+    // HttpSession session,
+    // Model model,
+    // HttpServletRequest request) {
 
-        String sessionCaptcha = (String) session.getAttribute("CAPTCHA");
+    // log.info("raw passworsdfdsfsd dkfj {}", password);
 
-        if (sessionCaptcha == null ||
-                !sessionCaptcha.equals(captchaInput)) {
+    // String sessionCaptcha = (String) session.getAttribute("CAPTCHA");
 
-            model.addAttribute("error", "Invalid CAPTCHA");
+    // if (sessionCaptcha == null ||
+    // !sessionCaptcha.equals(captchaInput)) {
 
-            String newCaptcha = authService.generateCaptcha();
+    // model.addAttribute("error", "Invalid CAPTCHA");
 
-            session.setAttribute("CAPTCHA", newCaptcha);
-            model.addAttribute("captcha", newCaptcha);
+    // String newCaptcha = authService.generateCaptcha();
 
-            return "login";
-        }
+    // session.setAttribute("CAPTCHA", newCaptcha);
+    // model.addAttribute("captcha", newCaptcha);
 
-        // if (sessionCaptcha != null && captchaInput.equals(sessionCaptcha)) {
-        if (username != null && username.length() > 9 && username.length() < 21 && username.contains("_")) {
-            if (password != null && password.length() == 12) {
+    // return "login";
+    // }
 
-                Optional<GCUser> user = gcUserService.findByUsername(username);
+    // String rawPassword;
+    // try {
+    // rawPassword = aesUtil.decrypt(password);
+    // } catch (Exception e) {
+    // log.info("raw passworsdfsd dkfj ");
 
-                // if (user != null && gcUserService.matches(password, user.getPassword())) {
-                if (user.isPresent() && gcUserService.matches(password, user.get().getPassword())) {
+    // model.addAttribute("error", "Invalid encrypted password");
+    // return "candidateLoginPage";
+    // }
 
-                    // Create an authentication token and set it in the security context
-                    SimpleGrantedAuthority authority = new SimpleGrantedAuthority(user.get().getRole());
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username,
-                            null, Collections.singleton(authority));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+    // log.info("raw password dkfj {}",rawPassword);
 
-                    // request.setAttribute("username", username);
-                    // request.setAttribute("password", password);
-                    // session.removeAttribute("CAPTCHA");
-                    session.removeAttribute("CAPTCHA");
-                    request.changeSessionId();
-                    return "forward:/custom_login";
+    // // if (sessionCaptcha != null && captchaInput.equals(sessionCaptcha)) {
+    // if (username != null && username.length() > 9 && username.length() < 21 &&
+    // username.contains("_")) {
+    // if (rawPassword != null && rawPassword.length() == 12) {
 
-                } else {
-                    refreshCaptcha(session);
-                    model.addAttribute("error", "Invalid username or password.");
-                    return "login";
-                }
-            } else {
-                refreshCaptcha(session);
-                // model.addAttribute("error", "Password must be exactly 12 characters long.");
-                model.addAttribute("error", "Invalid username or password.");
-                return "login";
-            }
+    // Optional<GCUser> user = gcUserService.findByUsername(username);
 
-        } else {
-            // model.addAttribute("error", "Username must be 10 to 15 characters long and
-            // contain an underscore.");
-            refreshCaptcha(session);
-            model.addAttribute("error", "Invalid username or password.");
-            return "login";
-        }
+    // // if (user != null && gcUserService.matches(password, user.getPassword())) {
+    // if (user.isPresent() && gcUserService.matches(rawPassword,
+    // user.get().getPassword())) {
 
-    }
+    // // Create an authentication token and set it in the security context
+    // SimpleGrantedAuthority authority = new
+    // SimpleGrantedAuthority(user.get().getRole());
+    // UsernamePasswordAuthenticationToken authToken = new
+    // UsernamePasswordAuthenticationToken(username,
+    // null, Collections.singleton(authority));
+    // SecurityContextHolder.getContext().setAuthentication(authToken);
+
+    // // request.setAttribute("username", username);
+    // // request.setAttribute("password", password);
+    // // session.removeAttribute("CAPTCHA");
+    // session.removeAttribute("CAPTCHA");
+    // request.changeSessionId();
+    // // return "forward:/custom_login";
+    // return "redirect:/login";
+
+    // } else {
+    // refreshCaptcha(session);
+    // model.addAttribute("error", "Invalid username or password.");
+    // return "login";
+    // }
+    // } else {
+    // refreshCaptcha(session);
+    // // model.addAttribute("error", "Password must be exactly 12 characters
+    // long.");
+    // model.addAttribute("error", "Invalid username or password.");
+    // return "login";
+    // }
+
+    // } else {
+    // // model.addAttribute("error", "Username must be 10 to 15 characters long and
+    // // contain an underscore.");
+    // refreshCaptcha(session);
+    // model.addAttribute("error", "Invalid username or password.");
+    // return "login";
+    // }
+
+    // }
 
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
@@ -269,7 +310,6 @@ public class AuthController {
     @ResponseBody
     public ResponseEntity<Void> refreshCaptchaEndpoint(
             HttpSession session) {
-
 
         refreshCaptcha(session);
 

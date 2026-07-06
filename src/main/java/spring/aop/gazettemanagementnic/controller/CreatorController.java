@@ -13,14 +13,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import spring.aop.gazettemanagementnic.audit.AuditableAction;
 import spring.aop.gazettemanagementnic.entity.Gazette;
 import spring.aop.gazettemanagementnic.entity.Tender;
 import spring.aop.gazettemanagementnic.service.GazetteService;
 import spring.aop.gazettemanagementnic.service.TenderService;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 
 @Slf4j
 @Controller
@@ -41,50 +45,45 @@ public class CreatorController {
             model.addAttribute("gazettes", gazettes);
             return "creator/creator_dashboard";
         } else {
-            return "redirect:/login"; 
+            return "redirect:/login";
         }
 
     }
 
+    @AuditableAction(module = "CREATOR" , action = "SEND_TO_PUBLISHER", description = "send Gazzate to the publisher")
     @GetMapping("/sendPublisher/{id}")
     @ResponseBody
-    public ResponseEntity<?> send_to_Publisher(@PathVariable("id") Long id, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
-            try {
-                gazetteService.send_to_Publisher(id);
-                return ResponseEntity.ok("{\"message\": \"Gazette send successfully!\"}");
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("{\"error\": \"Failed to send gazette.\"}");
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"User not authorized.\"}");
+    public ResponseEntity<?> send_to_Publisher(@PathVariable("id") Long id) {
+
+        try {
+            gazetteService.send_to_Publisher(id);
+            return ResponseEntity.ok("{\"message\": \"Gazette send successfully!\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Failed to send gazette.\"}");
         }
+
     }
 
     @GetMapping("/delete/{id}")
     @ResponseBody
-    public ResponseEntity<?> deleteGazette(@PathVariable("id") Long id, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
-            try {
-                gazetteService.deleteGazette(id);
-                return ResponseEntity.ok("{\"message\": \"Gazette deleted successfully!\"}");
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("{\"error\": \"Failed to delete gazette.\"}");
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"User not authorized.\"}");
+    public ResponseEntity<?> deleteGazette(@PathVariable("id") Long id) {
+
+        try {
+            gazetteService.deleteGazette(id);
+            return ResponseEntity.ok("{\"message\": \"Gazette deleted successfully!\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Failed to delete gazette.\"}");
         }
+
     }
 
     @GetMapping("/submission_history")
-    public String submissionHistory(Model model, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
+    public String submissionHistory(Model model, Authentication authentication) {
+
+        User user = (User) authentication.getPrincipal();
+        String username = user.getUsername();
 
         if (username != null) {
             // Fetch all categorized gazettes
@@ -107,64 +106,52 @@ public class CreatorController {
     }
 
     @GetMapping("/tender_display")
-    public String displayTender(Model model, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
+    public String displayTender(Model model, Authentication authentication) {
 
-        if (username != null) {
-            List<Tender> tenders = tenderService.displayTender(username);
-            model.addAttribute("tenders", tenders);
-            return "creator/creator_tender_dashboard";
-        } else {
-            return "redirect:/login";
-        }
+        User user = (User) authentication.getPrincipal();
+        String username = user.getUsername();
+        List<Tender> tenders = tenderService.displayTender(username);
+        model.addAttribute("tenders", tenders);
+        return "creator/creator_tender_dashboard";
+
     }
 
     @GetMapping("/tender_delete/{id}")
     @ResponseBody
-    public ResponseEntity<?> deleteTender(@PathVariable("id") Long id, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
-            try {
+    public ResponseEntity<?> deleteTender(@PathVariable("id") Long id) {
 
-                log.info("Attempting to delete tender with ID: " + id);
-                tenderService.deleteTender(id);
-                return ResponseEntity.ok("{\"message\": \"Tender deleted successfully!\"}");
-            } catch (Exception e) {
-                log.error("Error occurred while deleting tender with ID: " + id, e);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("{\"error\": \"Failed to delete Tender.\"}");
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"User not authorized.\"}");
+        try {
+
+            log.info("Attempting to delete tender with ID: " + id);
+            tenderService.deleteTender(id);
+            return ResponseEntity.ok("{\"message\": \"Tender deleted successfully!\"}");
+        } catch (Exception e) {
+            log.error("Error occurred while deleting tender with ID: " + id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Failed to delete Tender.\"}");
         }
+
     }
 
     @GetMapping("/sendTenderPublisher/{id}")
     @ResponseBody
-    public ResponseEntity<?> sendTenderPublisher(@PathVariable("id") Long id, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
-            try {
-                tenderService.send_tender_Publisher(id);
-                return ResponseEntity.ok("{\"message\": \"Tender send successfully!\"}");
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("{\"error\": \"Failed to send Tender.\"}");
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"User not authorized.\"}");
+    public ResponseEntity<?> sendTenderPublisher(@PathVariable("id") Long id) {
+
+        try {
+            tenderService.send_tender_Publisher(id);
+            return ResponseEntity.ok("{\"message\": \"Tender send successfully!\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Failed to send Tender.\"}");
         }
+
     }
 
     @GetMapping("/tender_submission_history")
-    public String tenderSubmissionHistory(Model model, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
+    public String tenderSubmissionHistory(Model model, Authentication authentication) {
 
-        if (username == null) {
-            return "redirect:/login";
-        }
+        User user = (User) authentication.getPrincipal();
+        String username = user.getUsername();
 
         List<Tender> tenders = tenderService.displayAllTender(username);
         List<Tender> approvedTenders = tenderService.display_approved_Tender(username);

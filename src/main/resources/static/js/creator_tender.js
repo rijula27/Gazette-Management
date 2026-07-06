@@ -12,14 +12,70 @@ function validateTenderForm() {
     const lastDateObj = new Date(lastDate);
     const file = fileInput.files[0];
 
-    if (!title || title.length > 150) {
-        Swal.fire('Invalid Title', 'Please enter a valid tender title (max 150 characters).', 'warning');
+    if (!title) {
+        Swal.fire('Invalid Title', 'Tender title is required.', 'warning');
+        return false;
+    }
+
+    if (title.length > 150) {
+        Swal.fire('Invalid Title', 'Tender title cannot exceed 150 characters.', 'warning');
+        return false;
+    }
+
+    // Block HTML tags
+    if (/<[^>]+>/.test(title)) {
+        Swal.fire('Invalid Title', 'HTML or script tags are not allowed.', 'warning');
+        return false;
+    }
+
+    // Allow only expected characters
+    const titlePattern = /^[A-Za-z0-9\s.,()&\/\-_:]+$/;
+
+    if (!titlePattern.test(title)) {
+        Swal.fire(
+            'Invalid Title',
+            'Tender title contains invalid characters.',
+            'warning'
+        );
         return false;
     }
 
     // const refPattern = /^[A-Za-z0-9_\-\s\/.]{1,100}$/;
-    if (!refNo || refNo.length > 100) {
-        Swal.fire('Invalid Reference Number', 'Please enter a valid tender reference number (max 100 characters).', 'warning');
+    if (!refNo) {
+        Swal.fire(
+            'Invalid Reference Number',
+            'Reference Number is required.',
+            'warning'
+        );
+        return false;
+    }
+
+    if (refNo.length > 100) {
+        Swal.fire(
+            'Invalid Reference Number',
+            'Reference Number cannot exceed 100 characters.',
+            'warning'
+        );
+        return false;
+    }
+
+    if (/<[^>]+>/.test(refNo)) {
+        Swal.fire(
+            'Invalid Reference Number',
+            'HTML or script tags are not allowed.',
+            'warning'
+        );
+        return false;
+    }
+
+    const refPattern = /^[A-Za-z0-9\s._\-\/()]+$/;
+
+    if (!refPattern.test(refNo)) {
+        Swal.fire(
+            'Invalid Reference Number',
+            'Reference Number contains invalid characters.',
+            'warning'
+        );
         return false;
     }
 
@@ -50,9 +106,36 @@ function validateTenderForm() {
         return false;
     }
 
-    if (keywords.length > 0 && !/^([a-zA-Z0-9\s]+,?)*$/.test(keywords)) {
-        Swal.fire('Invalid Keywords', 'Keywords must be comma-separated words only.', 'warning');
-        return false;
+    if (keywords.length > 0) {
+
+        if (keywords.length > 250) {
+            Swal.fire(
+                'Invalid Keywords',
+                'Keywords cannot exceed 250 characters.',
+                'warning'
+            );
+            return false;
+        }
+
+        if (/<[^>]+>/.test(keywords)) {
+            Swal.fire(
+                'Invalid Keywords',
+                'HTML or script tags are not allowed.',
+                'warning'
+            );
+            return false;
+        }
+
+        const keywordPattern = /^[A-Za-z0-9\s,._()-]+$/;
+
+        if (!keywordPattern.test(keywords)) {
+            Swal.fire(
+                'Invalid Keywords',
+                'Keywords contain invalid characters.',
+                'warning'
+            );
+            return false;
+        }
     }
 
     return true;

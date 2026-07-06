@@ -22,6 +22,9 @@ import spring.aop.gazettemanagementnic.service.ContactUsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
+
 @Controller
 @RequestMapping("/contact")
 @Slf4j
@@ -63,11 +66,12 @@ public class ContactUsController {
     @PostMapping("/save")
     @ResponseBody
     public ResponseEntity<String> saveContact(@Valid @RequestBody ContactUsDto dto,
-            HttpSession session) {
+            Authentication authentication) {
 
-                log.info("sdklfjslkd ");
+        // log.info("sdklfjslkd ");
 
-        String adminName = (String) session.getAttribute("loggedInUser");
+        User user = (User) authentication.getPrincipal();
+        String adminName = user.getUsername();
 
         try {
             if (adminName == null || adminName.isEmpty()) {
@@ -86,16 +90,12 @@ public class ContactUsController {
     }
 
     @GetMapping("/contactDisplay")
-    public String contactUs_Display(Model model, HttpSession session) {
+    public String contactUs_Display(Model model) {
 
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
-            List<ContactUs> contact = contactUsService.displayContact();
-            model.addAttribute("contacts", contact);
-            return "admin/admin_contactUs";
-        } else {
-            return "redirect:/login";
-        }
+        List<ContactUs> contact = contactUsService.displayContact();
+        model.addAttribute("contacts", contact);
+        return "admin/admin_contactUs";
+
     }
 
     // @PostMapping("/edit")
@@ -128,11 +128,10 @@ public class ContactUsController {
     @PostMapping("/edit")
     @ResponseBody
     public ResponseEntity<String> editContact(@Valid @RequestBody ContactEditDto dto,
-            HttpSession session) {
+            Authentication authentication) {
 
-                log.info("lsjdfsdlkljjsj");
-
-        String adminName = (String) session.getAttribute("loggedInUser");
+        User user = (User) authentication.getPrincipal();
+        String adminName = user.getUsername();
 
         try {
             if (adminName == null || adminName.isEmpty()) {
@@ -151,8 +150,10 @@ public class ContactUsController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteContact(@PathVariable("id") Long id, Model model, HttpSession session) {
-        String adminName = (String) session.getAttribute("loggedInUser");
+    public String deleteContact(@PathVariable("id") Long id, Model model, Authentication authentication) {
+        // String adminName = (String) session.getAttribute("loggedInUser");
+        User user = (User) authentication.getPrincipal();
+        String adminName = user.getUsername();
         if (adminName != null) {
             contactUsService.deleteContact(id);
             model.addAttribute("successMessage", "User deleted successfully!");

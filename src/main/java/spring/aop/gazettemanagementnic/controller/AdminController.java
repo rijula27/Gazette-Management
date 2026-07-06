@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import spring.aop.gazettemanagementnic.audit.AuditableAction;
 import spring.aop.gazettemanagementnic.dto.CreatorRequestDTO;
 import spring.aop.gazettemanagementnic.dto.EditCreatorRequestDTO;
 import spring.aop.gazettemanagementnic.entity.GCUser;
@@ -35,6 +36,9 @@ import spring.aop.gazettemanagementnic.service.GCUserService;
 import spring.aop.gazettemanagementnic.service.GazetteService;
 import spring.aop.gazettemanagementnic.service.PdfService;
 import spring.aop.gazettemanagementnic.service.TenderService;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 
 @Controller
 @Slf4j
@@ -56,37 +60,52 @@ public class AdminController {
     @Autowired
     private PdfService pdfService;
 
+    // @GetMapping("/admin_display")
+    // public String displayGazette_Admin(Model model, HttpSession session) {
+
+    // log.info("ADMIN SESSION = {}", session.getId());
+    // log.info("loggedInUser = {}", session.getAttribute("loggedInUser"));
+
+    // String username = (String) session.getAttribute("loggedInUser");
+    // if (username != null) {
+    // List<Gazette> gazettes = gazetteService.displayGazette_Admin();
+    // model.addAttribute("gazettes", gazettes);
+    // return "admin/admin";
+    // } else {
+    // return "redirect:/login"; // redirect to login if user is not logged in
+    // }
+
+    // }
+
     @GetMapping("/admin_display")
-    public String displayGazette_Admin(Model model, HttpSession session) {
+    public String displayGazette_Admin(Model model, Authentication authentication) {
 
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
-            List<Gazette> gazettes = gazetteService.displayGazette_Admin();
-            model.addAttribute("gazettes", gazettes);
-            return "admin/admin";
-        } else {
-            return "redirect:/login"; // redirect to login if user is not logged in
-        }
+        log.info("Logged in user = {}", authentication.getName());
 
+        List<Gazette> gazettes = gazetteService.displayGazette_Admin();
+        model.addAttribute("gazettes", gazettes);
+
+        return "admin/admin";
     }
 
     @GetMapping("/admin_creator_list")
-    public String displayCreator_List(Model model, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
-            List<GCUser> gcUsers = gcUserService.displayUser_List();
-            model.addAttribute("gcUsers", gcUsers);
-            return "admin/admin_creator_list";
-        } else {
-            return "redirect:/login"; // redirect to login if user is not logged in
-        }
+    public String displayCreator_List(Model model) {
+
+        List<GCUser> gcUsers = gcUserService.displayUser_List();
+        model.addAttribute("gcUsers", gcUsers);
+        return "admin/admin_creator_list";
+
     }
 
+    @AuditableAction(module = "ADMIN" , action = "ADD", description = "Added new creator account")
     @PostMapping("/creator_upload")
     @ResponseBody
     public ResponseEntity<String> creatorUpload(@RequestBody CreatorRequestDTO requestDTO,
-            HttpSession session) {
-        String adminName = (String) session.getAttribute("loggedInUser");
+            Authentication authentication) {
+        // String adminName = (String) session.getAttribute("loggedInUser");
+
+        User user = (User) authentication.getPrincipal();
+        String adminName = user.getUsername();
 
         try {
             if (adminName == null || adminName.isEmpty()) {
@@ -133,59 +152,54 @@ public class AdminController {
 
     }
 
+    @AuditableAction(module = "ADMIN" , action = "DELETE", description = "Deleted gazatte")
     @GetMapping("/admin_delete/{id}")
-    public String deleteAdminGazette(@PathVariable("id") Long id, Model model, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
-            gazetteService.deleteGazette(id);
-            model.addAttribute("successMessage", "Gazette deleted successfully!");
-            return "redirect:/admin/admin_display";
-        } else {
-            return "redirect:/login"; // redirect to login if user is not logged in
+    public String deleteAdminGazette(@PathVariable("id") Long id, Model model) {
 
-        }
+        gazetteService.deleteGazette(id);
+        model.addAttribute("successMessage", "Gazette deleted successfully!");
+        return "redirect:/admin/admin_display";
+
     }
 
+    @AuditableAction(module = "ADMIN" , action = "DELETE", description = "Deleted tender")
     @GetMapping("/tender_delete/{id}")
     @ResponseBody
-    public ResponseEntity<?> deleteTender(@PathVariable("id") Long id, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
-            try {
+    public ResponseEntity<?> deleteTender(@PathVariable("id") Long id) {
 
-                log.info("Attempting to delete tender with ID: " + id);
-                tenderService.deleteTender(id);
-                return ResponseEntity.ok("{\"message\": \"Tender deleted successfully!\"}");
-            } catch (Exception e) {
-                log.error("Error occurred while deleting tender with ID: " + id, e);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("{\"error\": \"Failed to delete Tender.\"}");
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"User not authorized.\"}");
+        try {
+
+            log.info("Attempting to delete tender with ID: " + id);
+            tenderService.deleteTender(id);
+            return ResponseEntity.ok("{\"message\": \"Tender deleted successfully!\"}");
+        } catch (Exception e) {
+            log.error("Error occurred while deleting tender with ID: " + id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Failed to delete Tender.\"}");
         }
+
     }
 
+    @AuditableAction(module = "ADMIN" , action = "DELETE", description = "Deleted creator account")
     @GetMapping("/delete_creator/{id}")
-    public String deleteCreator(@PathVariable("id") Long id, Model model, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
-            gcUserService.deleteUser(id);
-            model.addAttribute("successMessage", "User deleted successfully!");
-            return "redirect:/admin/admin_creator_list";
-        } else {
-            return "redirect:/login"; // redirect to login if user is not logged in
+    public String deleteCreator(@PathVariable("id") Long id, Model model) {
 
-        }
+        gcUserService.deleteUser(id);
+        model.addAttribute("successMessage", "User deleted successfully!");
+        return "redirect:/admin/admin_creator_list";
 
     }
 
+
+    @AuditableAction(module = "ADMIN" , action = "UPDATE", description = "Updated creator account")
     @PostMapping("/edit_creator")
     @ResponseBody
     public ResponseEntity<String> edit_creator(@RequestBody EditCreatorRequestDTO editRequestDTO,
-            HttpSession session) {
-        String adminName = (String) session.getAttribute("loggedInUser");
+            Authentication authentication) {
+        // String adminName = (String) session.getAttribute("loggedInUser");
+
+        User user = (User) authentication.getPrincipal();
+        String adminName = user.getUsername();
         try {
             if (adminName == null || adminName.isEmpty()) {
                 return ResponseEntity.status(401).body("Session expired or not logged in.");
@@ -233,22 +247,24 @@ public class AdminController {
     }
 
     @GetMapping("/admin_publisher_list")
-    public String displayPublisher_List(Model model, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
-            List<GCUser> gcUsers = gcUserService.displayPublisher_List();
-            model.addAttribute("gcUsers", gcUsers);
-            return "admin/admin_publisher_list";
-        } else {
-            return "redirect:/login"; // redirect to login if user is not logged in
-        }
+    public String displayPublisher_List(Model model) {
+
+        List<GCUser> gcUsers = gcUserService.displayPublisher_List();
+        model.addAttribute("gcUsers", gcUsers);
+        return "admin/admin_publisher_list";
+
     }
 
+
+
+    @AuditableAction(module = "ADMIN" , action = "ADD", description = "Crated publisher account")
     @PostMapping("/publisher_upload")
     @ResponseBody
     public ResponseEntity<String> publisherUpload(@RequestBody CreatorRequestDTO requestDTO,
-            HttpSession session) {
-        String adminName = (String) session.getAttribute("loggedInUser");
+            Authentication authentication) {
+        // String adminName = (String) session.getAttribute("loggedInUser");
+        User user = (User) authentication.getPrincipal();
+        String adminName = user.getUsername();
 
         try {
             if (adminName == null || adminName.isEmpty()) {
@@ -294,24 +310,22 @@ public class AdminController {
     }
 
     @GetMapping("/delete_publisher/{id}")
-    public String deletePublisher(@PathVariable("id") Long id, Model model, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
-            gcUserService.deleteUser(id);
-            model.addAttribute("successMessage", "User deleted successfully!");
-            return "redirect:/admin/admin_publisher_list";
-        } else {
-            return "redirect:/login"; // redirect to login if user is not logged in
+    public String deletePublisher(@PathVariable("id") Long id, Model model) {
 
-        }
+        gcUserService.deleteUser(id);
+        model.addAttribute("successMessage", "User deleted successfully!");
+        return "redirect:/admin/admin_publisher_list";
 
     }
 
     @PostMapping("/edit_publisher")
     @ResponseBody
     public ResponseEntity<String> edit_publisher(@RequestBody EditCreatorRequestDTO editRequestDTO,
-            HttpSession session) {
-        String adminName = (String) session.getAttribute("loggedInUser");
+            Authentication authentication) {
+        // String adminName = (String) session.getAttribute("loggedInUser");
+
+        User user = (User) authentication.getPrincipal();
+        String adminName = user.getUsername();
         try {
             if (adminName == null || adminName.isEmpty()) {
                 return ResponseEntity.status(401).body("Session expired or not logged in.");
@@ -359,29 +373,22 @@ public class AdminController {
     }
 
     @GetMapping("/admin_tender_display")
-    public String display_tender_Admin(Model model, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
-            List<Tender> tenders = tenderService.display_Tender_Admin();
-            model.addAttribute("tenders", tenders);
-            return "admin/admin_tender";
-        } else {
-            return "redirect:/login"; // redirect to login if user is not logged in
-        }
+    public String display_tender_Admin(Model model) {
+
+        List<Tender> tenders = tenderService.display_Tender_Admin();
+        model.addAttribute("tenders", tenders);
+        return "admin/admin_tender";
+
     }
 
     @PostMapping("/uploadPdf")
     public String uploadPdf(@RequestParam("title") String title,
             @RequestParam("pdfFile") MultipartFile file,
-            HttpSession session,
+            Authentication authentication,
             RedirectAttributes redirectAttributes) {
 
-        String username = (String) session.getAttribute("loggedInUser");
-
-        if (username == null) {
-            return "redirect:/login";
-        }
-
+        User user = (User) authentication.getPrincipal();
+        String username = user.getUsername();
         try {
             final long MAX_SIZE = 20 * 1024 * 1024;
 
@@ -394,51 +401,58 @@ public class AdminController {
 
             pdfService.savePdf(title, file, date, username);
 
-            redirectAttributes.addAttribute("success", "Pdf saved successfully!");
-
+            redirectAttributes.addFlashAttribute("success", "PDF uploaded successfully.");
             return "redirect:/upload_pdf";
+
+        } catch (IllegalArgumentException e) {
+
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/upload_pdf";
+
+        } catch (SecurityException e) {
+
+            redirectAttributes.addFlashAttribute("error", "Invalid file path.");
+            return "redirect:/upload_pdf";
+
         } catch (IOException e) {
-            redirectAttributes.addAttribute("error", "Error uploading file ");
+
+            redirectAttributes.addFlashAttribute("error", "Error uploading file.");
             return "redirect:/upload_pdf";
         }
 
     }
 
     @GetMapping("/admin_pdf_display")
-    public String display_pdf_Admin(Model model, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
-            List<Pdf> pdfs = pdfService.display_Pdf_Admin();
-            model.addAttribute("pdfs", pdfs);
-            return "admin/admin_pdf";
-        } else {
-            return "redirect:/login"; // redirect to login if user is not logged in
-        }
+    public String display_pdf_Admin(Model model) {
+
+        List<Pdf> pdfs = pdfService.display_Pdf_Admin();
+        model.addAttribute("pdfs", pdfs);
+        return "admin/admin_pdf";
+
     }
 
     @GetMapping("/pdf_delete/{id}")
     @ResponseBody
-    public ResponseEntity<?> deletePdf(@PathVariable("id") Long id, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username != null) {
-            try {
-                pdfService.deletePdf(id);
-                return ResponseEntity.ok("{\"message\": \"Pdf deleted successfully!\"}");
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("{\"error\": \"Failed to delete Pdf.\"}");
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"error\": \"User not authorized.\"}");
+    public ResponseEntity<?> deletePdf(@PathVariable("id") Long id) {
+
+        try {
+            pdfService.deletePdf(id);
+            return ResponseEntity.ok("{\"message\": \"Pdf deleted successfully!\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Failed to delete Pdf.\"}");
         }
+
     }
 
     @PostMapping("/edit_admin")
     @ResponseBody
     public ResponseEntity<String> edit_admin(@RequestBody EditCreatorRequestDTO editRequestDTO,
-            HttpSession session) {
-        String adminName = (String) session.getAttribute("loggedInUser");
+            Authentication authentication) {
+        // String adminName = (String) session.getAttribute("loggedInUser");
+
+        User user = (User) authentication.getPrincipal();
+        String adminName = user.getUsername();
         try {
             if (adminName == null || adminName.isEmpty()) {
                 return ResponseEntity.status(401).body("Session expired or not logged in.");
